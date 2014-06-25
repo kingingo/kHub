@@ -1,4 +1,4 @@
-package me.kingingokhub.Pet;
+package me.kingingo.khub.Pet;
 
 import java.util.HashMap;
 import net.minecraft.server.v1_7_R3.ContainerAnvil;

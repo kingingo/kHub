@@ -1,4 +1,4 @@
-package me.kingingokhub.Pet;
+package me.kingingo.khub.Pet;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;

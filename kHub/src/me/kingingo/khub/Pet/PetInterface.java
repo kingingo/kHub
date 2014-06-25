@@ -1,4 +1,4 @@
-package me.kingingokhub.Pet;
+package me.kingingo.khub.Pet;
 
 import java.util.HashMap;
 import java.util.List;

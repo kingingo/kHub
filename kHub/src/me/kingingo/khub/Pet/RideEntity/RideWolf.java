@@ -1,7 +1,7 @@
 package me.kingingo.khub.Pet.RideEntity;
 import java.lang.reflect.Field;
 
-import me.kingingokhub.Pet.RideInterface;
+import me.kingingo.khub.Pet.RideInterface;
 import net.minecraft.server.v1_7_R3.EntityHuman;
 import net.minecraft.server.v1_7_R3.EntityLiving;
 import net.minecraft.server.v1_7_R3.EntityWolf;

@@ -8,7 +8,7 @@ import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
 import me.kingingo.kcore.memory.MemoryFix;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Packet.Packets.SERVER_INFO_ALL;
-import me.kingingokhub.Pet.PetManager;
+import me.kingingo.khub.Pet.PetManager;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,7 +22,7 @@ public class kHub extends JavaPlugin{
 	private HubManager Manager;
 	private PacketManager PacketManager;
 	private PetManager pet;
-	//dd
+	
 	public void onEnable(){
 		long time = System.currentTimeMillis();
 		loadConfig();

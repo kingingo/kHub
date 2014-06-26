@@ -29,7 +29,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class HubManager{
-
 	@Getter
 	private JavaPlugin instance;
 	@Getter

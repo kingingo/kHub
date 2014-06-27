@@ -41,13 +41,17 @@ public class HubManager{
 	private ArrayList<SERVER_STATUS> Server_Status = new ArrayList<>();
 	@Getter
 	private HashMap<GameType,ArrayList<Sign>> signs = new HashMap<>();
+	@Getter
+	private HashMap<Sign,ServerInfo> sign_server = new HashMap<>();
 	@Setter
 	@Getter
 	private Inventory GameMenue;
 	@Getter
 	private HashMap<String,Lobby> LobbyList = new HashMap<String,Lobby>();
 	@Getter
-	private Inventory LobbyInv = Bukkit.createInventory(null, 18, "§lLobby's: ");  	
+	private Inventory LobbyInv = Bukkit.createInventory(null, 18, "§lLobby's: ");  
+	@Getter
+	private Inventory GameInv = Bukkit.createInventory(null, 27, "§lCompass: ");
 	@Getter
 	private Coins coins;
 	@Getter
@@ -66,6 +70,17 @@ public class HubManager{
 		mysql.Update("CREATE TABLE IF NOT EXISTS hub_signs(typ varchar(30),world varchar(30), x double, z double, y double)");
 		loadSigns();
 		loadLobbys();
+		
+		for(GameType t : this.getSigns().keySet()){
+			for(Sign s : this.getSigns().get(t)){
+				s.setLine(0, "");
+				s.setLine(1, "Lade Server");
+				s.setLine(2, "");
+				s.setLine(3, "");
+				s.update();
+			}
+		}
+		
 	}
 	
 	public void loadLobbys(){

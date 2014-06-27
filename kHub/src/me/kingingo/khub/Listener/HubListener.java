@@ -63,6 +63,9 @@ public class HubListener extends kListener{
 			if(ev.getPlayer().getItemInHand().getType()==Material.NETHER_STAR){
 				ev.getPlayer().openInventory(manager.getLobbyInv());
 				ev.setCancelled(true);
+			}else if(ev.getPlayer().getItemInHand().getType()==Material.COMPASS){
+				ev.getPlayer().openInventory(manager.getLobbyInv());
+				ev.setCancelled(true);
 			}
 		}
 	}
@@ -236,12 +239,6 @@ public class HubListener extends kListener{
 		e.setCancelled(true);
 	}
 	
-	@EventHandler
-	public void Receive(ClientReceiveMessageEvent ev){	
-		Packet packet = manager.getPacketManager().getPacket(ev.getMessage());
-		if(packet!=null)Bukkit.getPluginManager().callEvent(new PacketReceiveEvent(packet));
-	}
-	
 	public int max(GameType t){
 		if(t==GameType.Falldown)return 16;
 		if(t==GameType.BeastMode)return 16;
@@ -369,7 +366,7 @@ public class HubListener extends kListener{
 	public void Interact(PlayerInteractEvent ev){
 		if(UtilEvent.isAction(ev, ActionType.BLOCK)&&ev.getClickedBlock().getState() instanceof Sign){
 			Sign s =(Sign) ev.getClickedBlock().getState();
-			UtilBG.sendToServer(ev.getPlayer(), "s"+s.getLine(0).split(" ")[3], manager.getInstance());
+			UtilBG.sendToServer(ev.getPlayer(), manager.getSign_server().get(s).ID, manager.getInstance());
 		}
 	}
 	
@@ -407,16 +404,23 @@ public class HubListener extends kListener{
 				se=l.get(type).get(i);
 				sign=manager.getSigns().get(type).get(i);
 				if(se!=null){
-					sign.setLine(0, "- "+ C.cWhite + type.getKürzel()+" "+ID(se.ID) + C.cBlack + " -");
-					sign.setLine(1, se.Map);
-					sign.setLine(2, "> "+C.cGreen+"Join "+C.cBlack+" <");
-					sign.setLine(3, se.CurrentPlayers+C.cGray+"/"+C.cBlack+se.MaxPlayers);
+					
+						sign.setLine(0, "- "+ C.cWhite + type.getKürzel()+" "+ID(se.ID) + C.cBlack + " -");
+						sign.setLine(1, se.Map);
+						if(se.CurrentPlayers>=se.MaxPlayers){
+							sign.setLine(2, "> "+C.mOrange+"Premium "+C.cBlack+" <");
+						}else{
+							sign.setLine(2, "> "+C.cGreen+"Join "+C.cBlack+" <");
+						}
+						sign.setLine(3, se.CurrentPlayers+C.cGray+"/"+C.cBlack+se.MaxPlayers);
+					
 				}else{
 					sign.setLine(0, "");
 					sign.setLine(1, "Kein Server");
 					sign.setLine(2, "");
 					sign.setLine(3, "");
 				}
+				manager.getSign_server().put(sign, se);
 				sign.update();
 			}
 			

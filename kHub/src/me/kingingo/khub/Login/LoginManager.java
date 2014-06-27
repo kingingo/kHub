@@ -95,10 +95,10 @@ public class LoginManager extends kListener{
 	
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
-		if(isLogin(ev.getPlayer())){
+		//if(isLogin(ev.getPlayer())){
 			Login.put(ev.getPlayer(), getPW(ev.getPlayer()));
 			ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.LOGIN_MESSAGE.getText());
-		}
+		//}
 	}
 	
 	@EventHandler

@@ -8,7 +8,6 @@ import me.kingingo.kcore.kListener;
 import me.kingingo.kcore.Client.Events.ClientReceiveMessageEvent;
 import me.kingingo.kcore.Enum.GameState;
 import me.kingingo.kcore.Enum.GameType;
-import me.kingingo.kcore.Packet.Packet;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.Permission;
@@ -26,10 +25,12 @@ import me.kingingo.khub.Server.ServerInfo;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
@@ -40,12 +41,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class HubListener extends kListener{
@@ -57,6 +58,17 @@ public class HubListener extends kListener{
 		this.manager=manager;
 	}
 	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		if (!event.isCancelled()) {
+			Player p = event.getPlayer();
+			String msg = event.getMessage();
+			msg=msg.replaceAll("%","");
+			if(manager.getPManager().hasPermission(p, Permission.ALL_PERMISSION))msg=msg.replaceAll("&", "§");
+			event.setFormat(manager.getPManager().getPrefix(p) + p.getName() + "§7: "+ msg);
+		}
+	}
+	
 	@EventHandler
 	public void LobbyMenu(PlayerInteractEvent ev){
 		if(UtilEvent.isAction(ev, ActionType.R)){
@@ -64,7 +76,7 @@ public class HubListener extends kListener{
 				ev.getPlayer().openInventory(manager.getLobbyInv());
 				ev.setCancelled(true);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.COMPASS){
-				ev.getPlayer().openInventory(manager.getLobbyInv());
+				ev.getPlayer().openInventory(manager.getGameInv());
 				ev.setCancelled(true);
 			}
 		}
@@ -91,7 +103,7 @@ public class HubListener extends kListener{
 								+ manager.getLobbyList()
 										.get(e.getCurrentItem().getItemMeta()
 												.getDisplayName().split("a")[1])
-										.getBG() + "/" + p.getName(), p,manager.getInstance());
+										.getBg() + "/" + p.getName(), p,manager.getInstance());
 			} else if (e.getCurrentItem().getType() == Material.SUGAR) {
 				e.setCancelled(true);
 				p.closeInventory();
@@ -101,7 +113,7 @@ public class HubListener extends kListener{
 									+ manager.getLobbyList().get(
 											e.getCurrentItem().getItemMeta()
 													.getDisplayName()
-													.split("a")[1]).getBG()
+													.split("a")[1]).getBg()
 									+ "/" + p.getName(), p,manager.getInstance());
 				} else {
 					p.sendMessage("§6Du hast keine§a Premium§6 Rechte.");
@@ -109,6 +121,22 @@ public class HubListener extends kListener{
 			} else {
 				e.setCancelled(true);
 				p.closeInventory();
+			}
+		}else if(e.getInventory().getName().equalsIgnoreCase("§7Wähle einen §6Server")){
+			e.setCancelled(true);
+			p.closeInventory();
+			if(e.getCurrentItem().getType()==Material.DIAMOND_HELMET){
+				UtilBG.sendToServer(p, "pvp",manager.getInstance());
+			}else if(e.getCurrentItem().getType()==Material.GRASS){
+				UtilBG.sendToServer(p, "sky",manager.getInstance());
+			}else if(e.getCurrentItem().getType()==Material.FIRE){
+				p.teleport(p.getWorld().getSpawnLocation());
+			}else if(e.getCurrentItem().getType()==Material.BED){
+				p.teleport(new Location(p.getWorld(),668,91,1791));
+			}else if(e.getCurrentItem().getType()==Material.EYE_OF_ENDER||e.getCurrentItem().getType()==Material.STICK||e.getCurrentItem().getType()==Material.LEATHER_HELMET){
+				p.teleport(new Location(p.getWorld(),701,91,1762));
+			}else if(e.getCurrentItem().getType()==Material.IRON_SPADE||e.getCurrentItem().getType()==Material.IRON_SWORD||e.getCurrentItem().getType()==Material.NETHER_STAR){
+				p.teleport(new Location(p.getWorld(),668,92,1730));
 			}
 		}
 
@@ -129,6 +157,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getWorld().setStorm(false);
 		ev.getPlayer().setFoodLevel(20);
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
+		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
 	}
 	
@@ -168,6 +197,12 @@ public class HubListener extends kListener{
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + "Nope :3");
 		} else if (cmd.equalsIgnoreCase("/tell")) {
+			event.setCancelled(true);
+			p.sendMessage(ChatColor.RED + "Nope :3");
+		} else if (cmd.equalsIgnoreCase("/plugin")) {
+			event.setCancelled(true);
+			p.sendMessage(ChatColor.RED + "Nope :3");
+		} else if (cmd.equalsIgnoreCase("/plugins")) {
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + "Nope :3");
 		} else if (cmd.equalsIgnoreCase("/pl")) {
@@ -338,6 +373,21 @@ public class HubListener extends kListener{
 	}
 	
 	@EventHandler
+	public void Message(ClientReceiveMessageEvent ev){
+		if(ev.getMessage().contains("whitelist=?off")){
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist off");
+		}else if(ev.getMessage().contains("whitelist=?on")){
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist on");
+		}else if(ev.getMessage().contains("reload=?now")){
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "reload");
+		}else if(ev.getMessage().contains("stop=?now")){
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop");
+		}else if(ev.getMessage().contains("restart=?now")){
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart");
+		}
+	}
+	
+	@EventHandler
 	public void Packet(PacketReceiveEvent ev){
 		if(ev.getPacket().getName().contains("SERVER_STATUS")){
 			SERVER_STATUS ss = new SERVER_STATUS(ev.getPacket().toString().split("-/-"));
@@ -354,7 +404,7 @@ public class HubListener extends kListener{
 		for(GameType typ : manager.getServers().keySet()){
 			if(!list.containsKey(typ))list.put(typ, new HashMap<Integer,ServerInfo>());
 			game=(ArrayList<ServerInfo>)manager.getServers().get(typ).clone();
-			for(int i=0; i<4; i++){
+			for(int i=0; i<3; i++){
 				s1=FreeServer(game);
 				list.get(typ).put(i,s1);
 				game.remove(s1);
@@ -364,7 +414,7 @@ public class HubListener extends kListener{
 	
 	@EventHandler
 	public void Interact(PlayerInteractEvent ev){
-		if(UtilEvent.isAction(ev, ActionType.BLOCK)&&ev.getClickedBlock().getState() instanceof Sign){
+		if(UtilEvent.isAction(ev, ActionType.BLOCK)&&ev.getClickedBlock().getState() instanceof Sign&&manager.getSign_server().containsKey( ((Sign)ev.getClickedBlock().getState()) )){
 			Sign s =(Sign) ev.getClickedBlock().getState();
 			UtilBG.sendToServer(ev.getPlayer(), manager.getSign_server().get(s).ID, manager.getInstance());
 		}

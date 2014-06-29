@@ -1,6 +1,7 @@
 package me.kingingo.khub;
 
 import me.kingingo.kcore.Client.Client;
+import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Update.Updater;
@@ -8,6 +9,7 @@ import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
 import me.kingingo.kcore.memory.MemoryFix;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Packet.Packets.SERVER_INFO_ALL;
+import me.kingingo.khub.Command.CommandGroup;
 import me.kingingo.khub.Login.LoginManager;
 import me.kingingo.khub.Pet.PetManager;
 
@@ -18,12 +20,11 @@ public class kHub extends JavaPlugin{
 	private Client c;
 	private Updater Updater;
 	private UpdaterAsync UpdaterAsync;
-	private MySQL mysql;
-	private PermissionManager pManager;
+	public static MySQL mysql;
+	public static PermissionManager pManager;
 	private HubManager Manager;
 	private PacketManager PacketManager;
 	private PetManager pet;
-	private LoginManager lManager;
 	
 	public void onEnable(){
 		long time = System.currentTimeMillis();
@@ -36,7 +37,6 @@ public class kHub extends JavaPlugin{
 		PacketManager=new PacketManager(this,c);
 		new MemoryFix(this);
 		Manager=new HubManager(this,mysql,pManager,PacketManager);
-		lManager = new LoginManager(Manager);
 		PacketManager.SendPacket("DATA-SERVER", new SERVER_INFO_ALL());
 		pet=new PetManager(Manager);
 		Manager.DebugLog(time, 21, this.getClass().getName());

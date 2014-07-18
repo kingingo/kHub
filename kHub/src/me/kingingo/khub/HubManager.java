@@ -21,6 +21,7 @@ import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.khub.Command.CommandBroadcast;
 import me.kingingo.khub.Command.CommandEnderMode;
 import me.kingingo.khub.Command.CommandGroup;
+import me.kingingo.khub.Command.CommandOnline;
 import me.kingingo.khub.Command.CommandTraitor;
 import me.kingingo.khub.Listener.HubListener;
 import me.kingingo.khub.Lobby.Lobby;
@@ -89,7 +90,11 @@ public class HubManager{
 		mysql.Update("CREATE TABLE IF NOT EXISTS hub_signs(typ varchar(30),world varchar(30), x double, z double, y double)");
 		loadSigns();
 		loadLobbys();
-		
+		getCmd().register(CommandTraitor.class, new CommandTraitor());
+		getCmd().register(CommandEnderMode.class, new CommandEnderMode(this));
+		getCmd().register(CommandGroup.class, new CommandGroup());
+		getCmd().register(CommandBroadcast.class, new CommandBroadcast());
+		getCmd().register(CommandOnline.class,new CommandOnline(this));
 		for(GameType t : this.getSigns().keySet()){
 			for(Sign s : this.getSigns().get(t)){
 				s.setLine(0, "");
@@ -98,11 +103,6 @@ public class HubManager{
 				s.setLine(3, "");
 				s.update();
 			}
-			
-			getCmd().register(CommandTraitor.class, new CommandTraitor());
-			getCmd().register(CommandEnderMode.class, new CommandEnderMode(this));
-			getCmd().register(CommandGroup.class, new CommandGroup());
-			getCmd().register(CommandBroadcast.class, new CommandBroadcast());
 		}
 		
 		GameInv.setItem(0, UtilItem.RenameItem(new ItemStack(160,1,(byte)7)," "));

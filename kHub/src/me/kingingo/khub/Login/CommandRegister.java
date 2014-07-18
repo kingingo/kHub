@@ -1,7 +1,6 @@
 package me.kingingo.khub.Login;
 
 import lombok.Getter;
-import me.kingingo.kcore.Command.Command;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
 import me.kingingo.kcore.Enum.Text;
 

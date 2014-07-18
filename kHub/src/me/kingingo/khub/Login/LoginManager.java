@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import lombok.Getter;
 import me.kingingo.kcore.kListener;
-import me.kingingo.kcore.Command.UtilCMD;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.khub.HubManager;
 
@@ -33,8 +32,6 @@ public class LoginManager extends kListener{
 		this.Manager=Manager;
 		getManager().getCmd().register(CommandLogin.class, new CommandLogin(this));
 		getManager().getCmd().register(CommandRegister.class, new CommandRegister(this));
-		//UtilCMD.registerCMDs(new CommandLogin("login","LABEL",this), Manager.getInstance());
-		//UtilCMD.registerCMDs(new CommandRegister("register","LABEL",this), Manager.getInstance());
 	}
 	
 	public void setUser(Player p,String pw, String ip){

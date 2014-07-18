@@ -76,6 +76,11 @@ public class PetManager implements Listener{
 	}
 	
 	public void load(){
+		for(Entity e : Bukkit.getWorld("world").getEntities()){
+			if(!(e instanceof Player)){
+				e.remove();
+			}
+		}
 		CustomEntityType.registerEntities();
 		CreateTable();
 		PetSheep ps = new PetSheep(this);
@@ -214,7 +219,7 @@ public class PetManager implements Listener{
 			System.err.println(err);
 		}
 		
-		if(petname!=null&&!petname.equalsIgnoreCase("null")){
+		if(petname!=null){
 			String[] split=petname.split("-/-");
 			
 			for(PetInterface pi : Pets){

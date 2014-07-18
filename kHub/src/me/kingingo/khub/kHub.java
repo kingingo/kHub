@@ -24,13 +24,13 @@ public class kHub extends JavaPlugin{
 	public static PermissionManager pManager;
 	private HubManager Manager;
 	private PacketManager PacketManager;
-	private PetManager pet;
+	//private PetManager pet;
 	
 	public void onEnable(){
 		long time = System.currentTimeMillis();
 		loadConfig();
 		Updater=new Updater(this);
-		c = new Client(getConfig().getInt("Config.Client.Port"),getConfig().getString("Config.Client.Host"),"HUB"+getConfig().getInt("Config.Lobby"),this,Updater);
+		c = new Client(getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),"HUB"+getConfig().getInt("Config.Lobby"),this,Updater);
 		mysql=new MySQL(getConfig().getString("Config.MySQL.User"),getConfig().getString("Config.MySQL.Password"),getConfig().getString("Config.MySQL.Host"),getConfig().getString("Config.MySQL.DB"),this);
 		pManager=new PermissionManager(this,mysql);
 		UpdaterAsync=new UpdaterAsync(this);
@@ -38,12 +38,12 @@ public class kHub extends JavaPlugin{
 		new MemoryFix(this);
 		Manager=new HubManager(this,mysql,pManager,PacketManager);
 		PacketManager.SendPacket("DATA-SERVER", new SERVER_INFO_ALL());
-		pet=new PetManager(Manager);
+		//pet=new PetManager(Manager);
 		Manager.DebugLog(time, 21, this.getClass().getName());
 	}
 	
 	public void onDisable(){
-		pet.disable();
+		//pet.disable();
 		c.disconnect(false);
 		mysql.close();
 		Updater.stop();

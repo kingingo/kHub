@@ -1,5 +1,6 @@
 package me.kingingo.khub.Listener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -104,20 +105,6 @@ public class HubListener extends kListener{
 										.get(e.getCurrentItem().getItemMeta()
 												.getDisplayName().split("a")[1])
 										.getBg() + "/" + p.getName(), p,manager.getInstance());
-			} else if (e.getCurrentItem().getType() == Material.SUGAR) {
-				e.setCancelled(true);
-				p.closeInventory();
-				if (manager.getPManager().hasPermission(p, Permission.PREMIUM_LOBBY)) {
-					UtilBG.SendToBungeeCord(
-							"lobby/"
-									+ manager.getLobbyList().get(
-											e.getCurrentItem().getItemMeta()
-													.getDisplayName()
-													.split("a")[1]).getBg()
-									+ "/" + p.getName(), p,manager.getInstance());
-				} else {
-					p.sendMessage("§6Du hast keine§a Premium§6 Rechte.");
-				}
 			} else {
 				e.setCancelled(true);
 				p.closeInventory();
@@ -346,6 +333,8 @@ public class HubListener extends kListener{
 			return Integer.valueOf(typ.split("sg")[1]);
 		}else if(typ.contains("s")){
 			return Integer.valueOf(typ.split("sk")[1]);
+		}else if(typ.contains("a")){
+			return Integer.valueOf(typ.split("a")[1]);
 		}
 		return -1;
 	}
@@ -383,7 +372,13 @@ public class HubListener extends kListener{
 		}else if(ev.getMessage().contains("stop=?now")){
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop");
 		}else if(ev.getMessage().contains("restart=?now")){
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop");
+			try {
+				Runtime.getRuntime().exec("./start.sh");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -416,6 +411,8 @@ public class HubListener extends kListener{
 	public void Interact(PlayerInteractEvent ev){
 		if(UtilEvent.isAction(ev, ActionType.BLOCK)&&ev.getClickedBlock().getState() instanceof Sign&&manager.getSign_server().containsKey( ((Sign)ev.getClickedBlock().getState()) )){
 			Sign s =(Sign) ev.getClickedBlock().getState();
+			if(s.getLine(1).equalsIgnoreCase("Kein Server"))return;
+			if(s.getLine(2).equalsIgnoreCase("> "+C.mOrange+"Premium "+C.cBlack+" <") && !manager.getPManager().hasPermission(ev.getPlayer(), Permission.JOIN_FULL_SERVER))return;
 			UtilBG.sendToServer(ev.getPlayer(), manager.getSign_server().get(s).ID, manager.getInstance());
 		}
 	}
@@ -445,7 +442,7 @@ public class HubListener extends kListener{
 	List<String> strings = new ArrayList<String>();
 	HashMap<GameType,HashMap<Integer,ServerInfo>> l = new HashMap<>();
 	@EventHandler
-	public void SignAndInv(UpdateEvent ev){
+	public void Sign(UpdateEvent ev){
 		if(ev.getType()!=UpdateType.SEC)return;
 		if(list.isEmpty())return;
 		l=(HashMap<GameType,HashMap<Integer,ServerInfo>>)list.clone();
@@ -453,7 +450,7 @@ public class HubListener extends kListener{
 			for(int i : l.get(type).keySet()){
 				se=l.get(type).get(i);
 				sign=manager.getSigns().get(type).get(i);
-				if(se!=null){
+				if(se!=null&&se.State==GameState.LobbyPhase){
 					
 						sign.setLine(0, "- "+ C.cWhite + type.getKürzel()+" "+ID(se.ID) + C.cBlack + " -");
 						sign.setLine(1, se.Map);

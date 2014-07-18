@@ -37,7 +37,6 @@ public class kHub extends JavaPlugin{
 		PacketManager=new PacketManager(this,c);
 		new MemoryFix(this);
 		Manager=new HubManager(this,mysql,pManager,PacketManager);
-		TEST
 		PacketManager.SendPacket("DATA-SERVER", new SERVER_INFO_ALL());
 		//pet=new PetManager(Manager);
 		Manager.DebugLog(time, 21, this.getClass().getName());

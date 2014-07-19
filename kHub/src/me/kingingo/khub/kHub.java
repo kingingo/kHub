@@ -1,17 +1,13 @@
 package me.kingingo.khub;
 
 import me.kingingo.kcore.Client.Client;
-import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.MySQL.MySQL;
+import me.kingingo.kcore.Packet.PacketManager;
+import me.kingingo.kcore.Packet.Packets.SERVER_INFO_ALL;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
 import me.kingingo.kcore.memory.MemoryFix;
-import me.kingingo.kcore.Packet.PacketManager;
-import me.kingingo.kcore.Packet.Packets.SERVER_INFO_ALL;
-import me.kingingo.khub.Command.CommandGroup;
-import me.kingingo.khub.Login.LoginManager;
-import me.kingingo.khub.Pet.PetManager;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

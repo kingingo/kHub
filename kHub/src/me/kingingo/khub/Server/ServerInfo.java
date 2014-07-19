@@ -1,7 +1,6 @@
 package me.kingingo.khub.Server;
 
 import me.kingingo.kcore.Enum.GameState;
-import me.kingingo.kcore.Enum.GameType;
 
 public class ServerInfo {
 	  public String ID;

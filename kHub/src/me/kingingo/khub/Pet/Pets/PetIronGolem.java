@@ -5,17 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 
 import me.kingingo.kcore.Permission.Permission;
+import me.kingingo.kcore.Util.AnvilGUI;
+import me.kingingo.kcore.Util.AnvilGUI.AnvilClickEvent;
 import me.kingingo.kcore.Util.UtilItem;
-import me.kingingo.khub.Pet.AnvilGUI;
 import me.kingingo.khub.Pet.PetInterface;
 import me.kingingo.khub.Pet.PetManager;
 import me.kingingo.khub.Pet.RideInterface;
-import me.kingingo.khub.Pet.AnvilGUI.AnvilClickEvent;
 import me.kingingo.khub.Pet.RideEntity.RideIronGolem;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.IronGolem;
@@ -254,7 +254,7 @@ public class PetIronGolem implements Listener,PetInterface {
     		}
     	}else if(displayname.equalsIgnoreCase("§bNamen Aendern")){
 
-    		AnvilGUI gui = new AnvilGUI(p,manager.getManager().getInstance(), new AnvilGUI.AnvilClickEventHandler(){
+    		AnvilGUI gui = new AnvilGUI(p,new AnvilGUI.AnvilClickEventHandler(){
 
 				@Override
 				public void onAnvilClick(AnvilClickEvent event) {
@@ -264,7 +264,7 @@ public class PetIronGolem implements Listener,PetInterface {
 						 sh =(IronGolem) sheeps.get(p).getBukkitEntity();
 						 sh.setCustomName(event.getName().replace("&", "§"));
 					}
-				}});
+				}}, manager.getManager().getInstance());
     		
 				 ItemStack renamed = UtilItem.RenameItem(new ItemStack(Material.NAME_TAG), "Pet Name");
 				 gui.setSlot(AnvilGUI.AnvilSlot.INPUT_LEFT, renamed);

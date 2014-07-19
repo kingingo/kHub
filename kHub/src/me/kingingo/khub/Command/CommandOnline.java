@@ -1,7 +1,5 @@
 package me.kingingo.khub.Command;
 
-import java.util.HashMap;
-
 import me.kingingo.kcore.Command.CommandHandler.Sender;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.khub.HubManager;
@@ -10,7 +8,6 @@ import me.kingingo.khub.Server.ServerInfo;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandOnline implements CommandExecutor{

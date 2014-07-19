@@ -2,16 +2,10 @@ package me.kingingo.khub.Pet.RideEntity;
 import java.lang.reflect.Field;
 
 import me.kingingo.khub.Pet.RideInterface;
-import net.minecraft.server.v1_7_R3.EntityBat;
-import net.minecraft.server.v1_7_R3.EntityBlaze;
-import net.minecraft.server.v1_7_R3.EntityHuman;
-import net.minecraft.server.v1_7_R3.EntityLiving;
-import net.minecraft.server.v1_7_R3.EntitySpider;
-import net.minecraft.server.v1_7_R3.EntityWither;
-import net.minecraft.server.v1_7_R3.PathfinderGoalBreakDoor;
-import net.minecraft.server.v1_7_R3.PathfinderGoalFloat;
-import net.minecraft.server.v1_7_R3.PathfinderGoalMeleeAttack;
-import net.minecraft.server.v1_7_R3.World;
+import net.minecraft.server.v1_7_R4.EntityHuman;
+import net.minecraft.server.v1_7_R4.EntityLiving;
+import net.minecraft.server.v1_7_R4.EntitySpider;
+import net.minecraft.server.v1_7_R4.World;
 
 public class RideSpider extends EntitySpider implements RideInterface{
 public float walkspeed = 0.35F;

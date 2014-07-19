@@ -2,10 +2,10 @@ package me.kingingo.khub.Pet.RideEntity;
 import java.lang.reflect.Field;
 
 import me.kingingo.khub.Pet.RideInterface;
-import net.minecraft.server.v1_7_R3.EntityHuman;
-import net.minecraft.server.v1_7_R3.EntityIronGolem;
-import net.minecraft.server.v1_7_R3.EntityLiving;
-import net.minecraft.server.v1_7_R3.World;
+import net.minecraft.server.v1_7_R4.EntityHuman;
+import net.minecraft.server.v1_7_R4.EntityIronGolem;
+import net.minecraft.server.v1_7_R4.EntityLiving;
+import net.minecraft.server.v1_7_R4.World;
 
 public class RideIronGolem extends EntityIronGolem implements RideInterface{
 public float walkspeed = 0.35F;

@@ -80,7 +80,7 @@ public class HubManager{
 		this.mysql=mysql;
 		this.PacketManager=pmana;
 		this.tokens=new Tokens(instance,mysql);
-		this.coins=new Coins(mysql,instance);
+		this.coins=new Coins(instance,mysql);
 		new HubListener(this);
 		mysql.Update("CREATE TABLE IF NOT EXISTS hub_signs(typ varchar(30),world varchar(30), x double, z double, y double)");
 		loadSigns();

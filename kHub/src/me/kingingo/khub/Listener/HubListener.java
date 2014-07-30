@@ -224,8 +224,8 @@ public class HubListener extends kListener{
 	
 	@EventHandler
 	public void Break(BlockBreakEvent ev) {
-		if (ev.getPlayer().isOp())
-			return;
+		if (ev.getPlayer().isOp())return;
+		
 		ev.setCancelled(true);
 	}
 

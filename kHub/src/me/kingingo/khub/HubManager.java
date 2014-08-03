@@ -199,6 +199,7 @@ public class HubManager{
 		LobbyInv.setContents(items);
 	}
 	
+	Sign s;
 	public void loadSigns(){
 		try
 	    {
@@ -206,7 +207,12 @@ public class HubManager{
 	      while (rs.next()){
 	    	  try{
 	    		  if(GameType.valueOf(rs.getString(1))!=null&&!signs.containsKey(GameType.valueOf(rs.getString(1))))signs.put(GameType.valueOf(rs.getString(1)), new ArrayList<Sign>());
-		    	  signs.get(GameType.valueOf(rs.getString(1))).add( ((Sign) (new Location(Bukkit.getWorld("world"),rs.getInt(2),rs.getInt(3),rs.getInt(4))).getBlock().getState() ) );
+	    		  try{
+	    			  s=((Sign) (new Location(Bukkit.getWorld("world"),rs.getInt(2),rs.getInt(3),rs.getInt(4))).getBlock().getState() );
+		    		  signs.get(GameType.valueOf(rs.getString(1))).add( s );
+	    		  }catch(ClassCastException e){
+	    			  System.err.println("[kHub] Sign nicht gefunden ...");
+	    		  }
 	    	  }catch(IllegalArgumentException e){
 	    		  System.out.println("NOT FOUND: "+rs.getString(1));
 	    	  }

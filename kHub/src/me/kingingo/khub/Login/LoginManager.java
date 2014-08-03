@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -115,6 +116,14 @@ public class LoginManager extends kListener{
 			Login.remove(ev.getPlayer());
 		}else if(Register.contains(ev.getPlayer())){
 			Register.remove(ev.getPlayer());
+		}
+	}
+	
+	@EventHandler
+	public void Command(PlayerCommandPreprocessEvent ev){
+		if(!ev.getMessage().contains("/login")&&!ev.getMessage().contains("/register")){
+			if(Login.containsKey(ev.getPlayer()))ev.setCancelled(true);
+			if(Register.contains(ev.getPlayer()))ev.setCancelled(true);
 		}
 	}
 	

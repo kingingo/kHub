@@ -143,6 +143,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getWorld().setWeatherDuration(0);
 		ev.getPlayer().getWorld().setStorm(false);
 		ev.getPlayer().setFoodLevel(20);
+		ev.getPlayer().getInventory().clear();
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
@@ -172,6 +173,9 @@ public class HubListener extends kListener{
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + "Nope :3");
 		} else if (cmd.equalsIgnoreCase("/msg")) {
+			event.setCancelled(true);
+			p.sendMessage(ChatColor.RED + "Nope :3");
+		}else if (cmd.equalsIgnoreCase("/ban")) {
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + "Nope :3");
 		} else if (cmd.equalsIgnoreCase("/kill")) {

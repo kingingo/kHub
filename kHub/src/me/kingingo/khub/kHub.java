@@ -1,6 +1,9 @@
 package me.kingingo.khub;
 
+import lombok.Getter;
 import me.kingingo.kcore.Client.Client;
+import me.kingingo.kcore.Command.CommandHandler;
+import me.kingingo.kcore.Command.Admin.CommandMuteAll;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Packet.Packets.SERVER_INFO_ALL;
@@ -34,6 +37,7 @@ public class kHub extends JavaPlugin{
 		new MemoryFix(this);
 		Manager=new HubManager(this,mysql,pManager,PacketManager);
 		PacketManager.SendPacket("DATA-SERVER", new SERVER_INFO_ALL());
+		Manager.getCmd().register(CommandMuteAll.class, new CommandMuteAll(pManager));
 		//pet=new PetManager(Manager);
 		Manager.DebugLog(time, 21, this.getClass().getName());
 	}

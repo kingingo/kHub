@@ -8,6 +8,7 @@ import me.kingingo.khub.Server.ServerInfo;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class CommandOnline implements CommandExecutor{
@@ -21,7 +22,6 @@ public class CommandOnline implements CommandExecutor{
 	@me.kingingo.kcore.Command.CommandHandler.Command(command = "online", sender = Sender.PLAYER)
 	public boolean onCommand(CommandSender cs, Command cmd,String label, String[] args){
 		Player p = (Player)cs;
-		
 		if(p.isOp()){
 			int i;
 			for(GameType typ : Manager.getServers().keySet()){

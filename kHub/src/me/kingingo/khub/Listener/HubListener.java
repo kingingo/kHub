@@ -12,6 +12,7 @@ import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.Permission;
+import me.kingingo.kcore.ScoreboardManager.PlayerScoreboard;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
@@ -49,6 +50,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.DisplaySlot;
 
 public class HubListener extends kListener{
 
@@ -118,12 +120,48 @@ public class HubListener extends kListener{
 				UtilBG.sendToServer(p, "sky",manager.getInstance());
 			}else if(e.getCurrentItem().getType()==Material.FIRE){
 				p.teleport(p.getWorld().getSpawnLocation());
-			}else if(e.getCurrentItem().getType()==Material.BED){
-				p.teleport(new Location(p.getWorld(),668,91,1791));
-			}else if(e.getCurrentItem().getType()==Material.EYE_OF_ENDER||e.getCurrentItem().getType()==Material.STICK||e.getCurrentItem().getType()==Material.LEATHER_HELMET){
-				p.teleport(new Location(p.getWorld(),701,91,1762));
-			}else if(e.getCurrentItem().getType()==Material.IRON_SPADE||e.getCurrentItem().getType()==Material.IRON_SWORD||e.getCurrentItem().getType()==Material.NETHER_STAR){
-				p.teleport(new Location(p.getWorld(),668,92,1730));
+			}else if(e.getCurrentItem().getType()==Material.WOOL){
+				if(e.getCurrentItem().getAmount() == 8){
+					Location loc = new Location(p.getWorld(),670.95906,91,1791.49289);
+					loc.setPitch(3);
+					loc.setYaw((float) -91.5903);
+					p.teleport(loc);
+				}else if(e.getCurrentItem().getAmount() == 16){
+					Location loc = new Location(p.getWorld(),666.59299,91,1791.50829);
+					loc.setPitch(1);
+					loc.setYaw((float) 90.45407);
+					p.teleport(loc);
+				}
+			}else if(e.getCurrentItem().getType()==Material.LEATHER_HELMET){
+				Location loc = new Location(p.getWorld(),705.13355,91,1762.46768);
+				loc.setPitch(3);
+				loc.setYaw((float) -90.55322);
+				p.teleport(loc);
+			}else if(e.getCurrentItem().getType()==Material.STICK){
+				Location loc = new Location(p.getWorld(),702.43580,91,1765.89488);
+				loc.setPitch(0);
+				loc.setYaw((float) -1.6535645);
+				p.teleport(loc);
+			}else if(e.getCurrentItem().getType()==Material.EYE_OF_ENDER){
+				Location loc = new Location(p.getWorld(),702.51246,91,1758.74952);
+				loc.setPitch(2);
+				loc.setYaw((float) 179.59485);
+				p.teleport(loc);
+			}else if(e.getCurrentItem().getType()==Material.IRON_SWORD){
+				Location loc = new Location(p.getWorld(),663.62425,92,1729.63968);
+				loc.setPitch(1);
+				loc.setYaw((float) 90.51337);
+				p.teleport(loc);
+			}else if(e.getCurrentItem().getType()==Material.IRON_SPADE){
+				Location loc = new Location(p.getWorld(),673.42154,92,1729.64898);
+				loc.setPitch(3);
+				loc.setYaw((float) -90.34192);
+				p.teleport(loc);
+			}else if(e.getCurrentItem().getType()==Material.NETHER_STAR){
+				Location loc = new Location(p.getWorld(),668.52374,92,1723.87255);
+				loc.setPitch(2);
+				loc.setYaw((float) 179.96045);
+				p.teleport(loc);
 			}
 		}
 
@@ -147,6 +185,16 @@ public class HubListener extends kListener{
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
+		PlayerScoreboard ps = new PlayerScoreboard(ev.getPlayer());
+		ps.addBoard(DisplaySlot.SIDEBAR, "§6§lInfo-Board");
+		ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getCoins().getCoins(ev.getPlayer()));
+		ps.setScore("Tokens: ", DisplaySlot.SIDEBAR,manager.getTokens().getTokens(ev.getPlayer()));
+		ps.setBoard();
+	}
+	
+	@EventHandler
+	public void QuitScore(PlayerQuitEvent ev){
+		ev.getPlayer().setScoreboard(null);
 	}
 	
 	@EventHandler
@@ -453,7 +501,13 @@ public class HubListener extends kListener{
 		for(GameType type : l.keySet()){
 			for(int i : l.get(type).keySet()){
 				se=l.get(type).get(i);
-				sign=manager.getSigns().get(type).get(i);
+				try{
+					sign=manager.getSigns().get(type).get(i);
+				}catch(NullPointerException e){
+					System.err.println("[Hub] Fehler: "+type.getKürzel()+" I:"+i);
+					e.printStackTrace();
+					continue;
+				}
 				if(se!=null&&se.State==GameState.LobbyPhase){
 					
 						sign.setLine(0, "- "+ C.cWhite + type.getKürzel()+" "+ID(se.ID) + C.cBlack + " -");

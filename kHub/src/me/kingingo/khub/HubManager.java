@@ -61,9 +61,7 @@ public class HubManager{
 	private Inventory LobbyInv = Bukkit.createInventory(null, 9, "§lLobby's: ");  
 	@Getter
 	private Inventory GameInv = Bukkit.createInventory(null, 45, "§7Wähle einen §6Server");
-	@Getter
 	private Coins coins;
-	@Getter
 	private Tokens tokens;
 	@Getter
 	private PacketManager PacketManager;
@@ -126,9 +124,8 @@ public class HubManager{
 		GameInv.setItem(6, UtilItem.RenameItem(new ItemStack(Material.GRASS),"§6Sky-Server"));
 		
 
-		GameInv.setItem(10, UtilItem.RenameItem(new ItemStack(Material.BED),"§6Rush"));
-		GameInv.setItem(19, UtilItem.RenameItem(new ItemStack(Material.BED),"§6MegaRush"));
-		GameInv.setItem(28, UtilItem.RenameItem(new ItemStack(Material.BED),"§6BeastMode"));
+		GameInv.setItem(10, UtilItem.RenameItem(new ItemStack(Material.WOOL,8,(byte)14),"§6SheepWars"));
+		GameInv.setItem(28, UtilItem.RenameItem(new ItemStack(Material.WOOL,16,(byte)14),"§6SheepWars"));
 
 		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"§6TIMV"));
 		GameInv.setItem(40, UtilItem.Item(UtilItem.LSetColor(new ItemStack(Material.LEATHER_HELMET), Color.RED),new String[]{""},"§6MarioParty"));
@@ -147,6 +144,16 @@ public class HubManager{
 				GameInv.getItem(i).setItemMeta(im);
 			}
 		}
+	}
+	
+	public Tokens getTokens(){
+		if(tokens==null)tokens=new Tokens(getInstance(),getMysql());
+		return tokens;
+	}
+	
+	public Coins getCoins(){
+		if(coins==null)coins=new Coins(getInstance(),getMysql());
+		return coins;
 	}
 	
 	public void loadLobbys(){

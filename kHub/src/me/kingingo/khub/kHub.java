@@ -1,6 +1,7 @@
 package me.kingingo.khub;
 
 import lombok.Getter;
+import me.kingingo.kcore.Addons.AddonNight;
 import me.kingingo.kcore.Client.Client;
 import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandMuteAll;
@@ -12,6 +13,7 @@ import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
 import me.kingingo.kcore.memory.MemoryFix;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class kHub extends JavaPlugin{
@@ -39,6 +41,7 @@ public class kHub extends JavaPlugin{
 		PacketManager.SendPacket("DATA-SERVER", new SERVER_INFO_ALL());
 		Manager.getCmd().register(CommandMuteAll.class, new CommandMuteAll(pManager));
 		//pet=new PetManager(Manager);
+	    new AddonNight(this,Bukkit.getWorld("world"));
 		Manager.DebugLog(time, 21, this.getClass().getName());
 	}
 	

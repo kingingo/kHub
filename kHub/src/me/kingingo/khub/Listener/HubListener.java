@@ -175,7 +175,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().clear();
 	}
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
 		ev.getPlayer().getWorld().setWeatherDuration(0);
@@ -187,14 +187,9 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
 		PlayerScoreboard ps = new PlayerScoreboard(ev.getPlayer());
 		ps.addBoard(DisplaySlot.SIDEBAR, "§6§lInfo-Board");
-		ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getCoins().getCoins(ev.getPlayer()));
-		ps.setScore("Tokens: ", DisplaySlot.SIDEBAR,manager.getTokens().getTokens(ev.getPlayer()));
+		ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getMysql().getInt("SELECT coins FROM coins_list WHERE name='" + ev.getPlayer().getName().toLowerCase() + "'"));
+		ps.setScore("Tokens: ", DisplaySlot.SIDEBAR,manager.getMysql().getInt("SELECT tokens FROM tokens_list WHERE name='" + ev.getPlayer().getName().toLowerCase() + "'"));
 		ps.setBoard();
-	}
-	
-	@EventHandler
-	public void QuitScore(PlayerQuitEvent ev){
-		ev.getPlayer().setScoreboard(null);
 	}
 	
 	@EventHandler

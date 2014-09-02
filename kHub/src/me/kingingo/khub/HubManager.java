@@ -10,6 +10,9 @@ import lombok.Setter;
 import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.MySQL.MySQL;
+import me.kingingo.kcore.MySQL.MySQLErr;
+import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
+import me.kingingo.kcore.MySQL.Events.MySQLQueryEvent;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.PermissionManager;
@@ -162,7 +165,7 @@ public class HubManager{
 			while (rs.next())LobbyList.put(rs.getString(1),new Lobby(rs.getString(1),rs.getString(2),rs.getString(3),rs.getInt(4)));
 			rs.close();
 		} catch (Exception err) {
-			System.err.println(err);
+			Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,mysql));
 		}
 		
 		ItemStack[] items = new ItemStack[9];

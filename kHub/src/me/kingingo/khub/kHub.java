@@ -42,7 +42,7 @@ public class kHub extends JavaPlugin{
 		Manager.getCmd().register(CommandMuteAll.class, new CommandMuteAll(pManager));
 		//pet=new PetManager(Manager);
 	    new AddonNight(this,Bukkit.getWorld("world"));
-		Manager.DebugLog(time, 21, this.getClass().getName());
+		Manager.DebugLog(time, 45, this.getClass().getName());
 	}
 	
 	public void onDisable(){

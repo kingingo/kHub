@@ -9,6 +9,7 @@ import me.kingingo.kcore.kListener;
 import me.kingingo.kcore.Client.Events.ClientReceiveMessageEvent;
 import me.kingingo.kcore.Enum.GameState;
 import me.kingingo.kcore.Enum.GameType;
+import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.Permission;
@@ -24,6 +25,7 @@ import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.Server.ServerInfo;
+import net.minecraft.server.v1_7_R4.Block;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -48,6 +50,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -83,7 +86,26 @@ public class HubListener extends kListener{
 				ev.setCancelled(true);
 			}
 		}
+		else if(UtilEvent.isAction(ev, ActionType.PHYSICAL)){
+			org.bukkit.block.Block b = ev.getPlayer().getLocation().getBlock();
+			if(b.getTypeId()==70){
+				ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§eAbonniere uns auf Youtube!");
+				ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§eAb 5k folgt ein §4neuer§e OPENWORLD Server!");
+				ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§cLink: §bwww.Youtube.com/KingingoHD");
+				ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§cLink: §bwww.Youtube.com/momofilmt");
+			}
+		}
 	}
+	
+//	@EventHandler
+//	public void Move(PlayerMoveEvent ev){
+//		if(ev.getPlayer().getLocation().getBlock().getTypeId()==70){
+//			ev.getPlayer().sendMessage("§eAbonniere uns auf Youtube!");
+//			ev.getPlayer().sendMessage("§7 Ab 5k folgt ein §4§lneuer§7§l OPENWORLD Server!");
+//			ev.getPlayer().sendMessage("§cLink: §bwww.Youtube.com/KingingoHD");
+//			ev.getPlayer().sendMessage("§cLink: §bwww.Youtube.com/momofilmt");
+//		}
+//	}
 
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
@@ -118,7 +140,7 @@ public class HubListener extends kListener{
 				UtilBG.sendToServer(p, "pvp",manager.getInstance());
 			}else if(e.getCurrentItem().getType()==Material.GRASS){
 				UtilBG.sendToServer(p, "sky",manager.getInstance());
-			}else if(e.getCurrentItem().getType()==Material.FIRE){
+			}else if(e.getCurrentItem().getType()==Material.ANVIL){
 				p.teleport(p.getWorld().getSpawnLocation());
 			}else if(e.getCurrentItem().getType()==Material.WOOL){
 				if(e.getCurrentItem().getAmount() == 8){

@@ -120,7 +120,7 @@ public class HubManager{
 		GameInv.setItem(30, UtilItem.RenameItem(new ItemStack(160,1,(byte)1)," "));
 		GameInv.setItem(20, UtilItem.RenameItem(new ItemStack(160,1,(byte)1)," "));
 		
-		GameInv.setItem(22,UtilItem.RenameItem(new ItemStack(Material.FIRE), "§6Spawn"));
+		GameInv.setItem(22,UtilItem.RenameItem(new ItemStack(Material.ANVIL), "§6Spawn"));
 		
 
 		GameInv.setItem(2, UtilItem.RenameItem(new ItemStack(Material.DIAMOND_HELMET),"§6PvP-Server"));
@@ -130,9 +130,9 @@ public class HubManager{
 		GameInv.setItem(10, UtilItem.RenameItem(new ItemStack(Material.WOOL,8,(byte)14),"§6SheepWars"));
 		GameInv.setItem(28, UtilItem.RenameItem(new ItemStack(Material.WOOL,16,(byte)14),"§6SheepWars"));
 
-		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"§6TIMV"));
-		GameInv.setItem(40, UtilItem.Item(UtilItem.LSetColor(new ItemStack(Material.LEATHER_HELMET), Color.RED),new String[]{""},"§6MarioParty"));
-		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.EYE_OF_ENDER),"§6EnderMode"));
+		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"§6TroubleInMinecaft"));
+		GameInv.setItem(40, UtilItem.Item(UtilItem.LSetColor(new ItemStack(Material.LEATHER_HELMET), Color.RED),new String[]{""},"§6Coming Soon"));
+		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.EYE_OF_ENDER),"§6Coming Soon"));
 		
 		GameInv.setItem(34, UtilItem.RenameItem(new ItemStack(Material.IRON_SPADE),"§6SkyPvP"));
 		GameInv.setItem(25, UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR),"§6Falldown"));
@@ -236,7 +236,7 @@ public class HubManager{
 	public void DebugLog(long time,int zeile,String c){
 		System.err.println("[DebugMode]: Class: "+c);
 		System.err.println("[DebugMode]: Zeile: "+zeile);
-		System.err.println("[DebugMode]: Zeit: "+UtilTime.convertString(System.currentTimeMillis() - time, 1, UtilTime.TimeUnit.FIT));
+		//System.err.println("[DebugMode]: Zeit: "+UtilTime.convertString(System.currentTimeMillis() - time, 1, UtilTime.TimeUnit.FIT));
 	}
 	
 	public void DebugLog(String m){

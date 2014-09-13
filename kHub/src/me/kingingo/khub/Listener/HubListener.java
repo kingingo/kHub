@@ -23,6 +23,7 @@ import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
+import me.kingingo.kcore.Util.UtilString;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.Server.ServerInfo;
 import net.minecraft.server.v1_7_R4.Block;
@@ -69,6 +70,10 @@ public class HubListener extends kListener{
 		if (!event.isCancelled()) {
 			Player p = event.getPlayer();
 			String msg = event.getMessage();
+			if(UtilString.checkForIP(msg)){
+				event.setCancelled(true);
+				return;
+			}
 			msg=msg.replaceAll("%","");
 			if(manager.getPManager().hasPermission(p, Permission.ALL_PERMISSION))msg=msg.replaceAll("&", "§");
 			event.setFormat(manager.getPManager().getPrefix(p) + p.getName() + "§7: "+ msg);

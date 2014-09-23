@@ -70,7 +70,7 @@ public class HubListener extends kListener{
 		if (!event.isCancelled()) {
 			Player p = event.getPlayer();
 			String msg = event.getMessage();
-			if(UtilString.checkForIP(msg)){
+			if(msg.toLowerCase().contains("minioncraft")||msg.toLowerCase().contains("mastercraft")||UtilString.checkForIP(msg)){
 				event.setCancelled(true);
 				return;
 			}

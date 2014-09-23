@@ -10,7 +10,7 @@ public class Traitor {
 		boolean b = false;
 		try{
 			
-			ResultSet rs =kHub.mysql.Query("SELECT traitor FROM tm_user WHERE name='" + p.toLowerCase() + "'");
+			ResultSet rs =kHub.mysql.Query("SELECT paesse FROM users_TTT WHERE player='" + p.toLowerCase() + "'");
 			
 			while(rs.next()){
 				b=Boolean.valueOf(true);
@@ -33,7 +33,7 @@ public class Traitor {
 		
 		try{
 			
-			ResultSet rs =kHub.mysql.Query("SELECT traitor FROM tm_user WHERE name='" + p.toLowerCase() + "'");
+			ResultSet rs =kHub.mysql.Query("SELECT paesse FROM users_TTT WHERE player='" + p.toLowerCase() + "'");
 			
 			while(rs.next()){
 				d = rs.getInt(1);
@@ -50,13 +50,13 @@ public class Traitor {
 	public static void delTraitor(String p,Integer coins){
 		int c = getTraitor(p);
 		int co=c-coins;
-		kHub.mysql.Update("UPDATE `tm_user` SET traitor='"+co+"' WHERE name='"+p.toLowerCase()+"'");
+		kHub.mysql.Update("UPDATE `users_TTT` SET paesse='"+co+"' WHERE player='"+p.toLowerCase()+"'");
 	}
 	
 	public static void addTraitor(String p,Integer coins){
 		int c = getTraitor(p);
 		int co=c+coins;
-		kHub.mysql.Update("UPDATE `tm_user` SET traitor='"+co+"' WHERE name='"+p.toLowerCase()+"'");
+		kHub.mysql.Update("UPDATE `users_TTT` SET paesse='"+co+"' WHERE player='"+p.toLowerCase()+"'");
 	}
 	
 }

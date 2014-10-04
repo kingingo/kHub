@@ -8,7 +8,6 @@ import me.kingingo.khub.Server.ServerInfo;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class CommandOnline implements CommandExecutor{

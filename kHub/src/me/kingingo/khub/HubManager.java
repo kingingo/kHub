@@ -12,14 +12,12 @@ import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
-import me.kingingo.kcore.MySQL.Events.MySQLQueryEvent;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Util.Coins;
 import me.kingingo.kcore.Util.Tokens;
 import me.kingingo.kcore.Util.UtilItem;
-import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.khub.Command.CommandBroadcast;
 import me.kingingo.khub.Command.CommandEnderMode;
 import me.kingingo.khub.Command.CommandGroup;
@@ -72,9 +70,12 @@ public class HubManager{
 	private LoginManager lManager;
 	@Getter
 	private CommandHandler cmd;
+	@Getter
+	private int id;
 	
 	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
 		this.instance=instance;
+		this.id=instance.getConfig().getInt("Config.Lobby");
 		this.cmd=new CommandHandler(instance);
 		this.lManager= new LoginManager(this);
 		this.pManager=pManager;

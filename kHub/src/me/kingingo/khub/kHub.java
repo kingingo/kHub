@@ -1,9 +1,7 @@
 package me.kingingo.khub;
 
-import lombok.Getter;
 import me.kingingo.kcore.Addons.AddonNight;
 import me.kingingo.kcore.Client.Client;
-import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandMuteAll;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
@@ -25,7 +23,6 @@ public class kHub extends JavaPlugin{
 	public static PermissionManager pManager;
 	private HubManager Manager;
 	private PacketManager PacketManager;
-	//private PetManager pet;
 	
 	public void onEnable(){
 		long time = System.currentTimeMillis();
@@ -40,14 +37,12 @@ public class kHub extends JavaPlugin{
 		Manager=new HubManager(this,mysql,pManager,PacketManager);
 		PacketManager.SendPacket("DATA-SERVER", new SERVER_INFO_ALL());
 		Manager.getCmd().register(CommandMuteAll.class, new CommandMuteAll(pManager));
-		//pet=new PetManager(Manager);
 	    new AddonNight(this,Bukkit.getWorld("world"));
 	    Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 		Manager.DebugLog(time, 45, this.getClass().getName());
 	}
 	
 	public void onDisable(){
-		//pet.disable();
 		c.disconnect(false);
 		mysql.close();
 		Updater.stop();

@@ -19,6 +19,7 @@ import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
 import me.kingingo.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import me.kingingo.kcore.Util.C;
+import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
@@ -26,7 +27,6 @@ import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilString;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.Server.ServerInfo;
-import net.minecraft.server.v1_7_R4.Block;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,7 +51,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -205,6 +204,7 @@ public class HubListener extends kListener{
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§aEPICPVP - Lobby"+manager.getId(), "§aShop.EpicPvP.de");
 		ev.getPlayer().getWorld().setWeatherDuration(0);
 		ev.getPlayer().getWorld().setStorm(false);
 		ev.getPlayer().setFoodLevel(20);

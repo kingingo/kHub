@@ -341,7 +341,7 @@ public class HubListener extends kListener{
 		if(t==GameType.TroubleMine)return 24;
 		if(t==GameType.MarioParty)return 16;
 		if(t==GameType.MegaRush)return 16;
-		if(t==GameType.EnderMode)return 24;
+		if(t==GameType.EnderGames)return 24;
 		if(t==GameType.Rush)return 8;
 		if(t==GameType.SurvivalGames)return 24;
 		if(t==GameType.SkyPvP)return 24;
@@ -355,7 +355,7 @@ public class HubListener extends kListener{
 			if(i==2)return GameState.SchutzModus;
 			if(i==3)return GameState.InGame;
 			if(i==4)return GameState.Restart;
-		}else if(t==GameType.EnderMode){
+		}else if(t==GameType.EnderGames){
 			if(i==0)return GameState.Restart;
 			if(i==1)return GameState.LobbyPhase;
 			if(i==2)return GameState.InGame;

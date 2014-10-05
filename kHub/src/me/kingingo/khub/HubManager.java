@@ -18,6 +18,7 @@ import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Util.Coins;
 import me.kingingo.kcore.Util.Tokens;
 import me.kingingo.kcore.Util.UtilItem;
+import me.kingingo.kcore.WalkEffect.WalkEffectManager;
 import me.kingingo.khub.Command.CommandBroadcast;
 import me.kingingo.khub.Command.CommandEnderMode;
 import me.kingingo.khub.Command.CommandGroup;
@@ -72,9 +73,12 @@ public class HubManager{
 	private CommandHandler cmd;
 	@Getter
 	private int id;
+	@Getter
+	private WalkEffectManager walkEffectManager;
 	
 	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
 		this.instance=instance;
+		this.walkEffectManager=new WalkEffectManager(instance);
 		this.id=instance.getConfig().getInt("Config.Lobby");
 		this.cmd=new CommandHandler(instance);
 		this.lManager= new LoginManager(this);

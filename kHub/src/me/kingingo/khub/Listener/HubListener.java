@@ -204,7 +204,7 @@ public class HubListener extends kListener{
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§aEPICPVP - Lobby"+manager.getId(), "§aShop.EpicPvP.de");
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eLobby "+manager.getId(), "§eShop.EpicPvP.de");
 		ev.getPlayer().getWorld().setWeatherDuration(0);
 		ev.getPlayer().getWorld().setStorm(false);
 		ev.getPlayer().setFoodLevel(20);

@@ -69,7 +69,7 @@ public class HubListener extends kListener{
 		if (!event.isCancelled()) {
 			Player p = event.getPlayer();
 			String msg = event.getMessage();
-			if(msg.toLowerCase().contains("minioncraft")||msg.toLowerCase().contains("mastercraft")||UtilString.checkForIP(msg)){
+			if((!manager.getPManager().hasPermission(p, Permission.CHAT_LINK))&&(msg.toLowerCase().contains("minioncraft")||msg.toLowerCase().contains("mastercraft")||UtilString.checkForIP(msg))){
 				event.setCancelled(true);
 				return;
 			}
@@ -341,7 +341,7 @@ public class HubListener extends kListener{
 		if(t==GameType.TroubleMine)return 24;
 		if(t==GameType.MarioParty)return 16;
 		if(t==GameType.MegaRush)return 16;
-		if(t==GameType.EnderGames)return 24;
+		if(t==GameType.DeathGames)return 24;
 		if(t==GameType.Rush)return 8;
 		if(t==GameType.SurvivalGames)return 24;
 		if(t==GameType.SkyPvP)return 24;
@@ -355,7 +355,7 @@ public class HubListener extends kListener{
 			if(i==2)return GameState.SchutzModus;
 			if(i==3)return GameState.InGame;
 			if(i==4)return GameState.Restart;
-		}else if(t==GameType.EnderGames){
+		}else if(t==GameType.DeathGames){
 			if(i==0)return GameState.Restart;
 			if(i==1)return GameState.LobbyPhase;
 			if(i==2)return GameState.InGame;

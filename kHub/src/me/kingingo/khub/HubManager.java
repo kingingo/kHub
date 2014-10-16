@@ -88,6 +88,7 @@ public class HubManager{
 		this.tokens=new Tokens(instance,mysql);
 		this.coins=new Coins(instance,mysql);
 		new HubListener(this);
+		mysql.Update("CREATE TABLE IF NOT EXISTS BG_Lobby(ip varchar(30),name varchar(30),bg varchar(30), count int,place int)");
 		mysql.Update("CREATE TABLE IF NOT EXISTS hub_signs(typ varchar(30),world varchar(30), x double, z double, y double)");
 		loadSigns();
 		loadLobbys();
@@ -166,7 +167,7 @@ public class HubManager{
 	
 	public void loadLobbys(){
 		try {
-			ResultSet rs = mysql.Query("SELECT `name`,`bg`,`ip`,`place` FROM BungeeCord_Lobby");
+			ResultSet rs = mysql.Query("SELECT `name`,`bg`,`ip`,`place` FROM BG_Lobby");
 			while (rs.next())LobbyList.put(rs.getString(1),new Lobby(rs.getString(1),rs.getString(2),rs.getString(3),rs.getInt(4)));
 			rs.close();
 		} catch (Exception err) {

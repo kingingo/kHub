@@ -168,7 +168,7 @@ public class HubListener extends kListener{
 				loc.setPitch(0);
 				loc.setYaw((float) -1.6535645);
 				p.teleport(loc);
-			}else if(e.getCurrentItem().getType()==Material.EYE_OF_ENDER){
+			}else if(e.getCurrentItem().getType()==Material.CHEST){
 				Location loc = new Location(p.getWorld(),702.51246,91,1758.74952);
 				loc.setPitch(2);
 				loc.setYaw((float) 179.59485);

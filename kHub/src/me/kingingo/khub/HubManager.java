@@ -22,6 +22,7 @@ import me.kingingo.kcore.WalkEffect.WalkEffectManager;
 import me.kingingo.khub.Command.CommandBroadcast;
 import me.kingingo.khub.Command.CommandEnderMode;
 import me.kingingo.khub.Command.CommandGroup;
+import me.kingingo.khub.Command.CommandInfo;
 import me.kingingo.khub.Command.CommandOnline;
 import me.kingingo.khub.Command.CommandTraitor;
 import me.kingingo.khub.Listener.HubListener;
@@ -97,6 +98,7 @@ public class HubManager{
 		getCmd().register(CommandGroup.class, new CommandGroup());
 		getCmd().register(CommandBroadcast.class, new CommandBroadcast());
 		getCmd().register(CommandOnline.class,new CommandOnline(this));
+		getCmd().register(CommandInfo.class,new CommandInfo(this));
 		for(GameType t : this.getSigns().keySet()){
 			for(Sign s : this.getSigns().get(t)){
 				s.setLine(0, "");
@@ -138,7 +140,7 @@ public class HubManager{
 
 		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"§6TroubleInMinecaft"));
 		GameInv.setItem(40, UtilItem.Item(UtilItem.LSetColor(new ItemStack(Material.LEATHER_HELMET), Color.RED),new String[]{""},"§6Coming Soon"));
-		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.EYE_OF_ENDER),"§6Coming Soon"));
+		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.CHEST),"§6DeathGames"));
 		
 		GameInv.setItem(34, UtilItem.RenameItem(new ItemStack(Material.IRON_SPADE),"§6SkyPvP"));
 		GameInv.setItem(25, UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR),"§6Falldown"));

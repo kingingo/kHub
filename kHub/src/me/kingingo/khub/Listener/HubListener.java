@@ -69,7 +69,10 @@ public class HubListener extends kListener{
 		if (!event.isCancelled()) {
 			Player p = event.getPlayer();
 			String msg = event.getMessage();
-			if((!manager.getPManager().hasPermission(p, Permission.CHAT_LINK))&&(msg.toLowerCase().contains("minioncraft")||msg.toLowerCase().contains("mastercraft")||UtilString.checkForIP(msg))){
+			if((!manager.getPManager().hasPermission(p, Permission.CHAT_LINK))&&
+					(msg.toLowerCase().contains("minioncraft")||
+							msg.toLowerCase().contains("mastercraft")||
+							UtilString.checkForIP(msg))){
 				event.setCancelled(true);
 				return;
 			}
@@ -87,6 +90,12 @@ public class HubListener extends kListener{
 				ev.setCancelled(true);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.COMPASS){
 				ev.getPlayer().openInventory(manager.getGameInv());
+				ev.setCancelled(true);
+			}else if(ev.getPlayer().getItemInHand().getType()==Material.STICK){
+				
+				ev.setCancelled(true);
+			}else if(ev.getPlayer().getItemInHand().getType()==Material.BLAZE_ROD){
+				
 				ev.setCancelled(true);
 			}
 		}

@@ -18,7 +18,7 @@ public class CommandInfo implements CommandExecutor{
 		this.Manager=Manager;
 	}
 	
-	@me.kingingo.kcore.Command.CommandHandler.Command(command = "info", sender = Sender.PLAYER)
+	@me.kingingo.kcore.Command.CommandHandler.Command(command = "serverinfo", sender = Sender.PLAYER)
 	public boolean onCommand(CommandSender cs, Command cmd,String label, String[] args){
 		Player p = (Player)cs;
 		if(p.isOp()){

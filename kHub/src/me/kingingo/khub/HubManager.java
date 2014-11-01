@@ -7,6 +7,10 @@ import java.util.HashMap;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.kingingo.kcore.Addons.AddonNight;
+import me.kingingo.kcore.Addons.AddonTimeNight;
+import me.kingingo.kcore.Calendar.Calendar;
+import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.MySQL.MySQL;
@@ -76,9 +80,24 @@ public class HubManager{
 	private int id;
 	@Getter
 	private WalkEffectManager walkEffectManager;
+	CalendarType holiday=null;
 	
 	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
 		this.instance=instance;
+		this.holiday=Calendar.getHoliday(5);
+		
+		if(holiday!=null){
+			switch(holiday){
+			case HELLOWEEN:
+				new AddonTimeNight(getInstance(), Bukkit.getWorld("world"));
+				break;
+			default:
+				new AddonNight(instance, Bukkit.getWorld("world"));
+			}
+		}else{
+			new AddonNight(instance, Bukkit.getWorld("world"));
+		}
+		
 		this.walkEffectManager=new WalkEffectManager(instance);
 		this.id=instance.getConfig().getInt("Config.Lobby");
 		this.cmd=new CommandHandler(instance);

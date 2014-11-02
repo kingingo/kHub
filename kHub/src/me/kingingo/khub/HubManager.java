@@ -29,6 +29,7 @@ import me.kingingo.khub.Command.CommandGroup;
 import me.kingingo.khub.Command.CommandInfo;
 import me.kingingo.khub.Command.CommandOnline;
 import me.kingingo.khub.Command.CommandTraitor;
+import me.kingingo.khub.Listener.BirthdayListener;
 import me.kingingo.khub.Listener.HubListener;
 import me.kingingo.khub.Lobby.Lobby;
 import me.kingingo.khub.Login.LoginManager;
@@ -90,6 +91,10 @@ public class HubManager{
 			switch(holiday){
 			case HELLOWEEN:
 				new AddonTimeNight(getInstance(), Bukkit.getWorld("world"));
+				break;
+			case GEBURSTAG:
+				new BirthdayListener(this);
+				new AddonNight(instance, Bukkit.getWorld("world"));
 				break;
 			default:
 				new AddonNight(instance, Bukkit.getWorld("world"));

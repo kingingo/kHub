@@ -9,7 +9,6 @@ import me.kingingo.khub.HubManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -39,9 +38,9 @@ public class BirthdayListener extends kListener{
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void Join(PlayerJoinEvent ev){
 		if(UtilMath.RandomInt(1, 0)==0){
-			ev.getPlayer().getInventory().setHelmet(this.t3ker);
-		}else{
 			ev.getPlayer().getInventory().setHelmet(this.kingingo);
+		}else{
+			ev.getPlayer().getInventory().setHelmet(this.t3ker);
 		}
 	}
 	

@@ -1,6 +1,5 @@
 package me.kingingo.khub;
 
-import me.kingingo.kcore.Addons.AddonNight;
 import me.kingingo.kcore.Client.Client;
 import me.kingingo.kcore.Command.Admin.CommandMuteAll;
 import me.kingingo.kcore.MySQL.MySQL;

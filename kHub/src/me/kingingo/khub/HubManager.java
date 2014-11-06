@@ -93,7 +93,9 @@ public class HubManager{
 				new AddonTimeNight(getInstance(), Bukkit.getWorld("world"));
 				break;
 			case GEBURSTAG:
-				new BirthdayListener(this);
+				if(Calendar.isInTime(1, CalendarType.GEBURSTAG)){
+					new BirthdayListener(this);
+				}
 				new AddonNight(instance, Bukkit.getWorld("world"));
 				break;
 			default:

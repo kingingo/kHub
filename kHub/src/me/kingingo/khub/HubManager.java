@@ -30,6 +30,7 @@ import me.kingingo.khub.Command.CommandInfo;
 import me.kingingo.khub.Command.CommandOnline;
 import me.kingingo.khub.Command.CommandTraitor;
 import me.kingingo.khub.Listener.BirthdayListener;
+import me.kingingo.khub.Listener.ChristmasListener;
 import me.kingingo.khub.Listener.HubListener;
 import me.kingingo.khub.Lobby.Lobby;
 import me.kingingo.khub.Login.LoginManager;
@@ -85,8 +86,17 @@ public class HubManager{
 	
 	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
 		this.instance=instance;
-		this.holiday=Calendar.getHoliday(5);
 		
+		this.walkEffectManager=new WalkEffectManager(instance);
+		this.id=instance.getConfig().getInt("Config.Lobby");
+		this.cmd=new CommandHandler(instance);
+		this.lManager= new LoginManager(this);
+		this.pManager=pManager;
+		this.mysql=mysql;
+		this.PacketManager=pmana;
+		this.tokens=new Tokens(instance,mysql);
+		this.coins=new Coins(instance,mysql);
+		this.holiday=Calendar.getHoliday();
 		if(holiday!=null){
 			switch(holiday){
 			case HELLOWEEN:
@@ -98,22 +108,19 @@ public class HubManager{
 				}
 				new AddonNight(instance, Bukkit.getWorld("world"));
 				break;
+			case WEIHNACHTEN:
+				if(Calendar.FromToTime("01.12", "24.12")){
+					new ChristmasListener(this);
+				}
+				new AddonTimeNight(getInstance(), Bukkit.getWorld("world"));
+				break;
 			default:
 				new AddonNight(instance, Bukkit.getWorld("world"));
 			}
 		}else{
 			new AddonNight(instance, Bukkit.getWorld("world"));
 		}
-		
-		this.walkEffectManager=new WalkEffectManager(instance);
-		this.id=instance.getConfig().getInt("Config.Lobby");
-		this.cmd=new CommandHandler(instance);
-		this.lManager= new LoginManager(this);
-		this.pManager=pManager;
-		this.mysql=mysql;
-		this.PacketManager=pmana;
-		this.tokens=new Tokens(instance,mysql);
-		this.coins=new Coins(instance,mysql);
+
 		new HubListener(this);
 		mysql.Update("CREATE TABLE IF NOT EXISTS BG_Lobby(ip varchar(30),name varchar(30),bg varchar(30), count int,place int)");
 		mysql.Update("CREATE TABLE IF NOT EXISTS hub_signs(typ varchar(30),world varchar(30), x double, z double, y double)");

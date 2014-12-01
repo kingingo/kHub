@@ -35,7 +35,7 @@ public class BirthdayListener extends kListener{
 		}
 	}
 	
-	@EventHandler(priority=EventPriority.LOWEST)
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
 		if(UtilMath.RandomInt(1, 0)==0){
 			ev.getPlayer().getInventory().setHelmet(this.kingingo);

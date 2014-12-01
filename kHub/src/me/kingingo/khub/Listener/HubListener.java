@@ -199,9 +199,6 @@ public class HubListener extends kListener{
 				p.teleport(loc);
 			}
 		}
-
-		
-
 	}
 	
 	@EventHandler
@@ -210,7 +207,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().clear();
 	}
 	
-	@EventHandler(priority=EventPriority.HIGHEST)
+	@EventHandler(priority=EventPriority.LOWEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eLobby "+manager.getId(), "§eShop.EpicPvP.de");
@@ -553,7 +550,7 @@ public class HubListener extends kListener{
 					
 				}else{
 					sign.setLine(0, "");
-					sign.setLine(1, "Kein Server");
+					sign.setLine(1, "Lade Server..");
 					sign.setLine(2, "");
 					sign.setLine(3, "");
 				}

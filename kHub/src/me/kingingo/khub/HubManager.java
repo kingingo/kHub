@@ -86,14 +86,12 @@ public class HubManager{
 	
 	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
 		this.instance=instance;
-		
 		this.walkEffectManager=new WalkEffectManager(instance);
 		this.id=instance.getConfig().getInt("Config.Lobby");
 		this.cmd=new CommandHandler(instance);
 		this.lManager= new LoginManager(this);
 		this.pManager=pManager;
 		this.mysql=mysql;
-		this.PacketManager=pmana;
 		this.tokens=new Tokens(instance,mysql);
 		this.coins=new Coins(instance,mysql);
 		this.holiday=Calendar.getHoliday();
@@ -121,6 +119,7 @@ public class HubManager{
 			new AddonNight(instance, Bukkit.getWorld("world"));
 		}
 
+		this.PacketManager=pmana;
 		new HubListener(this);
 		mysql.Update("CREATE TABLE IF NOT EXISTS BG_Lobby(ip varchar(30),name varchar(30),bg varchar(30), count int,place int)");
 		mysql.Update("CREATE TABLE IF NOT EXISTS hub_signs(typ varchar(30),world varchar(30), x double, z double, y double)");

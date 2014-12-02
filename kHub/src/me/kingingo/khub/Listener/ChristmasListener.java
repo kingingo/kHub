@@ -77,6 +77,7 @@ public class ChristmasListener extends kListener{
 		}
 	}
 	
+	int c;
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
 		if (!(e.getWhoClicked() instanceof Player)
@@ -92,14 +93,9 @@ public class ChristmasListener extends kListener{
 						p.sendMessage(Text.PREFIX.getText()+"§cDu hast bereits dein Türchen geöffnet!");						
 					}else{
 						getManager().getMysql().Update("INSERT INTO CHRISTMAS (name,day) VALUES ('"+p.getName().toLowerCase()+"','"+day+"');");
-						int c = e.getCurrentItem().getAmount()*UtilMath.RandomInt(4, 1)*7;
+						c = e.getCurrentItem().getAmount()*UtilMath.RandomInt(4, 1)*7;
 						getManager().getCoins().addCoins(p, true, c);
 						p.sendMessage(Text.PREFIX.getText()+"§aDu hast das Türchen geöffnet und §e"+c+"§a Coins erhalten!");
-//						PlayerScoreboard ps = new PlayerScoreboard(p);
-//						ps.addBoard(DisplaySlot.SIDEBAR, "§6§lInfo-Board");
-//						ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getMysql().getInt("SELECT coins FROM coins_list WHERE name='" + p.getName().toLowerCase() + "'"));
-//						ps.setScore("Tokens: ", DisplaySlot.SIDEBAR,manager.getMysql().getInt("SELECT tokens FROM tokens_list WHERE name='" + p.getName().toLowerCase() + "'"));
-//						ps.setBoard();
 					}
 				}else{
 					p.sendMessage(Text.PREFIX.getText()+"§cIst heute der "+e.getCurrentItem().getAmount()+"te ?");
@@ -139,7 +135,7 @@ public class ChristmasListener extends kListener{
 			ev.getPlayer().getInventory().setHelmet(christmas);
 		}
 		
-		if(ev.getPlayer().isOp())ev.getPlayer().getInventory().setItem(8, item.clone());
+		ev.getPlayer().getInventory().setItem(8, item.clone());
 	}
 	
 }

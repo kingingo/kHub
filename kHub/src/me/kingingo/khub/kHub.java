@@ -34,7 +34,6 @@ public class kHub extends JavaPlugin{
 			UpdaterAsync=new UpdaterAsync(this);
 			PacketManager=new PacketManager(this,c);
 			new MemoryFix(this);
-			PacketManager.SendPacket("DATA-SERVER", new SERVER_INFO_ALL());
 			pManager=new PermissionManager(this,PacketManager,mysql);
 			Manager=new HubManager(this,mysql,pManager,PacketManager);
 			Manager.getCmd().register(CommandMuteAll.class, new CommandMuteAll(pManager));

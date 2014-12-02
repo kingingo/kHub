@@ -7,6 +7,9 @@ import java.util.HashMap;
 import lombok.Getter;
 import me.kingingo.kcore.kListener;
 import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Update.UpdateType;
+import me.kingingo.kcore.Update.Event.UpdateEvent;
+import me.kingingo.kcore.Util.UtilList;
 import me.kingingo.khub.HubManager;
 
 import org.bukkit.Location;
@@ -33,6 +36,13 @@ public class LoginManager extends kListener{
 		this.Manager=Manager;
 		getManager().getCmd().register(CommandLogin.class, new CommandLogin(this));
 		getManager().getCmd().register(CommandRegister.class, new CommandRegister(this));
+	}
+	
+	@EventHandler
+	public void Update(UpdateEvent ev){
+		if(ev.getType()!=UpdateType.MIN_32)return;
+		UtilList.CleanList(Login);
+		UtilList.CleanList(Register);
 	}
 	
 	public void setUser(Player p,String pw, String ip){

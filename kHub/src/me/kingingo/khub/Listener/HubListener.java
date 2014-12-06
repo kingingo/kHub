@@ -489,11 +489,15 @@ public class HubListener extends kListener{
 	
 	@EventHandler
 	public void Interact(PlayerInteractEvent ev){
-		if(UtilEvent.isAction(ev, ActionType.BLOCK)&&ev.getClickedBlock().getState() instanceof Sign&&manager.getSign_server().containsKey( ((Sign)ev.getClickedBlock().getState()) )){
+		if(UtilEvent.isAction(ev, ActionType.BLOCK)&&ev.getClickedBlock().getState() instanceof Sign){
 			Sign s =(Sign) ev.getClickedBlock().getState();
-			if(s.getLine(1).equalsIgnoreCase("Lade Server.."))return;
-			if(s.getLine(2).equalsIgnoreCase("> "+C.mOrange+"Premium "+C.cBlack+" <") && !manager.getPManager().hasPermission(ev.getPlayer(), Permission.JOIN_FULL_SERVER))return;
-			UtilBG.sendToServer(ev.getPlayer(), manager.getSign_server().get(s).ID, manager.getInstance());
+			if(manager.getSign_server().containsKey( ((Sign)ev.getClickedBlock().getState()) )){
+				if(s.getLine(1).equalsIgnoreCase("Lade Server.."))return;
+				if(s.getLine(2).equalsIgnoreCase("> "+C.mOrange+"Premium "+C.cBlack+" <") && !manager.getPManager().hasPermission(ev.getPlayer(), Permission.JOIN_FULL_SERVER))return;
+				UtilBG.sendToServer(ev.getPlayer(), manager.getSign_server().get(s).ID, manager.getInstance());
+			}else if(s.getLine(0).equalsIgnoreCase("- Server -")){
+				UtilBG.sendToServer(ev.getPlayer(), s.getLine(2), plugin);
+			}
 		}
 	}
 	

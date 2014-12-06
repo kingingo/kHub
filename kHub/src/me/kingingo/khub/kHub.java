@@ -11,6 +11,7 @@ import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
 import me.kingingo.kcore.Util.UtilException;
 import me.kingingo.kcore.memory.MemoryFix;
+import me.kingingo.khub.Command.CommandJump;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,6 +41,7 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandMuteAll.class, new CommandMuteAll(pManager));
 			Manager.getCmd().register(CommandMem.class, new CommandMem(pManager));
 			Manager.getCmd().register(CommandMemFix.class, new CommandMemFix(pManager));
+			Manager.getCmd().register(CommandJump.class, new CommandJump(this));
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 			Manager.DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){

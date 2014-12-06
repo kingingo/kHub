@@ -59,7 +59,7 @@ public class ChristmasListener extends kListener{
 	    int place=0;
 	    for(int i = 1; i<=24;i++){
 	    	for(int a = 0; a < 200; a++){
-	    		place=UtilMath.RandomInt(23, 0);
+	    		place=UtilMath.RandomInt(24, 0);
 	    		if(inventory.getItem(place)==null||inventory.getItem(place).getType()==Material.AIR)break;
 	    	}
 	    	if(i==day){
@@ -106,9 +106,9 @@ public class ChristmasListener extends kListener{
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void LobbyMenu(PlayerInteractEvent ev){
-		if(UtilEvent.isAction(ev, ActionType.R)){
+		if(!manager.getLManager().getLogin().containsKey(ev.getPlayer())&&!manager.getLManager().getRegister().contains(ev.getPlayer())&&UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getType()==Material.SNOW_BALL){
 				ev.getPlayer().openInventory(inventory);
 				ev.setCancelled(true);

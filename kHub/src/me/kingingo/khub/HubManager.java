@@ -7,8 +7,8 @@ import java.util.HashMap;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.kingingo.kcore.Addons.AddonDay;
 import me.kingingo.kcore.Addons.AddonNight;
-import me.kingingo.kcore.Addons.AddonTimeNight;
 import me.kingingo.kcore.Calendar.Calendar;
 import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Command.CommandHandler;
@@ -41,6 +41,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -83,6 +84,8 @@ public class HubManager{
 	@Getter
 	private WalkEffectManager walkEffectManager;
 	CalendarType holiday=null;
+	@Getter
+	ArrayList<Player> invisble = new ArrayList<>();
 	
 	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
 		this.instance=instance;
@@ -98,7 +101,7 @@ public class HubManager{
 		if(holiday!=null){
 			switch(holiday){
 			case HELLOWEEN:
-				new AddonTimeNight(getInstance(), Bukkit.getWorld("world"));
+				new AddonNight(getInstance(), Bukkit.getWorld("world"));
 				break;
 			case GEBURSTAG:
 				if(Calendar.isInTime(1, CalendarType.GEBURSTAG)){
@@ -110,13 +113,13 @@ public class HubManager{
 				if(Calendar.FromToTime("01.12", "24.12")){
 					new ChristmasListener(this);
 				}
-				new AddonTimeNight(getInstance(), Bukkit.getWorld("world"));
+				new AddonNight(getInstance(), Bukkit.getWorld("world"));
 				break;
 			default:
 				new AddonNight(instance, Bukkit.getWorld("world"));
 			}
 		}else{
-			new AddonNight(instance, Bukkit.getWorld("world"));
+			new AddonDay(instance, Bukkit.getWorld("world"));
 		}
 
 		this.PacketManager=pmana;
@@ -141,6 +144,12 @@ public class HubManager{
 			}
 		}
 		
+		fillGameInv();
+	}
+	
+	//UNSICHTBAR / PET SHOP / Walk Effect / FLY
+	
+	public void fillGameInv(){
 		GameInv.setItem(0, UtilItem.RenameItem(new ItemStack(160,1,(byte)7)," "));
 		GameInv.setItem(9, UtilItem.RenameItem(new ItemStack(160,1,(byte)7)," "));
 		GameInv.setItem(18, UtilItem.RenameItem(new ItemStack(160,1,(byte)7)," "));
@@ -161,19 +170,13 @@ public class HubManager{
 		GameInv.setItem(20, UtilItem.RenameItem(new ItemStack(160,1,(byte)1)," "));
 		
 		GameInv.setItem(22,UtilItem.RenameItem(new ItemStack(Material.ANVIL), "§6Spawn"));
-		
-
 		GameInv.setItem(2, UtilItem.RenameItem(new ItemStack(Material.DIAMOND_HELMET),"§6PvP-Server"));
 		GameInv.setItem(6, UtilItem.RenameItem(new ItemStack(Material.GRASS),"§6Sky-Server"));
-		
-
 		GameInv.setItem(10, UtilItem.RenameItem(new ItemStack(Material.WOOL,8,(byte)14),"§6SheepWars"));
 		GameInv.setItem(28, UtilItem.RenameItem(new ItemStack(Material.WOOL,16,(byte)14),"§6SheepWars"));
-
 		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"§6TroubleInMinecaft"));
 		GameInv.setItem(40, UtilItem.Item(UtilItem.LSetColor(new ItemStack(Material.LEATHER_HELMET), Color.RED),new String[]{""},"§6Coming Soon"));
 		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.CHEST),"§6DeathGames"));
-		
 		GameInv.setItem(34, UtilItem.RenameItem(new ItemStack(Material.IRON_SPADE),"§6SkyPvP"));
 		GameInv.setItem(25, UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR),"§6Falldown"));
 		GameInv.setItem(16, UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD),"§6SurvivalGames"));

@@ -15,6 +15,7 @@ import me.kingingo.khub.HubManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -143,7 +144,7 @@ public class LoginManager extends kListener{
 		if(Register.contains(ev.getPlayer()))ev.setCancelled(true);
 	}
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.LOWEST)
 	public void Interact(PlayerInteractEvent ev){
 		if(Login.containsKey(ev.getPlayer()))ev.setCancelled(true);
 		if(Register.contains(ev.getPlayer()))ev.setCancelled(true);

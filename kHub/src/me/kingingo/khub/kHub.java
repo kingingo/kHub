@@ -1,10 +1,11 @@
 package me.kingingo.khub;
 
 import me.kingingo.kcore.Client.Client;
+import me.kingingo.kcore.Command.Admin.CommandMem;
+import me.kingingo.kcore.Command.Admin.CommandMemFix;
 import me.kingingo.kcore.Command.Admin.CommandMuteAll;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
-import me.kingingo.kcore.Packet.Packets.SERVER_INFO_ALL;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
@@ -37,7 +38,9 @@ public class kHub extends JavaPlugin{
 			pManager=new PermissionManager(this,PacketManager,mysql);
 			Manager=new HubManager(this,mysql,pManager,PacketManager);
 			Manager.getCmd().register(CommandMuteAll.class, new CommandMuteAll(pManager));
-		    Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
+			Manager.getCmd().register(CommandMem.class, new CommandMem(pManager));
+			Manager.getCmd().register(CommandMemFix.class, new CommandMemFix(pManager));
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 			Manager.DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
 			UtilException.catchException(e, "hub"+getConfig().getInt("Config.Lobby"), Bukkit.getIp(), mysql);

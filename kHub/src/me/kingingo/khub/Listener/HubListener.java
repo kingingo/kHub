@@ -22,6 +22,7 @@ import me.kingingo.kcore.Util.C;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilString;
@@ -82,8 +83,9 @@ public class HubListener extends kListener{
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void LobbyMenu(PlayerInteractEvent ev){
+		if(manager.getLManager().getLogin().containsKey(ev.getPlayer())||manager.getLManager().getRegister().contains(ev.getPlayer()))return;
 		if(UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getType()==Material.NETHER_STAR){
 				ev.getPlayer().openInventory(manager.getLobbyInv());
@@ -92,14 +94,20 @@ public class HubListener extends kListener{
 				ev.getPlayer().openInventory(manager.getGameInv());
 				ev.setCancelled(true);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.STICK){
-				
+				if(!manager.getInvisble().contains(ev.getPlayer())){
+					manager.getInvisble().add(ev.getPlayer());
+					for(Player p : UtilServer.getPlayers()){
+					    	p.hidePlayer(ev.getPlayer());
+					}
+					ev.getPlayer().getItemInHand().setType(Material.BLAZE_ROD);
+				}else{
+					
+				}
 				ev.setCancelled(true);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.BLAZE_ROD){
-				
 				ev.setCancelled(true);
 			}
-		}
-		else if(UtilEvent.isAction(ev, ActionType.PHYSICAL)){
+		}else if(UtilEvent.isAction(ev, ActionType.PHYSICAL)){
 			org.bukkit.block.Block b = ev.getPlayer().getLocation().getBlock();
 			if(b.getTypeId()==70){
 				ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§eAbonniere uns auf Youtube!");
@@ -109,16 +117,6 @@ public class HubListener extends kListener{
 			}
 		}
 	}
-	
-//	@EventHandler
-//	public void Move(PlayerMoveEvent ev){
-//		if(ev.getPlayer().getLocation().getBlock().getTypeId()==70){
-//			ev.getPlayer().sendMessage("§eAbonniere uns auf Youtube!");
-//			ev.getPlayer().sendMessage("§7 Ab 5k folgt ein §4§lneuer§7§l OPENWORLD Server!");
-//			ev.getPlayer().sendMessage("§cLink: §bwww.Youtube.com/KingingoHD");
-//			ev.getPlayer().sendMessage("§cLink: §bwww.Youtube.com/momofilmt");
-//		}
-//	}
 
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
@@ -204,6 +202,7 @@ public class HubListener extends kListener{
 	@EventHandler
 	public void Quit(PlayerQuitEvent ev){
 		ev.setQuitMessage(null);
+		if(manager.getInvisble().contains(ev.getPlayer()))manager.getInvisble().remove(ev.getPlayer());
 		ev.getPlayer().getInventory().clear();
 	}
 	

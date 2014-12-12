@@ -14,6 +14,8 @@ import me.kingingo.kcore.memory.MemoryFix;
 import me.kingingo.khub.Command.CommandJump;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class kHub extends JavaPlugin{
@@ -44,6 +46,11 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandJump.class, new CommandJump(this));
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 			Manager.DebugLog(time, 45, this.getClass().getName());
+			
+			for(Entity e : Bukkit.getWorld("world").getEntities()){
+				if(!(e instanceof Player))e.remove();
+			}
+			
 		}catch(Exception e){
 			UtilException.catchException(e, "hub"+getConfig().getInt("Config.Lobby"), Bukkit.getIp(), mysql);
 		}

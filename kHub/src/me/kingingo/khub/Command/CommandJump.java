@@ -14,6 +14,7 @@ import me.kingingo.khub.kHub;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -34,6 +35,7 @@ public class CommandJump extends kListener implements CommandExecutor {
 		for(int i = 0; i<50; i++){
 			if(hub.getConfig().contains("Config.Jump."+i+".fromX")){
 				list.put(new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+i+".fromX"),hub.getConfig().getInt("Config.Jump."+i+".fromY"),hub.getConfig().getInt("Config.Jump."+i+".fromZ")),  calculate( new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+i+".fromX"),hub.getConfig().getInt("Config.Jump."+i+".fromY"),hub.getConfig().getInt("Config.Jump."+i+".fromZ")), new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+i+".toX"),hub.getConfig().getInt("Config.Jump."+i+".toY"),hub.getConfig().getInt("Config.Jump."+i+".toZ")) ));
+				Log("Load Jump-"+i);
 			}else{
 				break;
 			}
@@ -44,6 +46,10 @@ public class CommandJump extends kListener implements CommandExecutor {
 	public boolean onCommand(CommandSender cs, Command cmd, String arg2,String[] args) {
 		Player p = (Player)cs;
 		if(p.isOp()){
+			if(p.getLocation().add(0,-1,0).getBlock().getType()==Material.GOLD_PLATE){
+				p.sendMessage(Text.PREFIX.getText()+"§cDu musst auf einer Gold Platte stehen!");
+				return false;
+			}
 			hub.getConfig().set("Config.Jump."+list.size()+".fromX", p.getLocation().getBlockX());
 			hub.getConfig().set("Config.Jump."+list.size()+".fromZ", p.getLocation().getBlockZ());
 			hub.getConfig().set("Config.Jump."+list.size()+".fromY", p.getLocation().getBlockY()-1);
@@ -55,15 +61,17 @@ public class CommandJump extends kListener implements CommandExecutor {
 	}
 
 	public Vector calculate(Location from , Location to){
-		return UtilLocation.calculateVector(from, to);
+		return UtilLocation.calculateVector(from, to.add(0,15,0)).multiply(10);
 	}
 	
 	@EventHandler
 	public void Update(UpdateEvent ev){
-		if(ev.getType()!=UpdateType.FAST)return;
+		if(ev.getType()!=UpdateType.FASTER)return;
 		for(Player player : UtilServer.getPlayers()){
-			if(list.containsKey(player.getLocation())){
-				player.setVelocity(list.get(player.getLocation()));
+			for(Location loc : list.keySet()){
+				if(loc.getBlockX()==player.getLocation().getBlockX()&&loc.getBlockY()==player.getLocation().getBlockY()-1&&loc.getBlockZ()==player.getLocation().getBlockZ()){
+					player.setVelocity(list.get(loc));
+				}
 			}
 		}
 	}
@@ -75,8 +83,9 @@ public class CommandJump extends kListener implements CommandExecutor {
 			hub.getConfig().set("Config.Jump."+list.size()+".toZ", ev.getPlayer().getLocation().getBlockZ());
 			hub.getConfig().set("Config.Jump."+list.size()+".toY", ev.getPlayer().getLocation().getBlockY()-1);
 			hub.saveConfig();
-			list.put(new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromX"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromY"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromZ")),  calculate( new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromX"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromY"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromZ")), new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+list.size()+".toX"),hub.getConfig().getInt("Config.Jump."+list.size()+".toY"),hub.getConfig().getInt("Config.Jump."+list.size()+".toZ")) ));
 			ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§cDie Jump Platte "+list.size()+" wurde gesetzt!");
+			list.put(new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromX"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromY"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromZ")),  calculate( new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromX"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromY"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromZ")), new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+list.size()+".toX"),hub.getConfig().getInt("Config.Jump."+list.size()+".toY"),hub.getConfig().getInt("Config.Jump."+list.size()+".toZ")) ));
+			player=null;
 		}
 	}
 

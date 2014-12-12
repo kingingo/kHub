@@ -48,6 +48,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -59,6 +60,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 public class HubListener extends kListener{
 
 	private HubManager manager;
+	private ArrayList<Player> score = new ArrayList<>();
 	
 	public HubListener(HubManager manager) {
 		super(manager.getInstance(),"HubListener");
@@ -85,6 +87,9 @@ public class HubListener extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void LobbyMenu(PlayerInteractEvent ev){
+		if(UtilEvent.isAction(ev, ActionType.BLOCK)&&!ev.getPlayer().isOp()){
+			ev.setCancelled(true);
+		}
 		if(manager.getLManager().getLogin().containsKey(ev.getPlayer())||manager.getLManager().getRegister().contains(ev.getPlayer()))return;
 		if(UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getType()==Material.NETHER_STAR){
@@ -93,21 +98,25 @@ public class HubListener extends kListener{
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.COMPASS){
 				ev.getPlayer().openInventory(manager.getGameInv());
 				ev.setCancelled(true);
-			}else if(ev.getPlayer().getItemInHand().getType()==Material.STICK){
-				if(!manager.getInvisble().contains(ev.getPlayer())){
-					manager.getInvisble().add(ev.getPlayer());
-					for(Player p : UtilServer.getPlayers()){
-					    	p.hidePlayer(ev.getPlayer());
-					}
-					ev.getPlayer().getItemInHand().setType(Material.BLAZE_ROD);
-				}else{
-					
-				}
-				ev.setCancelled(true);
-			}else if(ev.getPlayer().getItemInHand().getType()==Material.BLAZE_ROD){
-				ev.setCancelled(true);
 			}
+//			else if(ev.getPlayer().getItemInHand().getType()==Material.BONE){
+//				ev.getPlayer().openInventory(manager.getShop().getMain());
+//			}else if(ev.getPlayer().getItemInHand().getType()==Material.STICK){
+//				if(!manager.getInvisble().contains(ev.getPlayer())){
+//					manager.getInvisble().add(ev.getPlayer());
+//					for(Player p : UtilServer.getPlayers()){
+//					    	p.hidePlayer(ev.getPlayer());
+//					}
+//					ev.getPlayer().getItemInHand().setType(Material.BLAZE_ROD);
+//				}else{
+//					
+//				}
+//				ev.setCancelled(true);
+//			}else if(ev.getPlayer().getItemInHand().getType()==Material.BLAZE_ROD){
+//				ev.setCancelled(true);
+//			}
 		}else if(UtilEvent.isAction(ev, ActionType.PHYSICAL)){
+			ev.setCancelled(true);
 			org.bukkit.block.Block b = ev.getPlayer().getLocation().getBlock();
 			if(b.getTypeId()==70){
 				ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§eAbonniere uns auf Youtube!");
@@ -155,45 +164,42 @@ public class HubListener extends kListener{
 				p.teleport(p.getWorld().getSpawnLocation());
 			}else if(e.getCurrentItem().getType()==Material.WOOL){
 				if(e.getCurrentItem().getAmount() == 8){
-					Location loc = new Location(p.getWorld(),670.95906,91,1791.49289);
-					loc.setPitch(3);
-					loc.setYaw((float) -91.5903);
+					Location loc = new Location(p.getWorld(),65.52599,67,-2.44839);
+					loc.setPitch(2);
+					loc.setYaw((float) 179.6554);
 					p.teleport(loc);
 				}else if(e.getCurrentItem().getAmount() == 16){
-					Location loc = new Location(p.getWorld(),666.59299,91,1791.50829);
-					loc.setPitch(1);
-					loc.setYaw((float) 90.45407);
+					Location loc = new Location(p.getWorld(),65.38146,67,2.96377);
+					loc.setPitch(0);
+					loc.setYaw((float) 0.53686523);
 					p.teleport(loc);
 				}
 			}else if(e.getCurrentItem().getType()==Material.LEATHER_HELMET){
-				Location loc = new Location(p.getWorld(),705.13355,91,1762.46768);
-				loc.setPitch(3);
-				loc.setYaw((float) -90.55322);
-				p.teleport(loc);
+				p.teleport(p.getWorld().getSpawnLocation());
 			}else if(e.getCurrentItem().getType()==Material.STICK){
-				Location loc = new Location(p.getWorld(),702.43580,91,1765.89488);
+				Location loc = new Location(p.getWorld(),0.53106,65.5,68.74096);
 				loc.setPitch(0);
-				loc.setYaw((float) -1.6535645);
+				loc.setYaw((float) 0.72094727);
 				p.teleport(loc);
 			}else if(e.getCurrentItem().getType()==Material.CHEST){
-				Location loc = new Location(p.getWorld(),702.51246,91,1758.74952);
+				Location loc = new Location(p.getWorld(),-74.48174,67,-3.86677);
 				loc.setPitch(2);
-				loc.setYaw((float) 179.59485);
+				loc.setYaw((float) 179.83789);
 				p.teleport(loc);
 			}else if(e.getCurrentItem().getType()==Material.IRON_SWORD){
-				Location loc = new Location(p.getWorld(),663.62425,92,1729.63968);
-				loc.setPitch(1);
-				loc.setYaw((float) 90.51337);
+				Location loc = new Location(p.getWorld(),41.38345,65,44.67852);
+				loc.setPitch(3);
+				loc.setYaw((float) -91.886475);
 				p.teleport(loc);
 			}else if(e.getCurrentItem().getType()==Material.IRON_SPADE){
-				Location loc = new Location(p.getWorld(),673.42154,92,1729.64898);
+				Location loc = new Location(p.getWorld(),52.07203,65,-48.50810);
 				loc.setPitch(3);
-				loc.setYaw((float) -90.34192);
+				loc.setYaw((float) -90.53198);
 				p.teleport(loc);
 			}else if(e.getCurrentItem().getType()==Material.NETHER_STAR){
-				Location loc = new Location(p.getWorld(),668.52374,92,1723.87255);
+				Location loc = new Location(p.getWorld(),48.62277,65,-52.23374);
 				loc.setPitch(2);
-				loc.setYaw((float) 179.96045);
+				loc.setYaw((float) 176.39111);
 				p.teleport(loc);
 			}
 		}
@@ -202,8 +208,22 @@ public class HubListener extends kListener{
 	@EventHandler
 	public void Quit(PlayerQuitEvent ev){
 		ev.setQuitMessage(null);
-		if(manager.getInvisble().contains(ev.getPlayer()))manager.getInvisble().remove(ev.getPlayer());
+		//if(manager.getInvisble().contains(ev.getPlayer()))manager.getInvisble().remove(ev.getPlayer());
 		ev.getPlayer().getInventory().clear();
+	}
+	
+	@EventHandler
+	public void Update(UpdateEvent ev){
+		if(ev.getType()!=UpdateType.SEC)return;
+		if(score.isEmpty())return;
+		for(Player p : score){
+			PlayerScoreboard ps = new PlayerScoreboard(p);
+			ps.addBoard(DisplaySlot.SIDEBAR, "§6§lInfo-Board");
+			ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getCoins().getCoins(p));
+			ps.setScore("Tokens: ", DisplaySlot.SIDEBAR,manager.getTokens().getTokens(p));
+			ps.setBoard();
+		}
+		score.clear();
 	}
 	
 	@EventHandler(priority=EventPriority.LOWEST)
@@ -216,13 +236,10 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setHelmet(null);
 		ev.getPlayer().getInventory().clear();
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
+		if(ev.getPlayer().getName().equalsIgnoreCase("kingingohd"))ev.getPlayer().getInventory().setItem(5, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop"));
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
-		PlayerScoreboard ps = new PlayerScoreboard(ev.getPlayer());
-		ps.addBoard(DisplaySlot.SIDEBAR, "§6§lInfo-Board");
-		ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getMysql().getInt("SELECT coins FROM coins_list WHERE name='" + ev.getPlayer().getName().toLowerCase() + "'"));
-		ps.setScore("Tokens: ", DisplaySlot.SIDEBAR,manager.getMysql().getInt("SELECT tokens FROM tokens_list WHERE name='" + ev.getPlayer().getName().toLowerCase() + "'"));
-		ps.setBoard();
+		score.add(ev.getPlayer());
 	}
 	
 	@EventHandler
@@ -456,7 +473,6 @@ public class HubListener extends kListener{
 			try {
 				Runtime.getRuntime().exec("./start.sh");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -495,7 +511,7 @@ public class HubListener extends kListener{
 				if(s.getLine(1).equalsIgnoreCase("Lade Server.."))return;
 				if(s.getLine(2).equalsIgnoreCase("> "+C.mOrange+"Premium "+C.cBlack+" <") && !manager.getPManager().hasPermission(ev.getPlayer(), Permission.JOIN_FULL_SERVER))return;
 				UtilBG.sendToServer(ev.getPlayer(), manager.getSign_server().get(s).ID, manager.getInstance());
-			}else if(s.getLine(0).equalsIgnoreCase("- Server -")){
+			}else if(s.getLine(0).equalsIgnoreCase("[Server]")){
 				UtilBG.sendToServer(ev.getPlayer(), s.getLine(2), plugin);
 			}
 		}

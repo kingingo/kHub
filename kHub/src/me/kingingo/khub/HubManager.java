@@ -19,6 +19,8 @@ import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.PermissionManager;
+import me.kingingo.kcore.Pet.PetManager;
+import me.kingingo.kcore.Pet.Shop.PetShop;
 import me.kingingo.kcore.Util.Coins;
 import me.kingingo.kcore.Util.Tokens;
 import me.kingingo.kcore.Util.UtilItem;
@@ -32,6 +34,7 @@ import me.kingingo.khub.Command.CommandTraitor;
 import me.kingingo.khub.Listener.BirthdayListener;
 import me.kingingo.khub.Listener.ChristmasListener;
 import me.kingingo.khub.Listener.HubListener;
+import me.kingingo.khub.Listener.VoteListener;
 import me.kingingo.khub.Lobby.Lobby;
 import me.kingingo.khub.Login.LoginManager;
 import me.kingingo.khub.Server.ServerInfo;
@@ -81,15 +84,19 @@ public class HubManager{
 	private CommandHandler cmd;
 	@Getter
 	private int id;
-	@Getter
-	private WalkEffectManager walkEffectManager;
+	//@Getter
+	//private WalkEffectManager walkEffectManager;
 	CalendarType holiday=null;
-	@Getter
-	ArrayList<Player> invisble = new ArrayList<>();
+//	@Getter
+//	ArrayList<Player> invisble = new ArrayList<>();
+	//@Getter
+	//private PetShop shop;
+	//@Getter
+	//private PetManager pet;
 	
 	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
 		this.instance=instance;
-		this.walkEffectManager=new WalkEffectManager(instance);
+		//this.walkEffectManager=new WalkEffectManager(instance);
 		this.id=instance.getConfig().getInt("Config.Lobby");
 		this.cmd=new CommandHandler(instance);
 		this.lManager= new LoginManager(this);
@@ -97,6 +104,8 @@ public class HubManager{
 		this.mysql=mysql;
 		this.tokens=new Tokens(instance,mysql);
 		this.coins=new Coins(instance,mysql);
+		//this.pet=new PetManager(instance);
+		//this.shop=new PetShop(pet,pManager, coins, tokens);
 		this.holiday=Calendar.getHoliday();
 		if(holiday!=null){
 			switch(holiday){
@@ -124,10 +133,15 @@ public class HubManager{
 
 		this.PacketManager=pmana;
 		new HubListener(this);
+		if(("HUB"+instance.getConfig().getInt("Config.Lobby")).equalsIgnoreCase("HUB2")&&Bukkit.getPluginManager().getPlugin("Votifier")!=null){
+			new VoteListener(instance,getCoins(),getPacketManager());
+		}
 		mysql.Update("CREATE TABLE IF NOT EXISTS BG_Lobby(ip varchar(30),name varchar(30),bg varchar(30), count int,place int)");
 		mysql.Update("CREATE TABLE IF NOT EXISTS hub_signs(typ varchar(30),world varchar(30), x double, z double, y double)");
 		loadSigns();
 		loadLobbys();
+		getCoins().setJoin_Check(false);
+		getTokens().setJoin_Check(false);
 		getCmd().register(CommandTraitor.class, new CommandTraitor());
 		getCmd().register(CommandEnderMode.class, new CommandEnderMode(this));
 		getCmd().register(CommandGroup.class, new CommandGroup());

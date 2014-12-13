@@ -140,8 +140,6 @@ public class HubManager{
 		mysql.Update("CREATE TABLE IF NOT EXISTS hub_signs(typ varchar(30),world varchar(30), x double, z double, y double)");
 		loadSigns();
 		loadLobbys();
-		getCoins().setJoin_Check(false);
-		getTokens().setJoin_Check(false);
 		getCmd().register(CommandTraitor.class, new CommandTraitor());
 		getCmd().register(CommandEnderMode.class, new CommandEnderMode(this));
 		getCmd().register(CommandGroup.class, new CommandGroup());

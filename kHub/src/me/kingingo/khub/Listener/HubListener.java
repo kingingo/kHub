@@ -101,19 +101,6 @@ public class HubListener extends kListener{
 			}
 //			else if(ev.getPlayer().getItemInHand().getType()==Material.BONE){
 //				ev.getPlayer().openInventory(manager.getShop().getMain());
-//			}else if(ev.getPlayer().getItemInHand().getType()==Material.STICK){
-//				if(!manager.getInvisble().contains(ev.getPlayer())){
-//					manager.getInvisble().add(ev.getPlayer());
-//					for(Player p : UtilServer.getPlayers()){
-//					    	p.hidePlayer(ev.getPlayer());
-//					}
-//					ev.getPlayer().getItemInHand().setType(Material.BLAZE_ROD);
-//				}else{
-//					
-//				}
-//				ev.setCancelled(true);
-//			}else if(ev.getPlayer().getItemInHand().getType()==Material.BLAZE_ROD){
-//				ev.setCancelled(true);
 //			}
 		}else if(UtilEvent.isAction(ev, ActionType.PHYSICAL)){
 			ev.setCancelled(true);
@@ -216,14 +203,16 @@ public class HubListener extends kListener{
 	public void Update(UpdateEvent ev){
 		if(ev.getType()!=UpdateType.SEC)return;
 		if(score.isEmpty())return;
-		for(Player p : score){
-			PlayerScoreboard ps = new PlayerScoreboard(p);
-			ps.addBoard(DisplaySlot.SIDEBAR, "§6§lInfo-Board");
-			ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getCoins().getCoins(p));
-			ps.setScore("Tokens: ", DisplaySlot.SIDEBAR,manager.getTokens().getTokens(p));
-			ps.setBoard();
+		for(int i = 0; i<score.size(); i++){
+			if(manager.getCoins().getCoins().containsKey(((Player)score.get(i)).getName().toLowerCase())&&manager.getTokens().getTokens().containsKey(((Player)score.get(i)).getName().toLowerCase())){
+				PlayerScoreboard ps = new PlayerScoreboard(((Player)score.get(i)));
+				ps.addBoard(DisplaySlot.SIDEBAR, "§6§lInfo-Board");
+				ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getCoins().getCoins(((Player)score.get(i))));
+				ps.setScore("Tokens: ", DisplaySlot.SIDEBAR,manager.getTokens().getTokens(((Player)score.get(i))));
+				ps.setBoard();	
+				score.remove(i);
+			}
 		}
-		score.clear();
 	}
 	
 	@EventHandler(priority=EventPriority.LOWEST)
@@ -512,7 +501,7 @@ public class HubListener extends kListener{
 				if(s.getLine(2).equalsIgnoreCase("> "+C.mOrange+"Premium "+C.cBlack+" <") && !manager.getPManager().hasPermission(ev.getPlayer(), Permission.JOIN_FULL_SERVER))return;
 				UtilBG.sendToServer(ev.getPlayer(), manager.getSign_server().get(s).ID, manager.getInstance());
 			}else if(s.getLine(0).equalsIgnoreCase("[Server]")){
-				UtilBG.sendToServer(ev.getPlayer(), s.getLine(2), plugin);
+				UtilBG.sendToServer(ev.getPlayer(), s.getLine(2), manager.getInstance());
 			}
 		}
 	}

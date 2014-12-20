@@ -98,10 +98,9 @@ public class HubListener extends kListener{
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.COMPASS){
 				ev.getPlayer().openInventory(manager.getGameInv());
 				ev.setCancelled(true);
+			}else if(ev.getPlayer().getItemInHand().getType()==Material.BONE){
+				ev.getPlayer().openInventory(manager.getShop().getMain());
 			}
-//			else if(ev.getPlayer().getItemInHand().getType()==Material.BONE){
-//				ev.getPlayer().openInventory(manager.getShop().getMain());
-//			}
 		}else if(UtilEvent.isAction(ev, ActionType.PHYSICAL)){
 			ev.setCancelled(true);
 			org.bukkit.block.Block b = ev.getPlayer().getLocation().getBlock();
@@ -195,7 +194,6 @@ public class HubListener extends kListener{
 	@EventHandler
 	public void Quit(PlayerQuitEvent ev){
 		ev.setQuitMessage(null);
-		//if(manager.getInvisble().contains(ev.getPlayer()))manager.getInvisble().remove(ev.getPlayer());
 		ev.getPlayer().getInventory().clear();
 	}
 	

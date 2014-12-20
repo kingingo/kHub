@@ -11,6 +11,7 @@ import me.kingingo.kcore.kListener;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Packet.Packets.BROADCAST;
+import me.kingingo.kcore.Packet.Packets.NOT_SAVE_COINS;
 import me.kingingo.kcore.Util.Coins;
 
 public class VoteListener extends kListener{
@@ -29,7 +30,8 @@ public class VoteListener extends kListener{
 	 public void onVotifierEvent(VotifierEvent event) {
 		 vote = event.getVote();
 	     coins.addCoins(vote.getUsername(), 120);
-	     packetManager.SendPacket("BG", new BROADCAST(Text.PREFIX.getText()+"§6Der Spieler §b"+vote.getUsername()+"§6 hat fuer§b 120 Coins§6 gevotet!§a§l /Vote"));
+	     packetManager.SendPacket("hub", new NOT_SAVE_COINS(vote.getUsername().toLowerCase()));
+		 packetManager.SendPacket("BG", new BROADCAST(Text.PREFIX.getText()+"§6Der Spieler §b"+vote.getUsername()+"§6 hat fuer§b 120 Coins§6 gevotet!§a§l /Vote"));
 	 }
 	
 }

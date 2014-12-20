@@ -87,12 +87,12 @@ public class HubManager{
 	//@Getter
 	//private WalkEffectManager walkEffectManager;
 	CalendarType holiday=null;
-//	@Getter
-//	ArrayList<Player> invisble = new ArrayList<>();
-	//@Getter
-	//private PetShop shop;
-	//@Getter
-	//private PetManager pet;
+	@Getter
+	ArrayList<Player> invisble = new ArrayList<>();
+	@Getter
+	private PetShop shop;
+	@Getter
+	private PetManager pet;
 	
 	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
 		this.instance=instance;
@@ -104,8 +104,8 @@ public class HubManager{
 		this.mysql=mysql;
 		this.tokens=new Tokens(instance,mysql);
 		this.coins=new Coins(instance,mysql);
-		//this.pet=new PetManager(instance);
-		//this.shop=new PetShop(pet,pManager, coins, tokens);
+		this.pet=new PetManager(instance);
+		this.shop=new PetShop(pet,pManager, coins, tokens);
 		this.holiday=Calendar.getHoliday();
 		if(holiday!=null){
 			switch(holiday){

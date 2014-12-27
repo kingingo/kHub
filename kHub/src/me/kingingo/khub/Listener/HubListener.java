@@ -288,10 +288,22 @@ public class HubListener extends kListener{
 		} else if (cmd.equalsIgnoreCase("/me")) {
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + "Nope :3");
-		} else if (cmd.equalsIgnoreCase("/?")) {
-			event.setCancelled(true);
-			p.sendMessage(ChatColor.RED + "Nope :3");
-		} else if (cmd.equalsIgnoreCase("/help")) {
+		}else if (cmd.equalsIgnoreCase("/bukkit:kill")) {
+		      event.setCancelled(true);
+		       p.sendMessage(ChatColor.RED + "Nope :3");
+	     } else if (cmd.equalsIgnoreCase("/bukkit:msg")) {
+		      event.setCancelled(true);
+		       p.sendMessage(ChatColor.RED + "Nope :3");
+	     } else if (cmd.equalsIgnoreCase("/bukkit:tell")) {
+		      event.setCancelled(true);
+		       p.sendMessage(ChatColor.RED + "Nope :3");
+	     } else if (cmd.equalsIgnoreCase("/bukkit:me")) {
+		      event.setCancelled(true);
+		       p.sendMessage(ChatColor.RED + "Nope :3");
+	     } else if (cmd.equalsIgnoreCase("/?")) {
+	       event.setCancelled(true);
+	       p.sendMessage(ChatColor.RED + "Nope :3");
+	     } else if (cmd.equalsIgnoreCase("/help")) {
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + "Nope :3");
 		}

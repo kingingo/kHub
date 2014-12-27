@@ -34,6 +34,7 @@ import me.kingingo.khub.Command.CommandTraitor;
 import me.kingingo.khub.Listener.BirthdayListener;
 import me.kingingo.khub.Listener.ChristmasListener;
 import me.kingingo.khub.Listener.HubListener;
+import me.kingingo.khub.Listener.SilvesterListener;
 import me.kingingo.khub.Listener.VoteListener;
 import me.kingingo.khub.Lobby.Lobby;
 import me.kingingo.khub.Login.LoginManager;
@@ -84,8 +85,6 @@ public class HubManager{
 	private CommandHandler cmd;
 	@Getter
 	private int id;
-	//@Getter
-	//private WalkEffectManager walkEffectManager;
 	CalendarType holiday=null;
 	@Getter
 	ArrayList<Player> invisble = new ArrayList<>();
@@ -96,7 +95,6 @@ public class HubManager{
 	
 	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
 		this.instance=instance;
-		//this.walkEffectManager=new WalkEffectManager(instance);
 		this.id=instance.getConfig().getInt("Config.Lobby");
 		this.cmd=new CommandHandler(instance);
 		this.lManager= new LoginManager(this);
@@ -113,16 +111,20 @@ public class HubManager{
 				new AddonNight(getInstance(), Bukkit.getWorld("world"));
 				break;
 			case GEBURSTAG:
-				if(Calendar.isInTime(1, CalendarType.GEBURSTAG)){
+				if(Calendar.isFixHolidayDate(CalendarType.GEBURSTAG)){
 					new BirthdayListener(this);
 				}
 				new AddonNight(instance, Bukkit.getWorld("world"));
 				break;
 			case WEIHNACHTEN:
-				if(Calendar.FromToTime("01.12", "24.12")){
-					new ChristmasListener(this);
-				}
+				new ChristmasListener(this);
 				new AddonNight(getInstance(), Bukkit.getWorld("world"));
+				break;
+			case SILVESTER:
+				if(Calendar.isFixHolidayDate(CalendarType.SILVESTER)){
+					new SilvesterListener(this);
+					new AddonNight(getInstance(), Bukkit.getWorld("world"));
+				}
 				break;
 			default:
 				new AddonNight(instance, Bukkit.getWorld("world"));

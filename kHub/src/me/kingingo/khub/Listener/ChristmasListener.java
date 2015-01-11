@@ -6,26 +6,18 @@ import java.util.Date;
 import lombok.Getter;
 import me.kingingo.kcore.kListener;
 import me.kingingo.kcore.Enum.Text;
-import me.kingingo.kcore.Permission.Permission;
-import me.kingingo.kcore.Scoreboard.PlayerScoreboard;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
-import me.kingingo.kcore.Util.C;
-import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilMath;
-
-import org.bukkit.inventory.Inventory;
-
 import me.kingingo.kcore.Util.UtilParticle;
-import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.khub.HubManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,8 +25,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.DisplaySlot;
 
 public class ChristmasListener extends kListener{
 
@@ -135,7 +127,7 @@ public class ChristmasListener extends kListener{
 			ev.getPlayer().getInventory().setHelmet(christmas);
 		}
 		
-		ev.getPlayer().getInventory().setItem(8, item.clone());
+		ev.getPlayer().getInventory().setItem(6, item.clone());
 	}
 	
 }

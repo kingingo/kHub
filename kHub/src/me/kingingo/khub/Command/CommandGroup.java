@@ -25,7 +25,7 @@ public class CommandGroup implements CommandExecutor{
 					
 					String player = args[1];
 					String perm = args[2];
-					kHub.pManager.addPermission(player, perm);
+					kHub.pManager.addPermission(player,perm);
 					System.out.println("[kPermission] " + player + " hat die " + perm + " erhalten");
 				}
 				

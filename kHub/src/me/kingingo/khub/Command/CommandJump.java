@@ -9,7 +9,6 @@ import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.UtilLocation;
 import me.kingingo.kcore.Util.UtilServer;
-import me.kingingo.kcore.Util.UtilVector;
 import me.kingingo.khub.kHub;
 
 import org.bukkit.Bukkit;

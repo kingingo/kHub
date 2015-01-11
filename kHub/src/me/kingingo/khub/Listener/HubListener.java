@@ -22,11 +22,11 @@ import me.kingingo.kcore.Util.C;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEvent;
-import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilString;
 import me.kingingo.khub.HubManager;
+import me.kingingo.khub.kHub;
 import me.kingingo.khub.Server.ServerInfo;
 
 import org.bukkit.Bukkit;
@@ -48,7 +48,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -100,15 +99,6 @@ public class HubListener extends kListener{
 				ev.setCancelled(true);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.BONE){
 				ev.getPlayer().openInventory(manager.getShop().getMain());
-			}
-		}else if(UtilEvent.isAction(ev, ActionType.PHYSICAL)){
-			ev.setCancelled(true);
-			org.bukkit.block.Block b = ev.getPlayer().getLocation().getBlock();
-			if(b.getTypeId()==70){
-				ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§eAbonniere uns auf Youtube!");
-				ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§eAb 5k folgt ein §4neuer§e OPENWORLD Server!");
-				ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§cLink: §bwww.Youtube.com/KingingoHD");
-				ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§cLink: §bwww.Youtube.com/momofilmt");
 			}
 		}
 	}
@@ -216,6 +206,7 @@ public class HubListener extends kListener{
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
+		ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.WHEREIS_TEXT.getText("Hub "+manager.getId()));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eLobby "+manager.getId(), "§eShop.EpicPvP.de");
 		ev.getPlayer().getWorld().setWeatherDuration(0);
 		ev.getPlayer().getWorld().setStorm(false);
@@ -223,7 +214,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setHelmet(null);
 		ev.getPlayer().getInventory().clear();
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-		if(ev.getPlayer().getName().equalsIgnoreCase("kingingohd"))ev.getPlayer().getInventory().setItem(5, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop"));
+		if(ev.getPlayer().getName().equalsIgnoreCase("kingingohd"))ev.getPlayer().getInventory().setItem(2, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop"));
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
 		score.add(ev.getPlayer());

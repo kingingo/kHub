@@ -24,13 +24,13 @@ import me.kingingo.kcore.Pet.Shop.PetShop;
 import me.kingingo.kcore.Util.Coins;
 import me.kingingo.kcore.Util.Tokens;
 import me.kingingo.kcore.Util.UtilItem;
-import me.kingingo.kcore.WalkEffect.WalkEffectManager;
 import me.kingingo.khub.Command.CommandBroadcast;
 import me.kingingo.khub.Command.CommandEnderMode;
 import me.kingingo.khub.Command.CommandGroup;
 import me.kingingo.khub.Command.CommandInfo;
 import me.kingingo.khub.Command.CommandOnline;
 import me.kingingo.khub.Command.CommandTraitor;
+import me.kingingo.khub.InvisbleManager.InvisibleManager;
 import me.kingingo.khub.Listener.BirthdayListener;
 import me.kingingo.khub.Listener.ChristmasListener;
 import me.kingingo.khub.Listener.HubListener;
@@ -121,10 +121,8 @@ public class HubManager{
 				new AddonNight(getInstance(), Bukkit.getWorld("world"));
 				break;
 			case SILVESTER:
-				if(Calendar.isFixHolidayDate(CalendarType.SILVESTER)){
 					new SilvesterListener(this);
 					new AddonNight(getInstance(), Bukkit.getWorld("world"));
-				}
 				break;
 			default:
 				new AddonNight(instance, Bukkit.getWorld("world"));
@@ -135,6 +133,7 @@ public class HubManager{
 
 		this.PacketManager=pmana;
 		new HubListener(this);
+		new InvisibleManager(this);
 		if(("HUB"+instance.getConfig().getInt("Config.Lobby")).equalsIgnoreCase("HUB2")&&Bukkit.getPluginManager().getPlugin("Votifier")!=null){
 			new VoteListener(instance,getCoins(),getPacketManager());
 		}
@@ -188,7 +187,7 @@ public class HubManager{
 		GameInv.setItem(6, UtilItem.RenameItem(new ItemStack(Material.GRASS),"§6Sky-Server"));
 		GameInv.setItem(10, UtilItem.RenameItem(new ItemStack(Material.WOOL,8,(byte)14),"§6SheepWars"));
 		GameInv.setItem(28, UtilItem.RenameItem(new ItemStack(Material.WOOL,16,(byte)14),"§6SheepWars"));
-		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"§6TroubleInMinecaft"));
+		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"§6TroubleInMinecraft"));
 		GameInv.setItem(40, UtilItem.Item(UtilItem.LSetColor(new ItemStack(Material.LEATHER_HELMET), Color.RED),new String[]{""},"§6Coming Soon"));
 		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.CHEST),"§6DeathGames"));
 		GameInv.setItem(34, UtilItem.RenameItem(new ItemStack(Material.IRON_SPADE),"§6SkyPvP"));

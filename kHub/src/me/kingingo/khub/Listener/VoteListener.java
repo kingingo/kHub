@@ -1,18 +1,18 @@
 package me.kingingo.khub.Listener;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.model.VotifierEvent;
-
 import me.kingingo.kcore.kListener;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Packet.Packets.BROADCAST;
 import me.kingingo.kcore.Packet.Packets.NOT_SAVE_COINS;
 import me.kingingo.kcore.Util.Coins;
+
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.vexsoftware.votifier.model.Vote;
+import com.vexsoftware.votifier.model.VotifierEvent;
 
 public class VoteListener extends kListener{
 

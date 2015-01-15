@@ -72,7 +72,7 @@ public class HubManager{
 	@Getter
 	private HashMap<String,Lobby> LobbyList = new HashMap<String,Lobby>();
 	@Getter
-	private Inventory LobbyInv = Bukkit.createInventory(null, 9, "§lLobby's: ");  
+	private Inventory LobbyInv;
 	@Getter
 	private Inventory GameInv = Bukkit.createInventory(null, 45, "§7Wähle einen §6Server");
 	private Coins coins;
@@ -224,7 +224,16 @@ public class HubManager{
 			Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,mysql));
 		}
 		
-		ItemStack[] items = new ItemStack[9];
+		int a = LobbyList.size();
+		
+		if(a<4){
+			a=9;
+		}else {
+			a=18;
+		}
+		
+		this.LobbyInv=Bukkit.createInventory(null, a, "§lLobby's: ");
+		ItemStack[] items = new ItemStack[LobbyInv.getSize()];
 		for(String s : LobbyList.keySet()){
 			Lobby l = LobbyList.get(s);
 				int place = l.getPlace();
@@ -236,8 +245,7 @@ public class HubManager{
 			    	lore.add("§6Klicke um die Lobby "+ l.getName().split(" ")[1] + " zu betreten ");
 			    	im.setLore(lore);
 			    	item.setItemMeta(im);
-			    	items[place]=item;
-					//Data.LobbyInv.setItem(place, item);	
+			    	items[place]=item;	
 				}else{
 					ItemStack item = new ItemStack(289);
 					ItemMeta im = item.getItemMeta();
@@ -247,11 +255,10 @@ public class HubManager{
 			    	im.setLore(lore);
 			    	item.setItemMeta(im);
 			    	items[place]=item;
-					//Data.LobbyInv.setItem(place, LobbyItem(new ItemStack(289),l.getIP(),l.getName()));
 				}
 		}
 		
-		for(int i = 0; i<9;i++){
+		for(int i = 0; i<LobbyInv.getSize();i++){
 			if(items[i]==null||items[i].getType()==Material.AIR){
 				ItemStack item = new ItemStack(160);
 				items[i]=item;

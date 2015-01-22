@@ -226,7 +226,7 @@ public class HubManager{
 		
 		int a = LobbyList.size();
 		
-		if(a<4){
+		if(a<=4){
 			a=9;
 		}else {
 			a=18;

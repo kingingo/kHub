@@ -202,7 +202,7 @@ public class HubListener extends kListener{
 		for(int i = 0; i<score.size(); i++){
 			if(manager.getCoins().getCoins().containsKey(((Player)score.get(i)).getName().toLowerCase())&&manager.getTokens().getTokens().containsKey(((Player)score.get(i)).getName().toLowerCase())){
 				PlayerScoreboard ps = new PlayerScoreboard(((Player)score.get(i)));
-				ps.addBoard(DisplaySlot.SIDEBAR, "§6§lInfo-Board");
+				ps.addBoard(DisplaySlot.SIDEBAR, "§6§lEpicPvP.eu");
 				ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getCoins().getCoins(((Player)score.get(i))));
 				ps.setScore("Tokens: ", DisplaySlot.SIDEBAR,manager.getTokens().getTokens(((Player)score.get(i))));
 				ps.setBoard();	
@@ -222,7 +222,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setHelmet(null);
 		ev.getPlayer().getInventory().clear();
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-		if(ev.getPlayer().getName().equalsIgnoreCase("ManiiLP")||ev.getPlayer().getName().equalsIgnoreCase("kingingohd"))ev.getPlayer().getInventory().setItem(2, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop"));
+		ev.getPlayer().getInventory().setItem(2, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop"));
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
 		score.add(ev.getPlayer());

@@ -22,13 +22,6 @@ public class CommandOnline implements CommandExecutor{
 	public boolean onCommand(CommandSender cs, Command cmd,String label, String[] args){
 		Player p = (Player)cs;
 		if(p.isOp()){
-//			String server="§bServer(§7%§b):§7";
-//			int count=0;
-//			for(ServerInfo s : Manager.getServers().get(GameType.TroubleInMinecraft)){
-//				server=server+s.ID+"§b,§7";
-//				count++;
-//			}
-//			p.sendMessage(server.replaceAll("%", String.valueOf(count)));
 			int i;
 			for(GameType typ : Manager.getServers().keySet()){
 				i=0;

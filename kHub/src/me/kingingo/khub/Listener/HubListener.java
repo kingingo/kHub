@@ -26,7 +26,6 @@ import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilString;
 import me.kingingo.khub.HubManager;
-import me.kingingo.khub.kHub;
 import me.kingingo.khub.Server.ServerInfo;
 
 import org.bukkit.Bukkit;
@@ -38,7 +37,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
@@ -107,6 +105,8 @@ public class HubListener extends kListener{
 				ev.setCancelled(true);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.BONE){
 				ev.getPlayer().openInventory(manager.getShop().getMain());
+			}else if(ev.getPlayer().getItemInHand().getType()==Material.DIAMOND_PICKAXE){
+				UtilBG.sendToServer(ev.getPlayer(), "v", manager.getInstance());
 			}
 		}
 	}
@@ -225,6 +225,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setItem(2, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop"));
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
+		ev.getPlayer().getInventory().setItem(6,UtilItem.Item(new ItemStack(Material.DIAMOND_PICKAXE), new String[]{"§bKlick mich um den Build Server zu betretten."},"§aBuild-Server"));
 		score.add(ev.getPlayer());
 	}
 	

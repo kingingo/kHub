@@ -27,7 +27,7 @@ public class CommandEnderMode implements CommandExecutor{
 					m.getTokens().Exist(player);
 					m.getTokens().addTokens(player,true, t);
 					
-					System.out.println("[KLB] " + player + " hat nun " + t);
+					System.out.println("[Hub] " + player + " hat nun " + t);
 				}
 				
 				return false;

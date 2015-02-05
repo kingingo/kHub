@@ -1,6 +1,9 @@
 package me.kingingo.khub.Command;
 
+import java.util.UUID;
+
 import me.kingingo.kcore.Command.CommandHandler.Sender;
+import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.khub.HubManager;
 
 import org.bukkit.command.Command;
@@ -24,8 +27,9 @@ public class CommandEnderMode implements CommandExecutor{
 				if(args.length == 3){
 					String player = args[1];
 					int t = Integer.valueOf(args[2]);
-					m.getTokens().Exist(player);
-					m.getTokens().addTokens(player,true, t);
+					UUID uuid = UtilPlayer.getUUID(player, m.getMysql());
+					m.getTokens().Exist(uuid);
+					m.getTokens().addTokens(uuid,true, t);
 					
 					System.out.println("[Hub] " + player + " hat nun " + t);
 				}

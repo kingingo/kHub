@@ -135,7 +135,7 @@ public class HubManager{
 		new HubListener(this);
 		new InvisibleManager(this);
 		if(("HUB"+instance.getConfig().getInt("Config.Lobby")).equalsIgnoreCase("HUB2")&&Bukkit.getPluginManager().getPlugin("Votifier")!=null){
-			new VoteListener(instance,getCoins(),getPacketManager());
+			new VoteListener(mysql,getCoins(),getPacketManager());
 		}
 		mysql.Update("CREATE TABLE IF NOT EXISTS BG_Lobby(ip varchar(30),name varchar(30),bg varchar(30), count int,place int)");
 		mysql.Update("CREATE TABLE IF NOT EXISTS hub_signs(typ varchar(30),world varchar(30), x double, z double, y double)");

@@ -6,6 +6,7 @@ import me.kingingo.kcore.Command.Admin.CommandMem;
 import me.kingingo.kcore.Command.Admin.CommandMemFix;
 import me.kingingo.kcore.Command.Admin.CommandMute;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
+import me.kingingo.kcore.Command.Admin.CommandkFly;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.PermissionManager;
@@ -42,6 +43,7 @@ public class kHub extends JavaPlugin{
 			new MemoryFix(this);
 			this.pManager=new PermissionManager(this,PacketManager,mysql);
 			this.Manager=new HubManager(this,mysql,pManager,PacketManager);
+			Manager.getCmd().register(CommandkFly.class, new CommandkFly(pManager));
 			Manager.getCmd().register(CommandMute.class, new CommandMute(pManager));	
 			Manager.getCmd().register(CommandChatMute.class, new CommandChatMute(pManager));
 			Manager.getCmd().register(CommandToggle.class, new CommandToggle(pManager));

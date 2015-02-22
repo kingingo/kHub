@@ -1,7 +1,7 @@
 package me.kingingo.khub.Listener;
 
 import lombok.Getter;
-import me.kingingo.kcore.kListener;
+import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilMath;
 import me.kingingo.khub.HubManager;

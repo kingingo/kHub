@@ -2,8 +2,8 @@ package me.kingingo.khub.Listener;
 
 import java.util.UUID;
 
-import me.kingingo.kcore.kListener;
 import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Packet.Packets.BROADCAST;
@@ -13,7 +13,6 @@ import me.kingingo.kcore.Util.UtilPlayer;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;

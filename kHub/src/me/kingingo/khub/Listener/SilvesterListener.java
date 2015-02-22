@@ -1,7 +1,7 @@
 package me.kingingo.khub.Listener;
 
 import lombok.Getter;
-import me.kingingo.kcore.kListener;
+import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.TextParticle.TextParticle;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;

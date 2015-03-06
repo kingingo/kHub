@@ -7,7 +7,6 @@ import me.kingingo.kcore.Command.Admin.CommandMemFix;
 import me.kingingo.kcore.Command.Admin.CommandMute;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
 import me.kingingo.kcore.Command.Admin.CommandkFly;
-import me.kingingo.kcore.Enum.ServerType;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.PermissionManager;

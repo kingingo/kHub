@@ -6,9 +6,10 @@ import me.kingingo.kcore.Command.Admin.CommandMem;
 import me.kingingo.kcore.Command.Admin.CommandMemFix;
 import me.kingingo.kcore.Command.Admin.CommandMute;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
-import me.kingingo.kcore.Command.Admin.CommandkFly;
+import me.kingingo.kcore.Command.Commands.CommandkFly;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
+import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
@@ -41,7 +42,7 @@ public class kHub extends JavaPlugin{
 			this.UpdaterAsync=new UpdaterAsync(this);
 			this.PacketManager=new PacketManager(this,c);
 			new MemoryFix(this);
-			this.pManager=new PermissionManager(this,PacketManager,mysql);
+			this.pManager=new PermissionManager(this,GroupTyp.GAME,PacketManager,mysql);
 			this.Manager=new HubManager(this,mysql,pManager,PacketManager);
 			Manager.getCmd().register(CommandkFly.class, new CommandkFly(pManager));
 			Manager.getCmd().register(CommandMute.class, new CommandMute(pManager));	
@@ -49,7 +50,7 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandToggle.class, new CommandToggle(pManager));
 			Manager.getCmd().register(CommandMem.class, new CommandMem(pManager));
 			Manager.getCmd().register(CommandMemFix.class, new CommandMemFix(pManager));
-			Manager.getCmd().register(CommandJump.class, new CommandJump(this));
+			//Manager.getCmd().register(CommandJump.class, new CommandJump(this));
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 			Manager.DebugLog(time, 45, this.getClass().getName());
 			

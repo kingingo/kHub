@@ -2,6 +2,7 @@ package me.kingingo.khub.Command;
 
 import me.kingingo.kcore.Command.CommandHandler.Sender;
 import me.kingingo.kcore.Enum.GameType;
+import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.Server.ServerInfo;
 
@@ -21,7 +22,7 @@ public class CommandOnline implements CommandExecutor{
 	@me.kingingo.kcore.Command.CommandHandler.Command(command = "online", sender = Sender.PLAYER)
 	public boolean onCommand(CommandSender cs, Command cmd,String label, String[] args){
 		Player p = (Player)cs;
-		if(p.isOp()){
+		if(p.hasPermission(kPermission.ALL_PERMISSION.getPermissionToString())){
 			int i;
 			for(GameType typ : Manager.getServers().keySet()){
 				i=0;

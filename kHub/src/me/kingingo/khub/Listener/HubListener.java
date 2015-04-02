@@ -12,7 +12,7 @@ import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
-import me.kingingo.kcore.Permission.Permission;
+import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Scoreboard.PlayerScoreboard;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
@@ -73,7 +73,7 @@ public class HubListener extends kListener{
 		if (!event.isCancelled()) {
 			Player p = event.getPlayer();
 			String msg = event.getMessage();
-			if((!manager.getPManager().hasPermission(p, Permission.CHAT_LINK))&&
+			if((!manager.getPManager().hasPermission(p, kPermission.CHAT_LINK))&&
 					(msg.toLowerCase().contains("minioncraft")||
 							msg.toLowerCase().contains("mastercraft")||
 							UtilString.checkForIP(msg))){
@@ -81,7 +81,7 @@ public class HubListener extends kListener{
 				return;
 			}
 			msg=msg.replaceAll("%","");
-			if(manager.getPManager().hasPermission(p, Permission.ALL_PERMISSION))msg=msg.replaceAll("&", "§");
+			if(manager.getPManager().hasPermission(p, kPermission.ALL_PERMISSION))msg=msg.replaceAll("&", "§");
 			event.setFormat(manager.getPManager().getPrefix(p) + p.getName() + "§7: "+ msg);
 		}
 	}
@@ -509,7 +509,7 @@ public class HubListener extends kListener{
 			Sign s =(Sign) ev.getClickedBlock().getState();
 			if(manager.getSign_server().containsKey( ((Sign)ev.getClickedBlock().getState()) )){
 				if(s.getLine(1).equalsIgnoreCase("Lade Server.."))return;
-				if(s.getLine(2).equalsIgnoreCase("> "+C.mOrange+"Premium "+C.cBlack+" <") && !manager.getPManager().hasPermission(ev.getPlayer(), Permission.JOIN_FULL_SERVER))return;
+				if(s.getLine(2).equalsIgnoreCase("> "+C.mOrange+"Premium "+C.cBlack+" <") && !manager.getPManager().hasPermission(ev.getPlayer(), kPermission.JOIN_FULL_SERVER))return;
 				UtilBG.sendToServer(ev.getPlayer(), manager.getSign_server().get(s).ID, manager.getInstance());
 			}else if(s.getLine(0).equalsIgnoreCase("[Server]")){
 				UtilBG.sendToServer(ev.getPlayer(), s.getLine(2), manager.getInstance());

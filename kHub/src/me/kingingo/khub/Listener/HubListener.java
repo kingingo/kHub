@@ -201,11 +201,10 @@ public class HubListener extends kListener{
 		if(ev.getType()!=UpdateType.SEC)return;
 		if(score.isEmpty())return;
 		for(int i = 0; i<score.size(); i++){
-			if(manager.getCoins().getCoins().containsKey(UtilPlayer.getRealUUID(((Player)score.get(i))))&&manager.getTokens().getTokens().containsKey(UtilPlayer.getRealUUID(((Player)score.get(i))))){
+			if(manager.getCoins().getCoins().containsKey(UtilPlayer.getRealUUID(((Player)score.get(i))))){
 				PlayerScoreboard ps = new PlayerScoreboard(((Player)score.get(i)));
 				ps.addBoard(DisplaySlot.SIDEBAR, "§6§lEpicPvP.eu");
 				ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getCoins().getCoins(((Player)score.get(i))));
-				ps.setScore("Tokens: ", DisplaySlot.SIDEBAR,manager.getTokens().getTokens(((Player)score.get(i))));
 				ps.setBoard();	
 				score.remove(i);
 			}

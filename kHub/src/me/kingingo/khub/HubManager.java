@@ -23,10 +23,8 @@ import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Pet.PetManager;
 import me.kingingo.kcore.Pet.Shop.PetShop;
 import me.kingingo.kcore.Util.Coins;
-import me.kingingo.kcore.Util.Tokens;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.khub.Command.CommandBroadcast;
-import me.kingingo.khub.Command.CommandEnderMode;
 import me.kingingo.khub.Command.CommandInfo;
 import me.kingingo.khub.Command.CommandOnline;
 import me.kingingo.khub.Command.CommandTraitor;
@@ -76,7 +74,6 @@ public class HubManager{
 	@Getter
 	private Inventory GameInv = Bukkit.createInventory(null, 45, "§7Wähle einen §6Server");
 	private Coins coins;
-	private Tokens tokens;
 	@Getter
 	private PacketManager PacketManager;
 	@Getter
@@ -100,10 +97,9 @@ public class HubManager{
 		this.lManager= new LoginManager(this);
 		this.pManager=pManager;
 		this.mysql=mysql;
-		this.tokens=new Tokens(instance,mysql);
 		this.coins=new Coins(instance,mysql);
 		this.pet=new PetManager(instance);
-		this.shop=new PetShop(pet,pManager, coins, tokens);
+		this.shop=new PetShop(pet,pManager, coins);
 		this.holiday=Calendar.getHoliday();
 		if(holiday!=null){
 			switch(holiday){
@@ -125,7 +121,7 @@ public class HubManager{
 					new AddonNight(getInstance(), Bukkit.getWorld("world"));
 				break;
 			default:
-				new AddonNight(instance, Bukkit.getWorld("world"));
+				new AddonDay(instance, Bukkit.getWorld("world"));
 			}
 		}else{
 			new AddonDay(instance, Bukkit.getWorld("world"));
@@ -142,7 +138,6 @@ public class HubManager{
 		loadSigns();
 		loadLobbys();
 		getCmd().register(CommandTraitor.class, new CommandTraitor());
-		getCmd().register(CommandEnderMode.class, new CommandEnderMode(this));
 		getCmd().register(CommandGroup.class, new CommandGroup(pManager));
 		getCmd().register(CommandBroadcast.class, new CommandBroadcast());
 		getCmd().register(CommandOnline.class,new CommandOnline(this));
@@ -203,11 +198,6 @@ public class HubManager{
 				GameInv.getItem(i).setItemMeta(im);
 			}
 		}
-	}
-	
-	public Tokens getTokens(){
-		if(tokens==null)tokens=new Tokens(getInstance(),getMysql());
-		return tokens;
 	}
 	
 	public Coins getCoins(){

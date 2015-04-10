@@ -148,17 +148,10 @@ public class HubListener extends kListener{
 			}else if(e.getCurrentItem().getType()==Material.ANVIL){
 				p.teleport(p.getWorld().getSpawnLocation());
 			}else if(e.getCurrentItem().getType()==Material.WOOL){
-				if(e.getCurrentItem().getAmount() == 8){
-					Location loc = new Location(p.getWorld(),65.52599,67,-2.44839);
-					loc.setPitch(2);
-					loc.setYaw((float) 179.6554);
-					p.teleport(loc);
-				}else if(e.getCurrentItem().getAmount() == 16){
-					Location loc = new Location(p.getWorld(),65.38146,67,2.96377);
-					loc.setPitch(0);
-					loc.setYaw((float) 0.53686523);
-					p.teleport(loc);
-				}
+				Location loc = new Location(p.getWorld(),67.30168,67,0.57736);
+				loc.setPitch(3);
+				loc.setYaw((float) -91.69348);
+				p.teleport(loc);
 			}else if(e.getCurrentItem().getType()==Material.LEATHER_HELMET){
 				p.teleport(p.getWorld().getSpawnLocation());
 			}else if(e.getCurrentItem().getType()==Material.STICK){
@@ -356,84 +349,31 @@ public class HubListener extends kListener{
 	public void damage(EntityDamageByEntityEvent e) {
 		e.setCancelled(true);
 	}
-	
-	public int max(GameType t){
-		if(t==GameType.Falldown)return 16;
-		if(t==GameType.BeastMode)return 16;
-		if(t==GameType.TroubleMine)return 24;
-		if(t==GameType.MarioParty)return 16;
-		if(t==GameType.MegaRush)return 16;
-		if(t==GameType.DeathGames)return 24;
-		if(t==GameType.Rush)return 8;
-		if(t==GameType.SurvivalGames)return 24;
-		if(t==GameType.SkyPvP)return 24;
-		return 16;
-	}
-	
-	public GameState getS(GameType t,int i){
-		if(t==GameType.TroubleMine){
-			if(i==0)return GameState.Restart;
-			if(i==1)return GameState.LobbyPhase;
-			if(i==2)return GameState.SchutzModus;
-			if(i==3)return GameState.InGame;
-			if(i==4)return GameState.Restart;
-		}else if(t==GameType.DeathGames){
-			if(i==0)return GameState.Restart;
-			if(i==1)return GameState.LobbyPhase;
-			if(i==2)return GameState.InGame;
-			if(i==3)return GameState.InGame;
-			if(i==4)return GameState.Restart;
-		}else if(t==GameType.SurvivalGames){
-			if(i==0)return GameState.Restart;
-			if(i==1)return GameState.LobbyPhase;
-			if(i==2)return GameState.InGame;
-			if(i==3)return GameState.InGame;
-			if(i==4)return GameState.Restart;
-		}else if(t==GameType.SkyPvP){
-			if(i==0)return GameState.Restart;
-			if(i==1)return GameState.LobbyPhase;
-			if(i==2)return GameState.InGame;
-			if(i==3)return GameState.InGame;
-			if(i==4)return GameState.Restart;
-		}else if(t==GameType.Falldown){
-			if(i==0)return GameState.Restart;
-			if(i==1)return GameState.LobbyPhase;
-			if(i==2)return GameState.InGame;
-			if(i==3)return GameState.SchutzModus;
-			if(i==4)return GameState.Restart;
-		}else{
-			if(i==0)return GameState.Restart;
-			if(i==1)return GameState.LobbyPhase;
-			if(i==2)return GameState.InGame;
-			if(i==3)return GameState.Restart;
-		}
-		return GameState.Restart;
-	}
-	
-	public int ID(String typ){
-		if(typ.contains("fd")){
-			return Integer.valueOf(typ.split("fd")[1]);
-		}else if(typ.contains("bm")){
-			return Integer.valueOf(typ.split("bm")[1]);
-		}else if(typ.contains("tm")){
-			return Integer.valueOf(typ.split("tm")[1]);
-		}else if(typ.contains("mp")){
-			return Integer.valueOf(typ.split("mp")[1]);
-		}else if(typ.contains("mr")){
-			return Integer.valueOf(typ.split("mr")[1]);
-		}else if(typ.contains("em")){
-			return Integer.valueOf(typ.split("em")[1]);
-		}else if(typ.contains("r")){
-			return Integer.valueOf(typ.split("r")[1]);
-		}else if(typ.contains("sg")){
-			return Integer.valueOf(typ.split("sg")[1]);
-		}else if(typ.contains("s")){
-			return Integer.valueOf(typ.split("sk")[1]);
-		}else if(typ.contains("a")){
-			return Integer.valueOf(typ.split("a")[1]);
-		}
-		return -1;
-	}
+
+//	public int ID(String typ){
+//		if(typ.contains("fd")){
+//			return Integer.valueOf(typ.split("fd")[1]);
+//		}else if(typ.contains("bm")){
+//			return Integer.valueOf(typ.split("bm")[1]);
+//		}else if(typ.contains("tm")){
+//			return Integer.valueOf(typ.split("tm")[1]);
+//		}else if(typ.contains("mp")){
+//			return Integer.valueOf(typ.split("mp")[1]);
+//		}else if(typ.contains("mr")){
+//			return Integer.valueOf(typ.split("mr")[1]);
+//		}else if(typ.contains("em")){
+//			return Integer.valueOf(typ.split("em")[1]);
+//		}else if(typ.contains("r")){
+//			return Integer.valueOf(typ.split("r")[1]);
+//		}else if(typ.contains("sg")){
+//			return Integer.valueOf(typ.split("sg")[1]);
+//		}else if(typ.contains("s")){
+//			return Integer.valueOf(typ.split("sk")[1]);
+//		}else if(typ.contains("a")){
+//			return Integer.valueOf(typ.split("a")[1]);
+//		}
+//		return -1;
+//	}
 
 	@EventHandler
 	public void onSign(SignChangeEvent ev) {
@@ -494,7 +434,7 @@ public class HubListener extends kListener{
 		for(GameType typ : manager.getServers().keySet()){
 			if(!list.containsKey(typ))list.put(typ, new HashMap<Integer,ServerInfo>());
 			game=(ArrayList<ServerInfo>)manager.getServers().get(typ).clone();
-			for(int i=0; i<3; i++){
+			for(int i=0; i<manager.getSigns().get(typ).size(); i++){
 				s1=FreeServer(game);
 				list.get(typ).put(i,s1);
 				game.remove(s1);
@@ -556,8 +496,8 @@ public class HubListener extends kListener{
 					continue;
 				}
 				if(se!=null&&se.State==GameState.LobbyPhase){
-					
-						sign.setLine(0, "- "+ C.cWhite + type.getKürzel()+" "+ID(se.ID) + C.cBlack + " -");
+					//ID(se.ID)
+						sign.setLine(0, "- "+ C.cWhite + type.getKürzel()+" "+ se.ID.split("a")[1] + C.cBlack + " -");
 						sign.setLine(1, se.Map);
 						if(se.CurrentPlayers>=se.MaxPlayers){
 							sign.setLine(2, "> "+C.mOrange+"Premium "+C.cBlack+" <");

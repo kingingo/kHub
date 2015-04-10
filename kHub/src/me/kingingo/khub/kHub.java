@@ -2,11 +2,11 @@ package me.kingingo.khub;
 
 import me.kingingo.kcore.Client.Client;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
+import me.kingingo.kcore.Command.Admin.CommandFly;
 import me.kingingo.kcore.Command.Admin.CommandMem;
 import me.kingingo.kcore.Command.Admin.CommandMemFix;
 import me.kingingo.kcore.Command.Admin.CommandMute;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
-import me.kingingo.kcore.Command.Commands.CommandkFly;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.GroupTyp;
@@ -15,7 +15,6 @@ import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
 import me.kingingo.kcore.Util.UtilException;
 import me.kingingo.kcore.memory.MemoryFix;
-import me.kingingo.khub.Command.CommandJump;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -44,7 +43,7 @@ public class kHub extends JavaPlugin{
 			new MemoryFix(this);
 			this.pManager=new PermissionManager(this,GroupTyp.GAME,PacketManager,mysql);
 			this.Manager=new HubManager(this,mysql,pManager,PacketManager);
-			Manager.getCmd().register(CommandkFly.class, new CommandkFly(pManager));
+			Manager.getCmd().register(CommandFly.class, new CommandFly());
 			Manager.getCmd().register(CommandMute.class, new CommandMute(pManager));	
 			Manager.getCmd().register(CommandChatMute.class, new CommandChatMute(pManager));
 			Manager.getCmd().register(CommandToggle.class, new CommandToggle(pManager));

@@ -180,8 +180,7 @@ public class HubManager{
 		GameInv.setItem(22,UtilItem.RenameItem(new ItemStack(Material.ANVIL), "§6Spawn"));
 		GameInv.setItem(2, UtilItem.RenameItem(new ItemStack(Material.DIAMOND_HELMET),"§6PvP-Server"));
 		GameInv.setItem(6, UtilItem.RenameItem(new ItemStack(Material.GRASS),"§6Sky-Server"));
-		GameInv.setItem(10, UtilItem.RenameItem(new ItemStack(Material.WOOL,8,(byte)14),"§6SheepWars"));
-		GameInv.setItem(28, UtilItem.RenameItem(new ItemStack(Material.WOOL,16,(byte)14),"§6SheepWars"));
+		GameInv.setItem(19, UtilItem.RenameItem(new ItemStack(Material.WOOL,1,(byte)14),"§6SheepWars"));
 		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"§6TroubleInMinecraft"));
 		GameInv.setItem(40, UtilItem.Item(UtilItem.LSetColor(new ItemStack(Material.LEATHER_HELMET), Color.RED),new String[]{""},"§6Coming Soon"));
 		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.CHEST),"§6DeathGames"));

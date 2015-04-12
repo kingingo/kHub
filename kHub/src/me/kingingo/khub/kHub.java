@@ -44,9 +44,9 @@ public class kHub extends JavaPlugin{
 			this.pManager=new PermissionManager(this,GroupTyp.GAME,PacketManager,mysql);
 			this.Manager=new HubManager(this,mysql,pManager,PacketManager);
 			Manager.getCmd().register(CommandFly.class, new CommandFly());
-			Manager.getCmd().register(CommandMute.class, new CommandMute(pManager));	
-			Manager.getCmd().register(CommandChatMute.class, new CommandChatMute(pManager));
-			Manager.getCmd().register(CommandToggle.class, new CommandToggle(pManager));
+			Manager.getCmd().register(CommandMute.class, new CommandMute(this));	
+			Manager.getCmd().register(CommandChatMute.class, new CommandChatMute(this));
+			Manager.getCmd().register(CommandToggle.class, new CommandToggle(this));
 			Manager.getCmd().register(CommandMem.class, new CommandMem(pManager));
 			Manager.getCmd().register(CommandMemFix.class, new CommandMemFix(pManager));
 			//Manager.getCmd().register(CommandJump.class, new CommandJump(this));

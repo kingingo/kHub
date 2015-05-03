@@ -147,10 +147,15 @@ public class HubListener extends kListener{
 				UtilBG.sendToServer(p, "sky",manager.getInstance());
 			}else if(e.getCurrentItem().getType()==Material.ANVIL){
 				p.teleport(p.getWorld().getSpawnLocation());
+			}else if(e.getCurrentItem().getType()==Material.BED){
+				Location loc = new Location(p.getWorld(),66.107,67,-1.973);
+				loc.setPitch((float) 3.6);
+				loc.setYaw((float) 178.2);
+				p.teleport(loc);
 			}else if(e.getCurrentItem().getType()==Material.WOOL){
-				Location loc = new Location(p.getWorld(),67.30168,67,0.57736);
-				loc.setPitch(3);
-				loc.setYaw((float) -91.69348);
+				Location loc = new Location(p.getWorld(),65.201,67.06250,3.157);
+				loc.setPitch((float) 4.7);
+				loc.setYaw((float) 3.9);
 				p.teleport(loc);
 			}else if(e.getCurrentItem().getType()==Material.LEATHER_HELMET){
 				p.teleport(p.getWorld().getSpawnLocation());
@@ -218,7 +223,6 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setItem(2, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop"));
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
-	//	ev.getPlayer().getInventory().setItem(6,UtilItem.Item(new ItemStack(Material.DIAMOND_PICKAXE), new String[]{"§bKlick mich um den Build Server zu betretten."},"§aBuild-Server"));
 		score.add(ev.getPlayer());
 	}
 	
@@ -349,31 +353,6 @@ public class HubListener extends kListener{
 	public void damage(EntityDamageByEntityEvent e) {
 		e.setCancelled(true);
 	}
-
-//	public int ID(String typ){
-//		if(typ.contains("fd")){
-//			return Integer.valueOf(typ.split("fd")[1]);
-//		}else if(typ.contains("bm")){
-//			return Integer.valueOf(typ.split("bm")[1]);
-//		}else if(typ.contains("tm")){
-//			return Integer.valueOf(typ.split("tm")[1]);
-//		}else if(typ.contains("mp")){
-//			return Integer.valueOf(typ.split("mp")[1]);
-//		}else if(typ.contains("mr")){
-//			return Integer.valueOf(typ.split("mr")[1]);
-//		}else if(typ.contains("em")){
-//			return Integer.valueOf(typ.split("em")[1]);
-//		}else if(typ.contains("r")){
-//			return Integer.valueOf(typ.split("r")[1]);
-//		}else if(typ.contains("sg")){
-//			return Integer.valueOf(typ.split("sg")[1]);
-//		}else if(typ.contains("s")){
-//			return Integer.valueOf(typ.split("sk")[1]);
-//		}else if(typ.contains("a")){
-//			return Integer.valueOf(typ.split("a")[1]);
-//		}
-//		return -1;
-//	}
 
 	@EventHandler
 	public void onSign(SignChangeEvent ev) {

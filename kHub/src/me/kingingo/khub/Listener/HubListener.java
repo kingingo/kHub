@@ -11,6 +11,7 @@ import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
+import me.kingingo.kcore.Packet.Packets.HUB_ONLINE;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Scoreboard.PlayerScoreboard;
@@ -22,6 +23,7 @@ import me.kingingo.kcore.Util.C;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilPlayer;
@@ -128,12 +130,7 @@ public class HubListener extends kListener{
 			} else if (e.getCurrentItem().getTypeId() == 289) {
 				e.setCancelled(true);
 				p.closeInventory();
-				UtilBG.SendToBungeeCord(
-						"lobby/"
-								+ manager.getLobbyList()
-										.get(e.getCurrentItem().getItemMeta()
-												.getDisplayName().split("a")[1])
-										.getBg() + "/" + p.getName(), p,manager.getInstance());
+				UtilBG.SendToBungeeCord("lobby/"+ manager.getLobbyList().get(e.getCurrentItem().getItemMeta().getDisplayName().split("a")[1]).getBg() + "/" + p.getName(), p,manager.getInstance());
 			} else {
 				e.setCancelled(true);
 				p.closeInventory();
@@ -396,10 +393,12 @@ public class HubListener extends kListener{
 		}
 	}
 	
+	SERVER_STATUS ss;
+	HUB_ONLINE hub;
 	@EventHandler
 	public void Packet(PacketReceiveEvent ev){
-		if(ev.getPacket().getName().contains("SERVER_STATUS")){
-			SERVER_STATUS ss = new SERVER_STATUS(ev.getPacket().toString().split("-/-"));
+		if(ev.getPacket() instanceof SERVER_STATUS){
+			ss = (SERVER_STATUS)ev.getPacket();
 			manager.getServer_Status().add(ss);
 		}
 	}
@@ -504,8 +503,8 @@ public class HubListener extends kListener{
 	ServerInfo si;
 	@EventHandler
 	public void StatusUpdate(UpdateAsyncEvent ev){
-		if(ev.getType()!=UpdateAsyncType.SEC)return;
-		if(manager.getServer_Status().isEmpty())return;
+		if(ev.getType()==UpdateAsyncType.SEC){
+			if(manager.getServer_Status().isEmpty())return;
 			cloned =(ArrayList<SERVER_STATUS>) manager.getServer_Status().clone();
 			for(SERVER_STATUS ss : cloned){
 				if(!manager.getServers().containsKey(ss.getTyp()))manager.getServers().put(ss.getTyp(), new ArrayList<ServerInfo>());
@@ -534,6 +533,11 @@ public class HubListener extends kListener{
 				manager.getServer_Status().remove(ss);
 			}
 			cloned.clear();
+		}
+		
+		if(ev.getType()==UpdateAsyncType.SEC_8){
+			manager.getPacketManager().SendPacket("DATA", new HUB_ONLINE("hub"+manager.getId(), UtilServer.getPlayers().size()));
+		}
 	}
 	
 }

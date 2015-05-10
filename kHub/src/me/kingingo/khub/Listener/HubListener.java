@@ -14,7 +14,7 @@ import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.HUB_ONLINE;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.kPermission;
-import me.kingingo.kcore.Scoreboard.PlayerScoreboard;
+import me.kingingo.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
@@ -23,10 +23,10 @@ import me.kingingo.kcore.Util.C;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEvent;
-import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilPlayer;
+import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilString;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.Server.ServerInfo;
@@ -58,12 +58,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.DisplaySlot;
 
 public class HubListener extends kListener{
 
 	private HubManager manager;
-	private ArrayList<Player> score = new ArrayList<>();
 	
 	public HubListener(HubManager manager) {
 		super(manager.getInstance(),"HubListener");
@@ -84,7 +82,7 @@ public class HubListener extends kListener{
 			}
 			msg=msg.replaceAll("%","");
 			if(manager.getPManager().hasPermission(p, kPermission.ALL_PERMISSION))msg=msg.replaceAll("&", "§");
-			event.setFormat(manager.getPManager().getPrefix(p) + p.getName() + "§7: "+ msg);
+			event.setFormat(manager.getPManager().getPrefix(p) + p.getName() + "§7:§f "+ msg);
 		}
 	}
 	
@@ -192,18 +190,8 @@ public class HubListener extends kListener{
 	}
 	
 	@EventHandler
-	public void Update(UpdateEvent ev){
-		if(ev.getType()!=UpdateType.SEC)return;
-		if(score.isEmpty())return;
-		for(int i = 0; i<score.size(); i++){
-			if(manager.getCoins().getCoins().containsKey(UtilPlayer.getRealUUID(((Player)score.get(i))))){
-				PlayerScoreboard ps = new PlayerScoreboard(((Player)score.get(i)));
-				ps.addBoard(DisplaySlot.SIDEBAR, "§6§lEpicPvP.eu");
-				ps.setScore("Coins: ", DisplaySlot.SIDEBAR,manager.getCoins().getCoins(((Player)score.get(i))));
-				ps.setBoard();	
-				score.remove(i);
-			}
-		}
+	public void AddBoard(PlayerSetScoreboardEvent ev){
+		UtilPlayer.setScoreboard(ev.getPlayer(), manager.getCoins(), manager.getPManager());
 	}
 	
 	@EventHandler(priority=EventPriority.LOWEST)
@@ -220,7 +208,6 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setItem(2, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop"));
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
-		score.add(ev.getPlayer());
 	}
 	
 	@EventHandler

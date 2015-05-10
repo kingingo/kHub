@@ -9,6 +9,8 @@ import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
+import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
+import me.kingingo.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import me.kingingo.kcore.Util.UtilList;
 import me.kingingo.khub.HubManager;
 
@@ -31,6 +33,8 @@ public class LoginManager extends kListener{
 	private HashMap<Player,String> Login = new HashMap<>();
 	@Getter
 	private ArrayList<Player> Register = new ArrayList<>();
+	@Getter
+	private ArrayList<Player> abfragen = new ArrayList<>();
 	
 	public LoginManager(HubManager Manager){
 		super(Manager.getInstance(),"LoginManager");
@@ -38,12 +42,40 @@ public class LoginManager extends kListener{
 		getManager().getCmd().register(CommandLogin.class, new CommandLogin(this));
 		getManager().getCmd().register(CommandRegister.class, new CommandRegister(this));
 	}
+
+	Player player;
+	@EventHandler
+	public void UpdateAsync(UpdateAsyncEvent ev){
+		if(ev.getType()==UpdateAsyncType.FAST){
+			if(abfragen.isEmpty())return;
+			for(int i = 0; i< (abfragen.size() < 10 ? abfragen.size() : 10) ;i++){
+				player=abfragen.get(i);
+				
+				if(isLogin(player)){
+					if(!isRegestriert(player)){
+						Register.add(player);
+						player.sendMessage(Text.PREFIX.getText()+Text.REGISTER_MESSAGE.getText());
+					}else{
+						Login.put(player, getPW(player));
+						player.sendMessage(Text.PREFIX.getText()+Text.LOGIN_MESSAGE.getText());
+					}
+				}
+				player.sendMessage(Text.PREFIX.getText()+"Informationen wurden erfolgreich geladen. Viel Spaß!");
+				abfragen.remove(i);
+			}
+		}
+	}
 	
 	@EventHandler
 	public void Update(UpdateEvent ev){
-		if(ev.getType()!=UpdateType.MIN_32)return;
-		UtilList.CleanList(Login);
-		UtilList.CleanList(Register);
+		if(ev.getType()==UpdateType.MIN_32){
+			UtilList.CleanList(Login);
+			UtilList.CleanList(Register);
+		}
+		
+		if(ev.getType()==UpdateType.MIN_32){
+			UtilList.CleanList(abfragen);
+		}
 	}
 	
 	public void setUser(Player p,String pw, String ip){
@@ -110,24 +142,15 @@ public class LoginManager extends kListener{
 	
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
-		if(isLogin(ev.getPlayer())){
-			if(!isRegestriert(ev.getPlayer())){
-				Register.add(ev.getPlayer());
-				ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.REGISTER_MESSAGE.getText());
-			}else{
-				Login.put(ev.getPlayer(), getPW(ev.getPlayer()));
-				ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.LOGIN_MESSAGE.getText());
-			}
-		}
+		abfragen.add(ev.getPlayer());
+		ev.getPlayer().sendMessage(Text.PREFIX.getText()+"Deine Spieler Informationen werden geladen...");
 	}
 	
 	@EventHandler
 	public void Quit(PlayerQuitEvent ev){
-		if(Login.containsKey(ev.getPlayer())){
-			Login.remove(ev.getPlayer());
-		}else if(Register.contains(ev.getPlayer())){
-			Register.remove(ev.getPlayer());
-		}
+		if(abfragen.contains(ev.getPlayer()))abfragen.remove(ev.getPlayer());
+		if(Login.containsKey(ev.getPlayer()))Login.remove(ev.getPlayer());
+		if(Register.contains(ev.getPlayer()))Register.remove(ev.getPlayer());
 	}
 	
 	@EventHandler
@@ -135,6 +158,7 @@ public class LoginManager extends kListener{
 		if(!ev.getMessage().contains("/login")&&!ev.getMessage().contains("/register")){
 			if(Login.containsKey(ev.getPlayer()))ev.setCancelled(true);
 			if(Register.contains(ev.getPlayer()))ev.setCancelled(true);
+			if(abfragen.contains(ev.getPlayer()))ev.setCancelled(true);
 		}
 	}
 	
@@ -142,12 +166,14 @@ public class LoginManager extends kListener{
 	public void Chat(PlayerChatEvent ev){
 		if(Login.containsKey(ev.getPlayer()))ev.setCancelled(true);
 		if(Register.contains(ev.getPlayer()))ev.setCancelled(true);
+		if(abfragen.contains(ev.getPlayer()))ev.setCancelled(true);
 	}
 	
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void Interact(PlayerInteractEvent ev){
 		if(Login.containsKey(ev.getPlayer()))ev.setCancelled(true);
 		if(Register.contains(ev.getPlayer()))ev.setCancelled(true);
+		if(abfragen.contains(ev.getPlayer()))ev.setCancelled(true);
 	}
 	
 	Location from;
@@ -156,7 +182,7 @@ public class LoginManager extends kListener{
 	double z;
 	@EventHandler
 	public void Move(PlayerMoveEvent ev){
-		if(Login.containsKey(ev.getPlayer())||Register.contains(ev.getPlayer())){
+		if(Login.containsKey(ev.getPlayer())||Register.contains(ev.getPlayer())||abfragen.contains(ev.getPlayer())){
 			from = ev.getFrom();
 			to = ev.getTo();
 			x = Math.floor(from.getX());

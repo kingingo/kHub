@@ -164,7 +164,7 @@ public class HubListener extends kListener{
 				loc.setPitch(2);
 				loc.setYaw((float) 179.83789);
 				p.teleport(loc);
-			}else if(e.getCurrentItem().getType()==Material.IRON_SWORD){
+			}else if(e.getCurrentItem().getType()==Material.DIAMOND_SWORD){
 				Location loc = new Location(p.getWorld(),41.38345,65,44.67852);
 				loc.setPitch(3);
 				loc.setYaw((float) -91.886475);

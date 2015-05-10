@@ -188,7 +188,7 @@ public class HubManager{
 		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.CHEST),"§6DeathGames"));
 		GameInv.setItem(34, UtilItem.RenameItem(new ItemStack(Material.IRON_SPADE),"§6SkyPvP"));
 		GameInv.setItem(25, UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR),"§6Falldown"));
-		GameInv.setItem(16, UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD),"§6SurvivalGames"));
+		GameInv.setItem(16, UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD),"§6QuickSurvivalGames"));
 		for(int i = 0 ; i < GameInv.getSize(); i++){
 			if(GameInv.getItem(i)==null||GameInv.getItem(i).getType()==Material.AIR){
 				if(GameInv.getItem(i)==null)GameInv.setItem(i, new ItemStack(Material.IRON_FENCE));

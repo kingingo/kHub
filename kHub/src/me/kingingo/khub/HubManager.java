@@ -14,6 +14,7 @@ import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
 import me.kingingo.kcore.Enum.GameType;
+import me.kingingo.kcore.Interface.Button.MainInterface;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
@@ -89,6 +90,8 @@ public class HubManager{
 	private PetShop shop;
 	@Getter
 	private PetManager pet;
+	@Getter
+	private MainInterface mainInterface;
 	
 	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
 		this.instance=instance;
@@ -101,6 +104,7 @@ public class HubManager{
 		this.pet=new PetManager(instance);
 		this.shop=new PetShop(pet,pManager, coins);
 		this.holiday=Calendar.getHoliday();
+		this.mainInterface=new MainInterface(getInstance(), "hub"+id, pmana);
 		if(holiday!=null){
 			switch(holiday){
 			case HELLOWEEN:

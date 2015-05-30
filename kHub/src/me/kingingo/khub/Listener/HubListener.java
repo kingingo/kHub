@@ -19,7 +19,7 @@ import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
 import me.kingingo.kcore.UpdateAsync.Event.UpdateAsyncEvent;
-import me.kingingo.kcore.Util.C;
+import me.kingingo.kcore.Util.Color;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEvent;
@@ -413,7 +413,7 @@ public class HubListener extends kListener{
 			Sign s =(Sign) ev.getClickedBlock().getState();
 			if(manager.getSign_server().containsKey( ((Sign)ev.getClickedBlock().getState()) )){
 				if(s.getLine(1).equalsIgnoreCase("Lade Server.."))return;
-				if(s.getLine(2).equalsIgnoreCase("> "+C.mOrange+"Premium "+C.cBlack+" <") && !manager.getPManager().hasPermission(ev.getPlayer(), kPermission.JOIN_FULL_SERVER))return;
+				if(s.getLine(2).equalsIgnoreCase("> "+Color.ORANGE+"Premium "+Color.BLACK+" <") && !manager.getPManager().hasPermission(ev.getPlayer(), kPermission.JOIN_FULL_SERVER))return;
 				UtilBG.sendToServer(ev.getPlayer(), manager.getSign_server().get(s).ID, manager.getInstance());
 			}else if(s.getLine(0).equalsIgnoreCase("[Server]")){
 				UtilBG.sendToServer(ev.getPlayer(), s.getLine(2), manager.getInstance());
@@ -462,14 +462,14 @@ public class HubListener extends kListener{
 				}
 				if(se!=null&&se.State==GameState.LobbyPhase){
 					//ID(se.ID)
-						sign.setLine(0, "- "+ C.cWhite + type.getKürzel()+" "+ se.ID.split("a")[1] + C.cBlack + " -");
+						sign.setLine(0, "- "+ Color.WHITE + type.getKürzel()+" "+ se.ID.split("a")[1] + Color.BLACK + " -");
 						sign.setLine(1, se.Map);
 						if(se.CurrentPlayers>=se.MaxPlayers){
-							sign.setLine(2, "> "+C.mOrange+"Premium "+C.cBlack+" <");
+							sign.setLine(2, "> "+Color.ORANGE+"Premium "+Color.BLACK+" <");
 						}else{
-							sign.setLine(2, "> "+C.cGreen+"Join "+C.cBlack+" <");
+							sign.setLine(2, "> "+Color.GREEN+"Join "+Color.BLACK+" <");
 						}
-						sign.setLine(3, se.CurrentPlayers+C.cGray+"/"+C.cBlack+se.MaxPlayers);
+						sign.setLine(3, se.CurrentPlayers+Color.GRAY.toString()+"/"+Color.BLACK+se.MaxPlayers);
 					
 				}else{
 					sign.setLine(0, "");

@@ -108,6 +108,9 @@ public class HubListener extends kListener{
 				ev.getPlayer().openInventory(manager.getShop().getMain());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.DIAMOND_PICKAXE){
 				UtilBG.sendToServer(ev.getPlayer(), "v", manager.getInstance());
+			}else if(ev.getPlayer().getItemInHand().getType()==Material.WORKBENCH){
+				ev.getPlayer().openInventory(manager.getMainInterface().getMain_page().getMain());
+				ev.setCancelled(true);
 			}
 		}
 	}
@@ -208,6 +211,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setItem(2, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop"));
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
+		if(ev.getPlayer().getName().equalsIgnoreCase("kingingohd"))ev.getPlayer().getInventory().setItem(6, UtilItem.Item(new ItemStack(Material.WORKBENCH), new String[]{"§bKlick mich um einen Privat Server zu erstellen."}, "§7Privat Server"));
 	}
 	
 	@EventHandler

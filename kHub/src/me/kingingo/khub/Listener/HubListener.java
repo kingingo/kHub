@@ -394,6 +394,7 @@ public class HubListener extends kListener{
 		}
 	}
 	
+	//Sucht die Freiesten Server aus wo die meisten Spieler schon online sind
 	HashMap<GameType,HashMap<Integer,ServerInfo>> list = new HashMap<>();
 	ArrayList<ServerInfo> game;
 	ServerInfo s1;
@@ -445,6 +446,7 @@ public class HubListener extends kListener{
 		return s;
 	}
 	
+	//Setzt auf die Signs die Server
 	ServerInfo se;
 	Sign sign;
 	List<String> strings = new ArrayList<String>();
@@ -465,7 +467,6 @@ public class HubListener extends kListener{
 					continue;
 				}
 				if(se!=null&&se.State==GameState.LobbyPhase){
-					//ID(se.ID)
 						sign.setLine(0, "- "+ Color.WHITE + type.getKürzel()+" "+ se.ID.split("a")[1] + Color.BLACK + " -");
 						sign.setLine(1, se.Map);
 						if(se.CurrentPlayers>=se.MaxPlayers){

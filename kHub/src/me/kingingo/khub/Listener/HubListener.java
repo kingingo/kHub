@@ -111,6 +111,9 @@ public class HubListener extends kListener{
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.WORKBENCH){
 				ev.getPlayer().openInventory(manager.getMainInterface().getMain_page().getMain());
 				ev.setCancelled(true);
+			}else if(ev.getPlayer().getItemInHand().getType()==Material.FIREWORK){
+				UtilBG.sendToServer(ev.getPlayer(), "event", manager.getInstance());
+				ev.setCancelled(true);
 			}
 		}
 	}
@@ -212,7 +215,8 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
 		if(ev.getPlayer().getName().equalsIgnoreCase("kingingohd"))ev.getPlayer().getInventory().setItem(6, UtilItem.Item(new ItemStack(Material.WORKBENCH), new String[]{"§bKlick mich um einen Privat Server zu erstellen."}, "§7Privat Server"));
-	}
+		ev.getPlayer().getInventory().setItem(6,UtilItem.Item(new ItemStack(Material.FIREWORK), new String[]{"§bKlick mich um zum Event-Server zu wechseln."},"§aEvent Server"));
+		}
 	
 	@EventHandler
 	public void Food(FoodLevelChangeEvent ev){

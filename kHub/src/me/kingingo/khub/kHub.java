@@ -7,6 +7,7 @@ import me.kingingo.kcore.Command.Admin.CommandMem;
 import me.kingingo.kcore.Command.Admin.CommandMemFix;
 import me.kingingo.kcore.Command.Admin.CommandMute;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
+import me.kingingo.kcore.Listener.Chat.ChatListener;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.GroupTyp;
@@ -50,6 +51,7 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandMem.class, new CommandMem(pManager));
 			Manager.getCmd().register(CommandMemFix.class, new CommandMemFix(pManager));
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
+			new ChatListener(this, null,this.pManager);
 			Manager.DebugLog(time, 45, this.getClass().getName());
 			
 			for(Entity e : Bukkit.getWorld("world").getEntities()){

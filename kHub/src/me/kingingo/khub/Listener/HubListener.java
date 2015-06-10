@@ -57,6 +57,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class HubListener extends kListener{
@@ -66,25 +67,23 @@ public class HubListener extends kListener{
 	public HubListener(HubManager manager) {
 		super(manager.getInstance(),"HubListener");
 		this.manager=manager;
+		UtilString.setupBadWords(null);
 	}
 	
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerChat(AsyncPlayerChatEvent event) {
-		if (!event.isCancelled()) {
-			Player p = event.getPlayer();
-			String msg = event.getMessage();
-			if((!manager.getPManager().hasPermission(p, kPermission.CHAT_LINK))&&
-					(msg.toLowerCase().contains("minioncraft")||
-							msg.toLowerCase().contains("mastercraft")||
-							UtilString.checkForIP(msg))){
-				event.setCancelled(true);
-				return;
-			}
-			msg=msg.replaceAll("%","");
-			if(manager.getPManager().hasPermission(p, kPermission.ALL_PERMISSION))msg=msg.replaceAll("&", "§");
-			event.setFormat(manager.getPManager().getPrefix(p) + p.getName() + "§7:§f "+ msg);
-		}
-	}
+//	@EventHandler(priority = EventPriority.LOWEST)
+//	public void onPlayerChat(AsyncPlayerChatEvent event) {
+//		if (!event.isCancelled()) {
+//			Player p = event.getPlayer();
+//			String msg = event.getMessage();
+//			if((!manager.getPManager().hasPermission(p, kPermission.CHAT_LINK))&&UtilString.isBadWord(msg)||UtilString.checkForIP(msg)){
+//				event.setCancelled(true);
+//				return;
+//			}
+//			msg=msg.replaceAll("%","");
+//			if(manager.getPManager().hasPermission(p, kPermission.ALL_PERMISSION))msg=msg.replaceAll("&", "§");
+//			event.setFormat(manager.getPManager().getPrefix(p) + p.getName() + "§7:§f "+ msg);
+//		}
+//	}
 	
 	@EventHandler
 	public void soilChangeEntity(EntityInteractEvent event){
@@ -215,7 +214,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(0,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
 		if(ev.getPlayer().getName().equalsIgnoreCase("kingingohd"))ev.getPlayer().getInventory().setItem(6, UtilItem.Item(new ItemStack(Material.WORKBENCH), new String[]{"§bKlick mich um einen Privat Server zu erstellen."}, "§7Privat Server"));
-		ev.getPlayer().getInventory().setItem(6,UtilItem.Item(new ItemStack(Material.FIREWORK), new String[]{"§bKlick mich um zum Event-Server zu wechseln."},"§aEvent Server"));
+//		ev.getPlayer().getInventory().setItem(6,UtilItem.Item(new ItemStack(Material.FIREWORK), new String[]{"§bKlick mich um zum Event-Server zu wechseln."},"§aEvent Server"));
 		}
 	
 	@EventHandler

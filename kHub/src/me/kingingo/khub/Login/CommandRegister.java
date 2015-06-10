@@ -27,6 +27,10 @@ public class CommandRegister implements CommandExecutor{
 		if(args.length==0)p.sendMessage(Text.PREFIX.getText()+Text.REGISTER_MESSAGE.getText());
 		else if(args.length==1){
 			pw=args[0];
+			if(!pw.matches("[a-zA-Z0-9_]*")){
+				p.sendMessage(Text.PREFIX.getText()+"§cUngültiges Zeichen!");
+				return false;
+			}
 			getLoginManager().getRegister().remove(p);
 			getLoginManager().delLogin(p.getName());
 			getLoginManager().setUser(p, pw, "");

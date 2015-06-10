@@ -12,6 +12,7 @@ import me.kingingo.kcore.Addons.AddonNight;
 import me.kingingo.kcore.Calendar.Calendar;
 import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Command.CommandHandler;
+import me.kingingo.kcore.Command.Admin.CommandFlyspeed;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.MySQL.MySQL;
@@ -34,6 +35,7 @@ import me.kingingo.khub.Listener.BirthdayListener;
 import me.kingingo.khub.Listener.ChristmasListener;
 import me.kingingo.khub.Listener.HubListener;
 import me.kingingo.khub.Listener.SilvesterListener;
+import me.kingingo.khub.Listener.VersusListener;
 import me.kingingo.khub.Listener.VoteListener;
 import me.kingingo.khub.Lobby.Lobby;
 import me.kingingo.khub.Login.LoginManager;
@@ -134,6 +136,7 @@ public class HubManager{
 		this.PacketManager=pmana;
 		new HubListener(this);
 		new InvisibleManager(this);
+		new VersusListener(this);
 		if(("HUB"+instance.getConfig().getInt("Config.Lobby")).equalsIgnoreCase("HUB2")&&Bukkit.getPluginManager().getPlugin("Votifier")!=null){
 			new VoteListener(mysql,getCoins(),getPacketManager());
 		}
@@ -146,6 +149,7 @@ public class HubManager{
 		getCmd().register(CommandBroadcast.class, new CommandBroadcast());
 		getCmd().register(CommandOnline.class,new CommandOnline(this));
 		getCmd().register(CommandInfo.class,new CommandInfo(this));
+		getCmd().register(CommandFlyspeed.class, new CommandFlyspeed());
 		for(GameType t : this.getSigns().keySet()){
 			for(Sign s : this.getSigns().get(t)){
 				s.setLine(0, "");

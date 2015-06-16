@@ -32,15 +32,17 @@ public class ChristmasListener extends kListener{
 
 	@Getter
 	private HubManager manager;
+	@Getter
+	private HubListener listener;
 	private int day;
 	private ItemStack christmas;
 	private Location center;
 	private Inventory inventory;
 	private ItemStack item;
 	
-	public ChristmasListener(HubManager manager){
-		super(manager.getInstance(),"[ChristmasListener]");
-		this.manager=manager;
+	public ChristmasListener(HubListener listener){
+		super(listener.getManager().getInstance(),"[ChristmasListener]");
+		this.manager=listener.getManager();
 	    this.day=Integer.valueOf(new SimpleDateFormat ("dd").format(new Date()));
 	    this.center=Bukkit.getWorld("world").getSpawnLocation().add(0, 3, 0);
 	    this.inventory=Bukkit.createInventory(null, 27, "§aAdventskalender:");
@@ -100,7 +102,7 @@ public class ChristmasListener extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void LobbyMenu(PlayerInteractEvent ev){
-		if(!manager.getLManager().getLogin().containsKey(ev.getPlayer())&&!manager.getLManager().getRegister().contains(ev.getPlayer())&&UtilEvent.isAction(ev, ActionType.R)){
+		if(!listener.getLoginManager().getLogin().containsKey(ev.getPlayer())&&!listener.getLoginManager().getRegister().contains(ev.getPlayer())&&UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getType()==Material.SNOW_BALL){
 				ev.getPlayer().openInventory(inventory);
 				ev.setCancelled(true);

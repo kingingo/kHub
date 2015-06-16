@@ -8,6 +8,7 @@ import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Packet.Packets.BROADCAST;
 import me.kingingo.kcore.Packet.Packets.NOT_SAVE_COINS;
+import me.kingingo.kcore.Packet.Packets.PLAYER_VOTE;
 import me.kingingo.kcore.Util.Coins;
 import me.kingingo.kcore.Util.UtilPlayer;
 
@@ -31,14 +32,18 @@ public class VoteListener extends kListener{
 		this.packetManager=packetManager;
 	}
 	
-		UUID uuid;
+	 UUID uuid;
+	 PLAYER_VOTE vpacket;
 	 @EventHandler(priority=EventPriority.NORMAL)
 	 public void onVotifierEvent(VotifierEvent event) {
 		 vote = event.getVote();
 		 uuid = UtilPlayer.getUUID(vote.getUsername(), mysql);
 	     coins.addCoins(uuid, 120);
 	     packetManager.SendPacket("hub", new NOT_SAVE_COINS(uuid));
-		 packetManager.SendPacket("BG", new BROADCAST(Text.PREFIX.getText()+"§6Der Spieler §b"+vote.getUsername()+"§6 hat fuer§b 120 Coins§6 gevotet!§a§l /Vote"));
+		 packetManager.SendPacket("BG", new BROADCAST(Text.PREFIX.getText()+"§6Der Spieler §b"+vote.getUsername()+"§6 hat gevotet!§a§l /Vote"));
+		 vpacket = new PLAYER_VOTE(vote.getUsername(), uuid);
+		 packetManager.SendPacket("PVP", vpacket);
+		 packetManager.SendPacket("SKYBLOCK", vpacket);
 	 }
 	
 }

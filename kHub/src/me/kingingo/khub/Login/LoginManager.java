@@ -45,8 +45,8 @@ public class LoginManager extends kListener{
 
 	Player player;
 	@EventHandler
-	public void UpdateAsync(UpdateAsyncEvent ev){
-		if(ev.getType()==UpdateAsyncType.FAST){
+	public void UpdateAsync(UpdateEvent ev){
+		if(ev.getType()==UpdateType.FAST){
 			if(abfragen.isEmpty())return;
 			for(int i = 0; i< (abfragen.size() < 10 ? abfragen.size() : 10) ;i++){
 				player=abfragen.get(i);

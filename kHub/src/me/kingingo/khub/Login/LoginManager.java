@@ -9,9 +9,8 @@ import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
-import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
-import me.kingingo.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import me.kingingo.kcore.Util.UtilList;
+import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.khub.HubManager;
 
 import org.bukkit.Location;
@@ -41,6 +40,7 @@ public class LoginManager extends kListener{
 		this.Manager=Manager;
 		getManager().getCmd().register(CommandLogin.class, new CommandLogin(this));
 		getManager().getCmd().register(CommandRegister.class, new CommandRegister(this));
+		getManager().getMysql().Update("CREATE TABLE IF NOT EXISTS list_users_1(name varchar(30), uuid varchar(100),password varchar(30))");
 	}
 
 	Player player;
@@ -58,6 +58,8 @@ public class LoginManager extends kListener{
 					}else{
 						Login.put(player, getPW(player));
 						player.sendMessage(Text.PREFIX.getText()+Text.LOGIN_MESSAGE.getText());
+						//getManager().getMysql().Update("INSERT INTO list_users_1 (name,uuid,password) VALUES ('" +player.getName().toLowerCase()+"','"+UtilPlayer.getRealUUID(player)+"','"+Login.get(player)+"') WHERE NOT EXISTS (SELECT name FROM list_users_1 WHERE name='" + player.getName().toLowerCase() + "');");
+						getManager().getMysql().Update("INSERT INTO list_users_1 (name,uuid,password) SELECT '" +player.getName().toLowerCase()+"','"+UtilPlayer.getRealUUID(player)+"','"+Login.get(player)+"' FROM DUAL WHERE NOT EXISTS (SELECT name FROM list_users_1 WHERE name='" +player.getName().toLowerCase()+"');");
 					}
 				}
 				player.sendMessage(Text.PREFIX.getText()+"Informationen wurden erfolgreich geladen. Viel Spaﬂ!");

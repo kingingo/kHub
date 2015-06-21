@@ -132,8 +132,8 @@ public class HubListener extends kListener{
 		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"§6TroubleInMinecraft"));
 		GameInv.setItem(40, UtilItem.Item( UtilItem.LSetColor(new ItemStack(Material.LEATHER_HELMET), org.bukkit.Color.RED) ,new String[]{""},"§6Coming Soon"));
 		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.CHEST),"§6DeathGames"));
-		GameInv.setItem(34, UtilItem.RenameItem(new ItemStack(Material.IRON_SPADE),"§6SkyPvP"));
-		GameInv.setItem(25, UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR),"§6Falldown"));
+		GameInv.setItem(34, UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD),"§6SkyWars"));
+		GameInv.setItem(25, UtilItem.RenameItem(new ItemStack(Material.BEDROCK),"§cCOMING SOON"));
 		GameInv.setItem(16, UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD),"§6QuickSurvivalGames"));
 		for(int i = 0 ; i < GameInv.getSize(); i++){
 			if(GameInv.getItem(i)==null||GameInv.getItem(i).getType()==Material.AIR){
@@ -383,12 +383,12 @@ public class HubListener extends kListener{
 				loc.setPitch(3);
 				loc.setYaw((float) -91.886475);
 				p.teleport(loc);
-			}else if(e.getCurrentItem().getType()==Material.IRON_SPADE){
+			}else if(e.getCurrentItem().getType()==Material.IRON_SWORD){
 				Location loc = new Location(p.getWorld(),52.07203,65,-48.50810);
 				loc.setPitch(3);
 				loc.setYaw((float) -90.53198);
 				p.teleport(loc);
-			}else if(e.getCurrentItem().getType()==Material.NETHER_STAR){
+			}else if(e.getCurrentItem().getType()==Material.BEDROCK){
 				Location loc = new Location(p.getWorld(),48.62277,65,-52.23374);
 				loc.setPitch(2);
 				loc.setYaw((float) 176.39111);

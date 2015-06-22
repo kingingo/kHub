@@ -18,7 +18,6 @@ import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.HUB_ONLINE;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.kPermission;
-import me.kingingo.kcore.PrivatServer.Interface.Button.MainInterface;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.Color;
@@ -66,15 +65,12 @@ public class HubListener extends kListener{
 	private Inventory LobbyInv;
 	@Getter
 	private LoginManager loginManager;
-	@Getter
-	private MainInterface mainInterface;
 	
 	public HubListener(HubManager manager) {
 		super(manager.getInstance(), "HubListener");
 		this.manager=manager;
 		this.loginManager= new LoginManager(manager);
 		this.manager.getInvisibleManager().setListener(this);
-		this.mainInterface=new MainInterface(manager.getInstance(), "hub"+manager.getId(), manager.getPacketManager());
 		
 		if(("HUB"+manager.getInstance().getConfig().getInt("Config.Lobby")).equalsIgnoreCase("HUB2")&&Bukkit.getPluginManager().getPlugin("Votifier")!=null){
 			new VoteListener(manager.getMysql(),manager.getCoins(),manager.getPacketManager());
@@ -235,8 +231,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setItem(2, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(8,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-		if(ev.getPlayer().getName().equalsIgnoreCase("kingingohd"))ev.getPlayer().getInventory().setItem(6, UtilItem.Item(new ItemStack(Material.WORKBENCH), new String[]{"§bKlick mich um einen Privat Server zu erstellen."}, "§7Privat Server"));
-    }
+	}
 	
 	@EventHandler
 	public void StatusUpdate(UpdateEvent ev){
@@ -316,9 +311,6 @@ public class HubListener extends kListener{
 				ev.getPlayer().openInventory(getManager().getShop().getMain());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.DIAMOND_PICKAXE){
 				UtilBG.sendToServer(ev.getPlayer(), "v", getManager().getInstance());
-			}else if(ev.getPlayer().getItemInHand().getType()==Material.WORKBENCH){
-				ev.getPlayer().openInventory(getMainInterface().getMain_page().getMain());
-				ev.setCancelled(true);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.FIREWORK){
 				UtilBG.sendToServer(ev.getPlayer(), "event", getManager().getInstance());
 				ev.setCancelled(true);

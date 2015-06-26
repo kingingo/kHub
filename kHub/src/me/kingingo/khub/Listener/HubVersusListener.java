@@ -1,5 +1,6 @@
 package me.kingingo.khub.Listener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -15,6 +16,7 @@ import me.kingingo.kcore.Inventory.Inventory.InventoryChoose;
 import me.kingingo.kcore.Inventory.Inventory.InventoryYesNo;
 import me.kingingo.kcore.Inventory.Item.ButtonBase;
 import me.kingingo.kcore.Inventory.Item.Click;
+import me.kingingo.kcore.Kit.InventorySetting.KitSettingInventorys;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.ARENA_STATUS;
@@ -67,6 +69,7 @@ public class HubVersusListener extends kListener{
 	private InventoryYesNo kit_random;
 	private InventoryChoose team_min;
 	private InventoryChoose team_max;
+	private KitSettingInventorys kits;
 	private HashMap<Creature,VersusType> creatures = new HashMap<>();
 	
 	public HubVersusListener(HubManager manager) {
@@ -81,6 +84,7 @@ public class HubVersusListener extends kListener{
 		k.boots=new ItemStack(Material.IRON_BOOTS);
 		k.inv=new ItemStack[]{new ItemStack(Material.DIAMOND_SWORD)};
 		this.kit=UtilInv.itemStackArrayToBase64(k.toItemArray());
+		this.kits=new KitSettingInventorys(manager.getInstance(), statsManager);
 		for(VersusType type : VersusType.values())versus_warte_liste.put(type, new ArrayList<Player>());
 		
 		this.optionen=new InventoryChoose(null, "§5Optionen", 9, new ItemStack[]{});
@@ -123,7 +127,16 @@ public class HubVersusListener extends kListener{
 			@Override
 			public void onClick(Player player, ActionType type, Object obj) {
 				if( ((ItemStack)obj).getType()==Material.DIAMOND_CHESTPLATE ){
-					
+					player.closeInventory();
+					if(kits.getInventorys().containsKey(player)){
+						kits.addKitInventory(player);
+					}else{
+						try {
+							kits.addKitInventory(player, new VersusKit().fromItemArray( UtilInv.itemStackArrayFromBase64(statsManager.getString(Stats.KIT, player))));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 				}
 			}
 			
@@ -299,6 +312,7 @@ public class HubVersusListener extends kListener{
 	@EventHandler
 	public void Quit(PlayerQuitEvent ev){
 		removeFromList(ev.getPlayer());
+		statsManager.SaveAllPlayerData(player);
 	}
 	
 	ArrayList<Player> load = new ArrayList<>();

@@ -16,6 +16,7 @@ import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.Util.UtilException;
 import me.kingingo.kcore.memory.MemoryFix;
+import me.kingingo.khub.Command.CommandTime;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -49,6 +50,7 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandMem.class, new CommandMem(pManager));
 			Manager.getCmd().register(CommandCoins.class, new CommandCoins(Manager.getCoins()));
 			Manager.getCmd().register(CommandMemFix.class, new CommandMemFix(pManager));
+			Manager.getCmd().register(CommandTime.class, new CommandTime());
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 			new ChatListener(this, null,this.pManager);
 			Manager.DebugLog(time, 45, this.getClass().getName());

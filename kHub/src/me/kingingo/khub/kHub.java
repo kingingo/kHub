@@ -1,5 +1,6 @@
 package me.kingingo.khub;
 
+import me.kingingo.kcore.AACHack.AACHack;
 import me.kingingo.kcore.Client.Client;
 import me.kingingo.kcore.Command.Admin.CommandCMDMute;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
@@ -9,6 +10,7 @@ import me.kingingo.kcore.Command.Admin.CommandMem;
 import me.kingingo.kcore.Command.Admin.CommandMemFix;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
+import me.kingingo.kcore.Listener.Command.ListenerCMD;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.GroupTyp;
@@ -54,7 +56,8 @@ public class kHub extends JavaPlugin{
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 			new ChatListener(this, null,this.pManager);
 			Manager.DebugLog(time, 45, this.getClass().getName());
-			
+			new AACHack(getConfig().getString("Config.HubType").toUpperCase()+getConfig().getInt("Config.Lobby"), mysql, PacketManager);
+			new ListenerCMD(this);
 			for(Entity e : Bukkit.getWorld("world").getEntities()){
 				if(!(e instanceof Player))e.remove();
 			}

@@ -27,6 +27,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -197,6 +198,13 @@ public class Listener extends kListener{
 	@EventHandler
 	public void damage(EntityDamageByEntityEvent e) {
 		e.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void death(PlayerDeathEvent ev){
+		ev.setDeathMessage(null);
+		ev.setDroppedExp(0);
+		ev.getDrops().clear();
 	}
 	
 	@EventHandler

@@ -40,7 +40,7 @@ public class VoteListener extends kListener{
 		 uuid = UtilPlayer.getUUID(vote.getUsername(), mysql);
 	     coins.addCoins(uuid, 120);
 	     packetManager.SendPacket("hub", new NOT_SAVE_COINS(uuid));
-		 packetManager.SendPacket("BG", new BROADCAST(Text.PREFIX.getText()+"§6Ein Spieler hat gevotet!§aMach es jetzt auch §l/Vote"));
+		 packetManager.SendPacket("BG", new BROADCAST(Text.PREFIX.getText()+"§6Ein Spieler hat gevotet!§a Vote jetzt auch §l/Vote"));
 		 vpacket = new PLAYER_VOTE(vote.getUsername(), uuid);
 		 packetManager.SendPacket("PVP", vpacket);
 		 packetManager.SendPacket("SKYBLOCK", vpacket);

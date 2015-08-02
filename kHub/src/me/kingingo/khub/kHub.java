@@ -57,7 +57,7 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandMemFix.class, new CommandMemFix(pManager));
 			Manager.getCmd().register(CommandTime.class, new CommandTime());
 			Manager.getCmd().register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
-			new NickManager(this);
+			new NickManager(pManager);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 			new ChatListener(this, null,this.pManager);
 			Manager.DebugLog(time, 45, this.getClass().getName());

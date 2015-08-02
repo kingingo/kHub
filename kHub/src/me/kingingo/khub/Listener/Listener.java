@@ -13,6 +13,7 @@ import me.kingingo.khub.HubManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -64,12 +65,13 @@ public class Listener extends kListener{
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
+		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
 		ev.getPlayer().getWorld().setWeatherDuration(0);
 		ev.getPlayer().getWorld().setStorm(false);
 		ev.getPlayer().setFoodLevel(20);
 		ev.getPlayer().getInventory().setHelmet(null);
 		ev.getPlayer().getInventory().clear();
-		ev.getPlayer().getInventory().setItem(0, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop"));
+		ev.getPlayer().getInventory().setItem(0, UtilItem.Item(new ItemStack(Material.CHEST), new String[]{"§bKlick mich um in den Shop zukommen."}, "§7Shop"));
 	}
 	
 	@EventHandler

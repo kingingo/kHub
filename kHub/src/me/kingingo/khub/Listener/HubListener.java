@@ -307,7 +307,7 @@ public class HubListener extends kListener{
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.COMPASS){
 				ev.getPlayer().openInventory(getGameInv());
 				ev.setCancelled(true);
-			}else if(ev.getPlayer().getItemInHand().getType()==Material.BONE){
+			}else if(ev.getPlayer().getItemInHand().getType()==Material.CHEST){
 				ev.getPlayer().openInventory(getManager().getShop().getMain());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.DIAMOND_PICKAXE){
 				UtilBG.sendToServer(ev.getPlayer(), "v", getManager().getInstance());

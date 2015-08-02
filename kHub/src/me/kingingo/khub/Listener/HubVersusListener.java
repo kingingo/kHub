@@ -23,6 +23,7 @@ import me.kingingo.kcore.Packet.Packets.ARENA_STATUS;
 import me.kingingo.kcore.Packet.Packets.VERSUS_SETTINGS;
 import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.StatsManager.StatsManager;
+import me.kingingo.kcore.TreasureChest.StandingTreasureChest.StandingTreasureChest;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.TabTitle;
@@ -216,7 +217,7 @@ public class HubVersusListener extends kListener{
 			ev.setCancelled(true);
 		}
 		if(UtilEvent.isAction(ev, ActionType.R)){
-			if(ev.getPlayer().getItemInHand().getType()==Material.BONE){
+			if(ev.getPlayer().getItemInHand().getType()==Material.CHEST){
 				ev.getPlayer().openInventory(getManager().getShop().getMain());
 			}
 		}

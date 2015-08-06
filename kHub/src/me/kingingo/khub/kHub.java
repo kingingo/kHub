@@ -11,6 +11,7 @@ import me.kingingo.kcore.Command.Admin.CommandMemFix;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
 import me.kingingo.kcore.Command.Admin.CommandgBroadcast;
 import me.kingingo.kcore.Disguise.DisguiseManager;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
 import me.kingingo.kcore.Listener.Command.ListenerCMD;
 import me.kingingo.kcore.MySQL.MySQL;
@@ -42,6 +43,7 @@ public class kHub extends JavaPlugin{
 			long time = System.currentTimeMillis();
 			loadConfig();
 			this.mysql=new MySQL(getConfig().getString("Config.MySQL.User"),getConfig().getString("Config.MySQL.Password"),getConfig().getString("Config.MySQL.Host"),getConfig().getString("Config.MySQL.DB"),this);
+			Language.load(mysql);
 			this.Updater=new Updater(this);
 			this.c = new Client(getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),getConfig().getString("Config.HubType").toUpperCase()+getConfig().getInt("Config.Lobby"),this,Updater);
 			this.PacketManager=new PacketManager(this,c);

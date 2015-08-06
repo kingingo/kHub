@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import lombok.Getter;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
@@ -84,15 +84,15 @@ public class ChristmasListener extends kListener{
 			if (e.getCurrentItem().getType() == Material.SNOW_BALL) {
 				if(day==e.getCurrentItem().getAmount()){
 					if(!getManager().getMysql().getString("SELECT `name` FROM `CHRISTMAS` WHERE day='"+day+"' AND name='"+p.getName().toLowerCase()+"'").equalsIgnoreCase("null")){
-						p.sendMessage(Text.PREFIX.getText()+"§cDu hast bereits dein Türchen geöffnet!");						
+						p.sendMessage(Language.getText(p, "PREFIX")+"§cDu hast bereits dein Türchen geöffnet!");						
 					}else{
 						getManager().getMysql().Update("INSERT INTO CHRISTMAS (name,day) VALUES ('"+p.getName().toLowerCase()+"','"+day+"');");
 						c = e.getCurrentItem().getAmount()*UtilMath.RandomInt(4, 1)*7;
 						getManager().getCoins().addCoins(p, true, c);
-						p.sendMessage(Text.PREFIX.getText()+"§aDu hast das Türchen geöffnet und §e"+c+"§a Coins erhalten!");
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "XMAS_DOOR",c));
 					}
 				}else{
-					p.sendMessage(Text.PREFIX.getText()+"§cIst heute der "+e.getCurrentItem().getAmount()+"te ?");
+					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "XMAS_DAY",e.getCurrentItem().getAmount()));
 				}
 				e.setCancelled(true);
 				p.closeInventory();

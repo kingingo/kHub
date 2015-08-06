@@ -10,7 +10,7 @@ import lombok.Setter;
 import me.kingingo.kcore.Addons.AddonNight;
 import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Enum.GameType;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
@@ -226,7 +226,7 @@ public class HubListener extends kListener{
 
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
-		ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.WHEREIS_TEXT.getText(manager.getId()+" Hub"));
+		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT",manager.getId()+" Hub"));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eLobby "+manager.getId(), "§eShop.EpicPvP.de");
 		ev.getPlayer().getInventory().setItem(2, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
 		ev.getPlayer().getInventory().setItem(8,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));

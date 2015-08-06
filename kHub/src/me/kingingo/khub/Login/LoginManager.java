@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import lombok.Getter;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
@@ -54,15 +54,15 @@ public class LoginManager extends kListener{
 				if(isLogin(player)){
 					if(!isRegestriert(player)){
 						Register.add(player);
-						player.sendMessage(Text.PREFIX.getText()+Text.REGISTER_MESSAGE.getText());
+						player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "REGISTER_MESSAGE"));
 					}else{
 						Login.put(player, getPW(player));
-						player.sendMessage(Text.PREFIX.getText()+Text.LOGIN_MESSAGE.getText());
+						player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "LOGIN_MESSAGE"));
 						//getManager().getMysql().Update("INSERT INTO list_users_1 (name,uuid,password) VALUES ('" +player.getName().toLowerCase()+"','"+UtilPlayer.getRealUUID(player)+"','"+Login.get(player)+"') WHERE NOT EXISTS (SELECT name FROM list_users_1 WHERE name='" + player.getName().toLowerCase() + "');");
 						getManager().getMysql().Update("INSERT INTO list_users_1 (name,uuid,password) SELECT '" +player.getName().toLowerCase()+"','"+UtilPlayer.getRealUUID(player)+"','"+Login.get(player)+"' FROM DUAL WHERE NOT EXISTS (SELECT name FROM list_users_1 WHERE name='" +player.getName().toLowerCase()+"');");
 					}
 				}
-				player.sendMessage(Text.PREFIX.getText()+"Informationen wurden erfolgreich geladen. Viel Spaﬂ!");
+				player.sendMessage(Language.getText(player, "PREFIX")+"Informationen wurden erfolgreich geladen. Viel Spaﬂ!");
 				abfragen.remove(i);
 			}
 		}
@@ -145,7 +145,7 @@ public class LoginManager extends kListener{
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		abfragen.add(ev.getPlayer());
-		ev.getPlayer().sendMessage(Text.PREFIX.getText()+"Deine Spieler Informationen werden geladen...");
+		ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "LOAD_PLAYER_DATA"));
 	}
 	
 	@EventHandler

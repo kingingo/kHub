@@ -2,7 +2,7 @@ package me.kingingo.khub.Login;
 
 import lombok.Getter;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,17 +24,17 @@ public class CommandRegister implements CommandExecutor{
 		if(!(cs instanceof Player))return false;
 		p=(Player)cs;
 		if(!getLoginManager().getRegister().contains(p))return false;
-		if(args.length==0)p.sendMessage(Text.PREFIX.getText()+Text.REGISTER_MESSAGE.getText());
+		if(args.length==0)p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "PREFIX"));
 		else if(args.length==1){
 			pw=args[0];
 			if(!pw.matches("[a-zA-Z0-9_]*")){
-				p.sendMessage(Text.PREFIX.getText()+"§cUngültiges Zeichen!");
+				p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "LOGIN_FAIL"));
 				return false;
 			}
 			getLoginManager().getRegister().remove(p);
 			getLoginManager().delLogin(p.getName());
 			getLoginManager().setUser(p, pw, "");
-			p.sendMessage(Text.PREFIX.getText()+Text.REGISTER_ACCEPT.getText());
+			p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "REGISTER_ACCEPT"));
 			return true;
 		}
 		return false;

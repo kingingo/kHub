@@ -2,7 +2,7 @@ package me.kingingo.khub.Login;
 
 import lombok.Getter;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,16 +24,16 @@ public class CommandLogin implements CommandExecutor{
 		if(!(cs instanceof Player))return false;
 		p=(Player)cs;
 		if(!getLoginManager().getLogin().containsKey(p))return false;
-		if(args.length==0)p.sendMessage(Text.PREFIX.getText()+Text.LOGIN_MESSAGE.getText());
+		if(args.length==0)p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "LOGIN_MESSAGE"));
 		else if(args.length==1){
 			pw=args[0];
 			if(pw.equalsIgnoreCase(getLoginManager().getLogin().get(p))){
 				getLoginManager().getLogin().remove(p);
 				getLoginManager().delLogin(p.getName());
-				p.sendMessage(Text.PREFIX.getText()+Text.LOGIN_ACCEPT.getText());
+				p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "LOGIN_ACCEPT"));
 				return true;
 			}else{
-				p.sendMessage(Text.PREFIX.getText()+Text.LOGIN_DENY.getText());
+				p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "LOGIN_DENY"));
 			}
 		}
 		return false;

@@ -9,7 +9,6 @@ import lombok.Getter;
 import me.kingingo.kcore.Enum.GameState;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.Team;
-import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
 import me.kingingo.kcore.Inventory.Inventory.InventoryChoose;
@@ -17,13 +16,13 @@ import me.kingingo.kcore.Inventory.Inventory.InventoryYesNo;
 import me.kingingo.kcore.Inventory.Item.ButtonBase;
 import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.Kit.InventorySetting.KitSettingInventorys;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.ARENA_STATUS;
 import me.kingingo.kcore.Packet.Packets.VERSUS_SETTINGS;
 import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.StatsManager.StatsManager;
-import me.kingingo.kcore.TreasureChest.StandingTreasureChest.StandingTreasureChest;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.TabTitle;
@@ -150,7 +149,7 @@ public class HubVersusListener extends kListener{
 			public void onClick(Player player, ActionType type, Object obj) {
 				if(obj instanceof ItemStack){
 					if( ((ItemStack)obj).getAmount() < statsManager.getInt(Stats.TEAM_MIN, player)){
-						player.sendMessage(Text.PREFIX.getText()+"Die Team maximal anzahl kann kleiner als die mindest anzahl sein!");
+						player.sendMessage(Language.getText(player, "PREFIX")+"Die Team maximal anzahl kann kleiner als die mindest anzahl sein!");
 						player.closeInventory();
 					}else{
 						statsManager.setInt(player, ((ItemStack)obj).getAmount(), Stats.TEAM_MAX);
@@ -168,7 +167,7 @@ public class HubVersusListener extends kListener{
 			public void onClick(Player player, ActionType type, Object obj) {
 				if(obj instanceof ItemStack){
 					if( ((ItemStack)obj).getAmount() > statsManager.getInt(Stats.TEAM_MAX, player)){
-						player.sendMessage(Text.PREFIX.getText()+"Die Team mindest anzahl kann nicht größer als die maximal anzahl sein!");
+						player.sendMessage(Language.getText(player, "PREFIX")+"Die Team mindest anzahl kann nicht größer als die maximal anzahl sein!");
 						player.closeInventory();
 					}else{
 						statsManager.setInt(player, ((ItemStack)obj).getAmount(), Stats.TEAM_MIN);
@@ -335,7 +334,7 @@ public class HubVersusListener extends kListener{
 	
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
-		ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.WHEREIS_TEXT.getText(manager.getId()+" Hub"));
+		ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eVersus Lobby "+manager.getId(), "§eShop.EpicPvP.de");
 		
 		if(creatures.isEmpty()){
@@ -375,14 +374,14 @@ public class HubVersusListener extends kListener{
 			if(versus_warte_liste.get(creatures.get(ev.getRightClicked())).contains(ev.getPlayer()))return;
 			removeFromList(ev.getPlayer());
 			versus_warte_liste.get(creatures.get(ev.getRightClicked())).add(ev.getPlayer());
-			ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.VERSUS_ADDED.getText());
+			ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
 		}else if(ev.getRightClicked().getEntityId()==this.creature_elo.getEntityId()){
 			ev.setCancelled(true);
 			if(elo_liste.contains(ev.getPlayer()))return;
 			removeFromList(ev.getPlayer());
 			elo_liste.add(ev.getPlayer());
 			elo_sort_liste.put(ev.getPlayer().getName(), statsManager.getInt(Stats.ELO, ev.getPlayer()));
-			ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.VERSUS_ADDED.getText());
+			ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
 		}
 	}
 	

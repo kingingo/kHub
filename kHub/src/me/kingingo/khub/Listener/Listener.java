@@ -71,7 +71,7 @@ public class Listener extends kListener{
 		ev.getPlayer().setFoodLevel(20);
 		ev.getPlayer().getInventory().setHelmet(null);
 		ev.getPlayer().getInventory().clear();
-		ev.getPlayer().getInventory().setItem(0, UtilItem.Item(new ItemStack(Material.CHEST), new String[]{"§bKlick mich um in den Shop zukommen."}, "§7Shop"));
+		ev.getPlayer().getInventory().setItem(1, UtilItem.Item(new ItemStack(Material.CHEST), new String[]{"§bKlick mich um in den Shop zukommen."}, "§7Shop"));
 	}
 	
 	@EventHandler

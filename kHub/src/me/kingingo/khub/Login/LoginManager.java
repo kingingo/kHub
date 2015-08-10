@@ -58,11 +58,9 @@ public class LoginManager extends kListener{
 					}else{
 						Login.put(player, getPW(player));
 						player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "LOGIN_MESSAGE"));
-						//getManager().getMysql().Update("INSERT INTO list_users_1 (name,uuid,password) VALUES ('" +player.getName().toLowerCase()+"','"+UtilPlayer.getRealUUID(player)+"','"+Login.get(player)+"') WHERE NOT EXISTS (SELECT name FROM list_users_1 WHERE name='" + player.getName().toLowerCase() + "');");
 						getManager().getMysql().Update("INSERT INTO list_users_1 (name,uuid,password) SELECT '" +player.getName().toLowerCase()+"','"+UtilPlayer.getRealUUID(player)+"','"+Login.get(player)+"' FROM DUAL WHERE NOT EXISTS (SELECT name FROM list_users_1 WHERE name='" +player.getName().toLowerCase()+"');");
 					}
 				}
-				player.sendMessage(Language.getText(player, "PREFIX")+"Informationen wurden erfolgreich geladen. Viel Spaﬂ!");
 				abfragen.remove(i);
 			}
 		}
@@ -145,7 +143,7 @@ public class LoginManager extends kListener{
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		abfragen.add(ev.getPlayer());
-		ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "LOAD_PLAYER_DATA"));
+//		ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "LOAD_PLAYER_DATA"));
 	}
 	
 	@EventHandler

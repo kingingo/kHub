@@ -59,7 +59,6 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandMemFix.class, new CommandMemFix(pManager));
 			Manager.getCmd().register(CommandTime.class, new CommandTime());
 			Manager.getCmd().register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
-			new NickManager(pManager);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 			new ChatListener(this, null,this.pManager);
 			Manager.DebugLog(time, 45, this.getClass().getName());
@@ -68,6 +67,7 @@ public class kHub extends JavaPlugin{
 			for(Entity e : Bukkit.getWorld("world").getEntities()){
 				if(!(e instanceof Player))e.remove();
 			}
+//			new NickManager(pManager);
 		}catch(Exception e){
 			UtilException.catchException(e, "hub"+getConfig().getInt("Config.Lobby"), Bukkit.getIp(), mysql);
 		}

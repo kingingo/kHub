@@ -6,6 +6,7 @@ import lombok.Setter;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilInv;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilServer;
@@ -62,12 +63,14 @@ public class InvisibleManager extends kListener{
 		if(listener!=null && listener.getLoginManager().getLogin().containsKey(ev.getPlayer())||listener!=null && listener.getLoginManager().getRegister().contains(ev.getPlayer()))return;
 		
 		if(UtilEvent.isAction(ev, ActionType.R)){
-			if(ev.getPlayer().getItemInHand().getType()==Material.BLAZE_ROD){
-				ev.getPlayer().getItemInHand().setType(Material.STICK);
-				invisible(ev.getPlayer());
-			}else if(ev.getPlayer().getItemInHand().getType()==Material.STICK){
-				if(visible(ev.getPlayer())){
-					ev.getPlayer().getItemInHand().setType(Material.BLAZE_ROD);
+			if(ev.getPlayer().getItemInHand().getTypeId()==351){
+				if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 8){
+					ev.getPlayer().getItemInHand().setDurability((byte)10);
+					invisible(ev.getPlayer());
+				}else if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 10){
+					if(visible(ev.getPlayer())){
+						ev.getPlayer().getItemInHand().setDurability((byte)8);
+					}
 				}
 			}
 		}
@@ -80,7 +83,7 @@ public class InvisibleManager extends kListener{
 	
 	@EventHandler(priority=EventPriority.LOW)
 	public void Join(PlayerJoinEvent ev){
-		ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.BLAZE_ROD), new String[]{"§bKlick mich die Spieler un/sichtbar."}, "§7Spieler Un/sichtbar"));
+		ev.getPlayer().getInventory().setItem(7, UtilItem.Item(new ItemStack(351,1,(byte)8), new String[]{"§bKlick mich die Spieler un/sichtbar."}, "§7Spieler Un/sichtbar"));
 		for(Player p : invisible.keySet())p.hidePlayer(ev.getPlayer());
 	}
 	

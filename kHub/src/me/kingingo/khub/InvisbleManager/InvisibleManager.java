@@ -3,6 +3,8 @@ package me.kingingo.khub.InvisbleManager;
 import java.util.HashMap;
 
 import lombok.Setter;
+import me.kingingo.kcore.Language.Language;
+import me.kingingo.kcore.Language.LanguageType;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilEvent;
@@ -64,12 +66,16 @@ public class InvisibleManager extends kListener{
 		
 		if(UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getTypeId()==351){
-				if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 8){
-					ev.getPlayer().getItemInHand().setDurability((byte)10);
+				if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 10){
+					ev.getPlayer().getItemInHand().setDurability((byte)8);
+					ev.getPlayer().getItemInHand().getItemMeta().setDisplayName(Language.getText(ev.getPlayer(), "HUB_ITEM_GRAY.DYE_PLAYERS_OFF"));
+					ev.getPlayer().updateInventory();
 					invisible(ev.getPlayer());
-				}else if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 10){
+				}else if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 8){
 					if(visible(ev.getPlayer())){
-						ev.getPlayer().getItemInHand().setDurability((byte)8);
+						ev.getPlayer().getItemInHand().setDurability((byte)10);
+						ev.getPlayer().getItemInHand().getItemMeta().setDisplayName(Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON"));
+						ev.getPlayer().updateInventory();
 					}
 				}
 			}
@@ -83,7 +89,7 @@ public class InvisibleManager extends kListener{
 	
 	@EventHandler(priority=EventPriority.LOW)
 	public void Join(PlayerJoinEvent ev){
-		ev.getPlayer().getInventory().setItem(7, UtilItem.Item(new ItemStack(351,1,(byte)8), new String[]{"§bKlick mich die Spieler un/sichtbar."}, "§7Spieler Un/sichtbar"));
+		ev.getPlayer().getInventory().setItem(7, UtilItem.RenameItem(new ItemStack(351,1,(byte)10),Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
 		for(Player p : invisible.keySet())p.hidePlayer(ev.getPlayer());
 	}
 	

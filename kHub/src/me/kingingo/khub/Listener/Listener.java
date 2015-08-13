@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import lombok.Getter;
 import me.kingingo.kcore.Client.Events.ClientReceiveMessageEvent;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import me.kingingo.kcore.Util.UtilItem;
@@ -71,7 +72,7 @@ public class Listener extends kListener{
 		ev.getPlayer().setFoodLevel(20);
 		ev.getPlayer().getInventory().setHelmet(null);
 		ev.getPlayer().getInventory().clear();
-		ev.getPlayer().getInventory().setItem(1, UtilItem.Item(new ItemStack(Material.CHEST), new String[]{"§bKlick mich um in den Shop zukommen."}, "§7Shop"));
+		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
 	}
 	
 	@EventHandler

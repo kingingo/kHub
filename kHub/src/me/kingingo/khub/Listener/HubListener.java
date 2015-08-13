@@ -73,7 +73,7 @@ public class HubListener extends kListener{
 	private LoginManager loginManager;
 	private InventoryBase language_inv;
 	
-	public HubListener(HubManager manager) {
+	public HubListener(final HubManager manager) {
 		super(manager.getInstance(), "HubListener");
 		this.manager=manager;
 		this.language_inv=new InventoryBase(manager.getInstance(), "");
@@ -83,11 +83,11 @@ public class HubListener extends kListener{
 
 				@Override
 				public void onClick(Player player, ActionType action, Object obj) {
-					Language.updateLanguage(player, LanguageType.get( ((ItemStack)obj).getItemMeta().getDisplayName().substring(2, ((ItemStack)obj).getItemMeta().getDisplayName().length()) ));
+					Language.updateLanguage(player, LanguageType.get( ((ItemStack)obj).getItemMeta().getDisplayName().substring(2, ((ItemStack)obj).getItemMeta().getDisplayName().length()) ),manager.getPacketManager());
 					player.closeInventory();
 				}
 				
-			}, UtilItem.RenameItem(new ItemStack(Material.MAP), "§a"+type.getDef().toUpperCase())));
+			}, UtilItem.RenameItem(new ItemStack(Material.PAPER), "§a"+type.getDef().toUpperCase())));
 		}
 		
 		this.loginManager= new LoginManager(manager);
@@ -249,10 +249,10 @@ public class HubListener extends kListener{
 	public void Join(PlayerJoinEvent ev){
 		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT",manager.getId()+" Hub"));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eLobby "+manager.getId(), "§eShop.EpicPvP.de");
-		ev.getPlayer().getInventory().setItem(0, UtilItem.Item(new ItemStack(Material.COMPASS), new String[]{"§bKlick mich um dich zu den Servern zu teleportieren."}, "§7Compass"));
-		ev.getPlayer().getInventory().setItem(8,UtilItem.Item(new ItemStack(Material.NETHER_STAR), new String[]{"§bKlick mich um die Lobby zu wechseln."},"§aLobby Teleporter"));
+		ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.COMPASS), Language.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
+		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), Language.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-		if(ev.getPlayer().hasPermission(kPermission.ALL_PERMISSION.getPermissionToString()))ev.getPlayer().getInventory().setItem(4, UtilItem.Item(new ItemStack(Material.BOOK_AND_QUILL), new String[]{""}, "§7Sprache auswählen"));
+		if(ev.getPlayer().hasPermission(kPermission.HUB_CHANGE_LANGUAGE.getPermissionToString()))ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
 	}
 	
 	@EventHandler
@@ -334,6 +334,7 @@ public class HubListener extends kListener{
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.DIAMOND_PICKAXE){
 				UtilBG.sendToServer(ev.getPlayer(), "v", getManager().getInstance());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.BOOK_AND_QUILL){
+				ev.setCancelled(true);
 				ev.getPlayer().openInventory(language_inv.getMain());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.FIREWORK){
 				UtilBG.sendToServer(ev.getPlayer(), "event", getManager().getInstance());

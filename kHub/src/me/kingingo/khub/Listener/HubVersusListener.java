@@ -3,7 +3,6 @@ package me.kingingo.khub.Listener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeMap;
 
 import lombok.Getter;
 import me.kingingo.kcore.Enum.GameState;
@@ -56,14 +55,11 @@ public class HubVersusListener extends kListener{
 
 	@Getter
 	private HubManager manager;
-	private ArrayList<ARENA_STATUS> status = new ArrayList<>();
+	private HashMap<ARENA_STATUS,TeamMinMax> status = new HashMap<>();
 	private HashMap<VersusType,ArrayList<Player>> versus_warte_liste = new HashMap<>();
-	private TreeMap<String,Integer> elo_sort_liste = new TreeMap<>();
-	private ArrayList<Player> elo_liste = new ArrayList<>();
 	private StatsManager statsManager;
 	private String kit;
 	private InventoryBase base;
-	private Creature creature_elo;
 	private Creature creature_option;
 	private InventoryPageBase optionen;
 	private InventoryYesNo kit_random;
@@ -71,6 +67,7 @@ public class HubVersusListener extends kListener{
 	private InventoryChoose team_max;
 	private KitSettingInventorys kits;
 	private HashMap<Creature,VersusType> creatures = new HashMap<>();
+	private HashMap<Player,Player> vs = new HashMap<>();
 	
 	public HubVersusListener(HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
@@ -205,9 +202,6 @@ public class HubVersusListener extends kListener{
 				list.remove(player);
 			}
 		}
-		
-		elo_liste.remove(player);
-		elo_sort_liste.remove(player.getName());
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
@@ -222,97 +216,105 @@ public class HubVersusListener extends kListener{
 		}
 	}
 	
-	ARENA_STATUS s;
-	ArrayList<Player> list = new ArrayList<>();
+	HashMap<Team,ArrayList<Player>> list = new HashMap<>();
 	int minteam;
 	int maxteam;
+	String kit_name;
 	Player player;
-	int pi = 0;
+	boolean b=false;
+	VersusType type;
+	int a=0;
+	int t=0;
 	@EventHandler
 	public void WarteListe(UpdateEvent ev){
-		if(ev.getType()==UpdateType.SEC && !status.isEmpty()){
-			for(VersusType i : versus_warte_liste.keySet()){
-				if(versus_warte_liste.get(i).isEmpty())continue;
-				if(versus_warte_liste.get(i).isEmpty())continue;
-				
-				for(int e = 0; e<status.size(); e++){
-					s=(ARENA_STATUS)status.get(e);
-					if(s.getState()==GameState.LobbyPhase&&!s.getMap().equalsIgnoreCase("")){
-						if(s.getTeams()==i.getTeam().length){
-							list.clear();
-							player=versus_warte_liste.get(i).get(0);
-							versus_warte_liste.remove(player);
-							minteam=statsManager.getInt(Stats.TEAM_MIN, player);
-							maxteam=statsManager.getInt(Stats.TEAM_MAX, player);
-							
-							for(int t = 0; t<s.getTeams(); t++){
-								if(minteam <= statsManager.getInt(Stats.TEAM_MIN, versus_warte_liste.get(i).get(pi))){
-									if(maxteam >= statsManager.getInt(Stats.TEAM_MAX, versus_warte_liste.get(i).get(pi))){
-										getManager().getPacketManager().SendPacket(s.getServer(), new VERSUS_SETTINGS(i,s.getArena(), player.getName(),versus_warte_liste.get(i).get(pi), byInt(t)) );
-										list.add(versus_warte_liste.get(i).get(pi));
-										versus_warte_liste.remove(pi);
-										continue;
+		if(ev.getType()==UpdateType.SEC_3 && !status.isEmpty()){
+			for(ARENA_STATUS arena : status.keySet()){
+				if(arena.getState()==GameState.LobbyPhase){
+					type=VersusType.withTeamAnzahl( arena.getTeams() );
+					if(versus_warte_liste.containsKey(type)){
+						
+						if(!versus_warte_liste.get(type).isEmpty()){
+							if(arena.getOnline()>1){
+								maxteam=status.get(arena).maxteam;
+								minteam=status.get(arena).minteam;
+								kit_name=status.get(arena).kit_name;
+								
+								for(int i = 0 ; i<versus_warte_liste.get(type).size(); i++){
+									if(arena.getOnline() >= maxteam*arena.getTeams())break;
+									player=(Player)versus_warte_liste.get(type).get(i);
+									if(minteam <= statsManager.getInt(Stats.TEAM_MIN, player)){
+										if(maxteam >= statsManager.getInt(Stats.TEAM_MIN, player)){
+											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),kit_name,player,Team.SOLO) );
+											versus_warte_liste.get(type).remove(player);
+											UtilBG.sendToServer(player, arena.getServer(), manager.getInstance());
+											arena.setOnline(arena.getOnline()+1);
+										}
 									}
 								}
-								pi++;
+							}else{
+								if(versus_warte_liste.get(type).size()>=arena.getTeams()){
+									minteam=statsManager.getInt(Stats.TEAM_MIN, versus_warte_liste.get(type).get(a));
+									maxteam=statsManager.getInt(Stats.TEAM_MAX, versus_warte_liste.get(type).get(a));
+									kit_name=versus_warte_liste.get(type).get(a).getName();
+									if(!list.isEmpty()){
+										list.clear();
+									}
+										
+									for(Team team : type.getTeam())list.put(team, new ArrayList<Player>());
+									t=0;
+									for(Player player : versus_warte_liste.get(type)){
+										if(list.get(((Team)list.keySet().toArray()[t])).size()==maxteam&&t==list.size())break;
+										if(minteam <= statsManager.getInt(Stats.TEAM_MIN, player)){
+											if(maxteam >= statsManager.getInt(Stats.TEAM_MIN, player)){
+												list.get(((Team)list.keySet().toArray()[t])).add(player);
+												t++;
+											}
+										}
+									}
+									
+									if(!list.isEmpty()){
+										b=true;
+										for(Team team : type.getTeam()){
+											if(list.get(team).size()<minteam){
+												b=false;
+												break;
+											}
+										}
+										
+										if(b){
+											status.get(arena).maxteam=maxteam;
+											status.get(arena).minteam=minteam;
+											status.get(arena).kit_name=kit_name;
+											for(Team team : list.keySet()){
+												for(Player player : list.get(team)){
+													getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),kit_name,player,team) );
+												}
+											}
+											
+											for(Team team : list.keySet()){
+												for(Player player : list.get(team)){
+													versus_warte_liste.get(type).remove(player);
+													UtilBG.sendToServer(player, arena.getServer(), manager.getInstance());
+												}
+											}
+										}
+									}else{
+										a++;
+									}
+								}
 							}
-							pi=0;
-							for(Player p : list)UtilBG.sendToServer(p, s.getServer(), getManager().getInstance());
 						}
 					}
 				}
 			}
-			
-			for(ARENA_STATUS s : status){
-				if(s.getTeams()==2){
-					if(s.getMap().equalsIgnoreCase("")){
-						if(s.getState()==GameState.LobbyPhase){
-							getManager().getPacketManager().SendPacket(s.getServer(), new VERSUS_SETTINGS(VersusType._TEAMx2, s.getArena(), "null", elo_liste.get(0), Team.RED));
-							
-							for(String p : elo_sort_liste.keySet()){
-								if(pi==1){
-									player=Bukkit.getPlayer(p);
-									getManager().getPacketManager().SendPacket(s.getServer(), new VERSUS_SETTINGS(VersusType._TEAMx2, s.getArena(), "null", player, Team.BLUE));
-									pi=0;
-									break;
-								}
-								if(elo_liste.get(0).getName().equalsIgnoreCase(p)){
-									pi=1;
-								}
-							}
-							
-							elo_sort_liste.remove(elo_liste.get(0));
-							elo_sort_liste.remove(player);
-							
-							UtilBG.sendToServer(player, s.getServer(), manager.getInstance());
-							UtilBG.sendToServer(elo_liste.get(0), s.getServer(), manager.getInstance());
-							elo_liste.remove(0);
-							elo_liste.remove(player);
-						}
-					}
-				}
-			}
-			
-			
-		}
-	}
-	
-	public Team byInt(int i){
-		switch(i){
-		case 0:return Team.RED;
-		case 1:return Team.BLUE;
-		case 2:return Team.GREEN;
-		case 3:return Team.YELLOW;
-		case 4:return Team.ORANGE;
-		case 5:return Team.GRAY;
-		default: return null;
-		}
+		}	
 	}
 	
 	@EventHandler
 	public void Quit(PlayerQuitEvent ev){
 		removeFromList(ev.getPlayer());
 		statsManager.SaveAllPlayerData(player);
+		vs.remove(ev.getPlayer());
 	}
 	
 	ArrayList<Player> load = new ArrayList<>();
@@ -350,16 +352,12 @@ public class HubVersusListener extends kListener{
 				((Villager)creature).setAdult();
 			}
 			
-			this.creature_elo=manager.getPet().AddPetWithOutOwner("§c1vs1", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),233.552,71.5,188.620));
-			((Villager)this.creature_elo).setProfession(Profession.BLACKSMITH);
-			((Villager)this.creature_elo).setAdult();
-			
 			this.creature_option=manager.getPet().AddPetWithOutOwner("§5Optionen", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),231.491,70,181.7));
 			((Villager)this.creature_option).setProfession(Profession.LIBRARIAN);
 			((Villager)this.creature_option).setAdult();
 		}
 		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
-		ev.getPlayer().getInventory().setItem(8,new ItemStack(Material.DIAMOND_SWORD));
+		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		load.add(ev.getPlayer());
 	}
@@ -375,13 +373,28 @@ public class HubVersusListener extends kListener{
 			removeFromList(ev.getPlayer());
 			versus_warte_liste.get(creatures.get(ev.getRightClicked())).add(ev.getPlayer());
 			ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
-		}else if(ev.getRightClicked().getEntityId()==this.creature_elo.getEntityId()){
-			ev.setCancelled(true);
-			if(elo_liste.contains(ev.getPlayer()))return;
-			removeFromList(ev.getPlayer());
-			elo_liste.add(ev.getPlayer());
-			elo_sort_liste.put(ev.getPlayer().getName(), statsManager.getInt(Stats.ELO, ev.getPlayer()));
-			ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
+		}else if(ev.getPlayer().getItemInHand()!=null&&ev.getPlayer().getItemInHand().getType()==Material.DIAMOND_SWORD){
+			if(ev.getRightClicked() instanceof Player){
+				if(vs.containsKey( ((Player)ev.getRightClicked()) )){
+					if(vs.get(((Player)ev.getRightClicked())).getName().equalsIgnoreCase(ev.getPlayer().getName())){
+						for(ARENA_STATUS arena : status.keySet()){
+							if(arena.getState() == GameState.LobbyPhase&&arena.getOnline()<=0){
+								getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getRightClicked()).getName(),ev.getPlayer(),VersusType._TEAMx2.getTeam()[0]) );
+								UtilBG.sendToServer(ev.getPlayer(), arena.getServer(), manager.getInstance());
+								getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getRightClicked()).getName(),((Player)ev.getRightClicked()),VersusType._TEAMx2.getTeam()[1]) );
+								UtilBG.sendToServer(((Player)ev.getRightClicked()), arena.getServer(), manager.getInstance());
+								status.get(arena).maxteam=1;
+								status.get(arena).minteam=1;
+								status.get(arena).kit_name=((Player)ev.getRightClicked()).getName();
+								vs.remove(((Player)ev.getRightClicked()));
+							}
+						}
+						return;
+					}
+				}
+				vs.remove(ev.getPlayer());
+				vs.put(ev.getPlayer(), ((Player)ev.getRightClicked()));
+			}
 		}
 	}
 	
@@ -392,21 +405,26 @@ public class HubVersusListener extends kListener{
 	public void Receive(PacketReceiveEvent ev){
 		if(ev.getPacket() instanceof ARENA_STATUS){
 			packet = (ARENA_STATUS)ev.getPacket();
-			System.out.println("PACKET: "+packet.toString());
 			find=false;
 			
 			for(int i = 0 ; i < status.size(); i++){
 				//ÜBERPRÜFT OB DIE ARENA SCHONMAL ABGESPEICHERT WURDE
-				if(status.get(i).getArena().equalsIgnoreCase(packet.getArena())){
+				if(((ARENA_STATUS)status.keySet().toArray()[i]).getArena().equalsIgnoreCase(packet.getArena())){
 					//ÜBERSCHREIBT DAS BESTEHNDE PACKET
-					status.get(i).Set(packet.toString());
+					((ARENA_STATUS)status.keySet().toArray()[i]).Set(packet.toString());
 					find=true;
 					break;
 				}
 			}
 			//SPEICHERT EINE NEUE ARENA AB!
-			if(!find)status.add(packet);
+			if(!find)status.put(packet,new TeamMinMax());
 		}
+	}
+	
+	public class TeamMinMax{
+		public int minteam;
+		public int maxteam;
+		private String kit_name;
 	}
 
 }

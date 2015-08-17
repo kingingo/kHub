@@ -89,6 +89,7 @@ public class HubListener extends kListener{
 				
 			}, UtilItem.RenameItem(new ItemStack(Material.PAPER), "§a"+type.getDef().toUpperCase())));
 		}
+		this.language_inv.getMain().fill(Material.STAINED_GLASS_PANE,(byte)15);
 		
 		this.loginManager= new LoginManager(manager);
 		this.manager.getInvisibleManager().setListener(this);
@@ -252,7 +253,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.COMPASS), Language.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
 		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), Language.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-		if(ev.getPlayer().hasPermission(kPermission.HUB_CHANGE_LANGUAGE.getPermissionToString()))ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
+		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
 	}
 	
 	@EventHandler

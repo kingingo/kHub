@@ -26,6 +26,7 @@ import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.UtilBG;
+import me.kingingo.kcore.Util.UtilEnt;
 import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilInv;
@@ -45,6 +46,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -334,14 +336,13 @@ public class HubVersusListener extends kListener{
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eVersus Lobby "+manager.getId(), "§eShop.EpicPvP.de");
 		
 		if(creatures.isEmpty()){
 			creatures.put(manager.getPet().AddPetWithOutOwner("§aRandom 1vs1", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),259.434,71.5,192.585)) ,VersusType._TEAMx2);
-			
 			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx3.getTeam().length+"x Teams", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),238.524,71.5,202.596)) ,VersusType._TEAMx3);
 			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx4.getTeam().length+"x Teams", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),241.518,71.5,205.421)) ,VersusType._TEAMx4);
 			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx5.getTeam().length+"x Teams", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),249.709,71.5,205.210)) ,VersusType._TEAMx5);
@@ -350,16 +351,59 @@ public class HubVersusListener extends kListener{
 			for(Creature creature : creatures.keySet()){
 				((Villager)creature).setProfession(Profession.BUTCHER);
 				((Villager)creature).setAdult();
+				manager.getHologram().setName(creature, creature.getCustomName());
+				creature.setCustomName("");
+				UtilEnt.setNoAI(creature, true);
 			}
 			
 			this.creature_option=manager.getPet().AddPetWithOutOwner("§5Optionen", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),231.491,70,181.7));
 			((Villager)this.creature_option).setProfession(Profession.LIBRARIAN);
 			((Villager)this.creature_option).setAdult();
+			manager.getHologram().setName(this.creature_option, this.creature_option.getCustomName());
+			creature_option.setCustomName("");
+			UtilEnt.setNoAI(creature_option, true);
 		}
 		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
 		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		load.add(ev.getPlayer());
+	}
+	
+	@EventHandler
+	public void Entity(EntityDamageByEntityEvent ev){
+		if(ev.getEntity() instanceof Player && ev.getDamager() instanceof Player){
+			if(((Player)ev.getDamager()).getItemInHand().getType()==Material.DIAMOND_SWORD){
+					if(vs.containsKey( ((Player)ev.getEntity()) )){
+						if(vs.get(((Player)ev.getEntity())).getName().equalsIgnoreCase(((Player)ev.getDamager()).getName())){
+							boolean b = false;
+							for(ARENA_STATUS arena : status.keySet()){
+								if(VersusType.withTeamAnzahl( arena.getTeams() )==VersusType._TEAMx2&&arena.getState() == GameState.LobbyPhase&&arena.getOnline()<=0){
+									getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getDamager()),VersusType._TEAMx2.getTeam()[0]) );
+									UtilBG.sendToServer(((Player)ev.getDamager()), arena.getServer(), manager.getInstance());
+									getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getEntity()),VersusType._TEAMx2.getTeam()[1]) );
+									UtilBG.sendToServer(((Player)ev.getEntity()), arena.getServer(), manager.getInstance());
+									status.get(arena).maxteam=1;
+									status.get(arena).minteam=1;
+									status.get(arena).kit_name=((Player)ev.getEntity()).getName();
+									vs.remove(((Player)ev.getEntity()));
+									vs.remove(((Player)ev.getDamager()));
+									b =true;
+									break;
+								}
+							}
+							if(!b){
+								((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_NO_FREE_ARENAS"));
+								((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_NO_FREE_ARENAS"));
+							}
+							return;
+						}
+					}
+					vs.remove(((Player)ev.getDamager()));
+					vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
+					((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
+					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
+			}
+		}
 	}
 	
 	@EventHandler
@@ -369,31 +413,13 @@ public class HubVersusListener extends kListener{
 			ev.getPlayer().openInventory(this.optionen);
 		}else if(creatures.containsKey(ev.getRightClicked())){
 			ev.setCancelled(true);
-			if(versus_warte_liste.get(creatures.get(ev.getRightClicked())).contains(ev.getPlayer()))return;
-			removeFromList(ev.getPlayer());
-			versus_warte_liste.get(creatures.get(ev.getRightClicked())).add(ev.getPlayer());
-			ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
-		}else if(ev.getPlayer().getItemInHand()!=null&&ev.getPlayer().getItemInHand().getType()==Material.DIAMOND_SWORD){
-			if(ev.getRightClicked() instanceof Player){
-				if(vs.containsKey( ((Player)ev.getRightClicked()) )){
-					if(vs.get(((Player)ev.getRightClicked())).getName().equalsIgnoreCase(ev.getPlayer().getName())){
-						for(ARENA_STATUS arena : status.keySet()){
-							if(arena.getState() == GameState.LobbyPhase&&arena.getOnline()<=0){
-								getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getRightClicked()).getName(),ev.getPlayer(),VersusType._TEAMx2.getTeam()[0]) );
-								UtilBG.sendToServer(ev.getPlayer(), arena.getServer(), manager.getInstance());
-								getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getRightClicked()).getName(),((Player)ev.getRightClicked()),VersusType._TEAMx2.getTeam()[1]) );
-								UtilBG.sendToServer(((Player)ev.getRightClicked()), arena.getServer(), manager.getInstance());
-								status.get(arena).maxteam=1;
-								status.get(arena).minteam=1;
-								status.get(arena).kit_name=((Player)ev.getRightClicked()).getName();
-								vs.remove(((Player)ev.getRightClicked()));
-							}
-						}
-						return;
-					}
-				}
-				vs.remove(ev.getPlayer());
-				vs.put(ev.getPlayer(), ((Player)ev.getRightClicked()));
+			if(versus_warte_liste.get(creatures.get(ev.getRightClicked())).contains(ev.getPlayer())){
+				removeFromList(ev.getPlayer());
+				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_REMOVE"));
+			}else{
+				removeFromList(ev.getPlayer());
+				versus_warte_liste.get(creatures.get(ev.getRightClicked())).add(ev.getPlayer());
+				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
 			}
 		}
 	}

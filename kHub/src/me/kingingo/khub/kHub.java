@@ -62,7 +62,7 @@ public class kHub extends JavaPlugin{
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 			new ChatListener(this, null,this.pManager);
 			Manager.DebugLog(time, 45, this.getClass().getName());
-			new AACHack(getConfig().getString("Config.HubType").toUpperCase()+getConfig().getInt("Config.Lobby"), mysql, PacketManager);
+//			new AACHack(getConfig().getString("Config.HubType").toUpperCase()+getConfig().getInt("Config.Lobby"), mysql, PacketManager);
 			new ListenerCMD(this);
 			for(Entity e : Bukkit.getWorld("world").getEntities()){
 				if(!(e instanceof Player))e.remove();

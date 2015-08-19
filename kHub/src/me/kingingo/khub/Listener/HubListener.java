@@ -12,7 +12,6 @@ import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
-import me.kingingo.kcore.Inventory.Inventory.InventoryChoose;
 import me.kingingo.kcore.Inventory.Item.ButtonBase;
 import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.Language.Language;
@@ -33,6 +32,7 @@ import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilServer;
+import me.kingingo.kcore.lag.Lag;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.Lobby.Lobby;
 import me.kingingo.khub.Login.LoginManager;
@@ -85,6 +85,7 @@ public class HubListener extends kListener{
 				public void onClick(Player player, ActionType action, Object obj) {
 					Language.updateLanguage(player, LanguageType.get( ((ItemStack)obj).getItemMeta().getDisplayName().substring(2, ((ItemStack)obj).getItemMeta().getDisplayName().length()) ),manager.getPacketManager());
 					player.closeInventory();
+					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "LANGUAGE_CHANGE"));
 				}
 				
 			}, UtilItem.RenameItem(new ItemStack(Material.PAPER), "§a"+type.getDef().toUpperCase())));
@@ -259,7 +260,7 @@ public class HubListener extends kListener{
 	@EventHandler
 	public void StatusUpdate(UpdateEvent ev){
 		if(ev.getType()==UpdateType.SLOW){
-			manager.getPacketManager().SendPacket("DATA", new HUB_ONLINE("hub"+manager.getId(), UtilServer.getPlayers().size()));
+			manager.getPacketManager().SendPacket("DATA", new HUB_ONLINE("hub"+manager.getId(), UtilServer.getPlayers().size(),Lag.getTPS()));
 		}
 	}
 	

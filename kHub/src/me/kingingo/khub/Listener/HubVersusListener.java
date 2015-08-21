@@ -25,9 +25,11 @@ import me.kingingo.kcore.StatsManager.StatsManager;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.TabTitle;
+import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEnt;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilInv;
 import me.kingingo.kcore.Util.UtilItem;
@@ -74,6 +76,7 @@ public class HubVersusListener extends kListener{
 	public HubVersusListener(HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
 		this.manager=manager;
+		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
 		this.base=new InventoryBase(manager.getInstance(), "§bVersus");
 		VersusKit k = new VersusKit();
@@ -228,18 +231,24 @@ public class HubVersusListener extends kListener{
 	public void WarteListe(UpdateEvent ev){
 		if(ev.getType()==UpdateType.SEC_3 && !status.isEmpty()){
 			for(ARENA_STATUS arena : status){
-				if(arena.getState()==GameState.LobbyPhase){
+				if(arena.getState()==GameState.LobbyPhase/*||arena.getState()==GameState.Laden*/){
 					type=VersusType.withTeamAnzahl( arena.getTeams() );
 					if(versus_warte_liste.containsKey(type)){
 						
 						if(!versus_warte_liste.get(type).isEmpty()){
-							if(arena.getOnline()>1){
-								
+							System.out.println(arena.getServer()+"  "+ arena.getArena()+"   "+arena.getOnline()+">1&&"+arena.getOnline()+">="+(arena.getMax_team()*arena.getTeams())+"&&"+arena.getState()+"==GameState.Laden");
+							if(arena.getOnline()>1/*&&arena.getOnline()>=(arena.getMax_team()*arena.getTeams())&&arena.getState()==GameState.Laden*/){
+								System.out.println("1");
 								for(int i = 0 ; i<versus_warte_liste.get(type).size(); i++){
+									System.out.println("3  "+arena.getOnline()+" >= "+arena.getMax_team()+"*"+arena.getTeams());
 									if(arena.getOnline() >= arena.getMax_team()*arena.getTeams())break;
+									System.out.println("4");
 									player=(Player)versus_warte_liste.get(type).get(i);
+									System.out.println("5 "+player.getName());
 									if(arena.getMin_team() <= statsManager.getInt(Stats.TEAM_MIN, player)){
+										System.out.println("6");
 										if(arena.getMax_team() >= statsManager.getInt(Stats.TEAM_MIN, player)){
+											System.out.println("7");
 											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),arena.getKit(),player,Team.SOLO,arena.getMin_team(),arena.getMax_team()) );
 											versus_warte_liste.get(type).remove(player);
 											UtilBG.sendToServer(player, arena.getServer(), manager.getInstance());
@@ -248,9 +257,15 @@ public class HubVersusListener extends kListener{
 									}
 								}
 							}else{
-								if(versus_warte_liste.get(type).size()>=arena.getTeams()){
-									arena.setMin_team(statsManager.getInt(Stats.TEAM_MIN, versus_warte_liste.get(type).get(a)));
-									arena.setMax_team(statsManager.getInt(Stats.TEAM_MAX, versus_warte_liste.get(type).get(a)));
+								if(versus_warte_liste.get(type).size()>=arena.getTeams()&&arena.getOnline()<=0){
+									System.out.println("2");
+									if(VersusType.byInt(arena.getTeams()) == VersusType._TEAMx2){
+										arena.setMin_team(1);
+										arena.setMax_team(1);
+									}else{
+										arena.setMin_team(statsManager.getInt(Stats.TEAM_MIN, versus_warte_liste.get(type).get(a)));
+										arena.setMax_team(statsManager.getInt(Stats.TEAM_MAX, versus_warte_liste.get(type).get(a)));
+									}
 									arena.setKit(versus_warte_liste.get(type).get(a).getName());
 									if(!list.isEmpty()){
 										list.clear();
@@ -258,14 +273,31 @@ public class HubVersusListener extends kListener{
 										
 									for(Team team : type.getTeam())list.put(team, new ArrayList<Player>());
 									t=0;
+									boolean b = false;
 									for(Player player : versus_warte_liste.get(type)){
-										if(list.get(((Team)list.keySet().toArray()[t])).size()==arena.getMax_team()&&t==list.size())break;
+										System.out.println("T: "+t+" "+list.size() +" "+arena.getMax_team());
 										if(arena.getMin_team() <= statsManager.getInt(Stats.TEAM_MIN, player)){
 											if(arena.getMax_team() >= statsManager.getInt(Stats.TEAM_MIN, player)){
 												list.get(((Team)list.keySet().toArray()[t])).add(player);
-												t++;
+												System.out.println("T: "+((Team)list.keySet().toArray()[t]).name()+" "+player.getName());
+												if( (t+1)==list.size() ){
+													t=0;
+												}else{
+													t++;
+												}
 											}
 										}
+										
+										for(Team t : list.keySet()){
+											if( list.get(t).size() >= arena.getMax_team() ){
+												b=true;
+											}else{
+												b=false;
+												break;
+											}
+										}
+										
+										if(b)break;
 									}
 									
 									if(!list.isEmpty()){
@@ -278,6 +310,7 @@ public class HubVersusListener extends kListener{
 										}
 										
 										if(b){
+//											arena.setState(GameState.Laden);
 											for(Team team : list.keySet()){
 												for(Player player : list.get(team)){
 													getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),arena.getKit(),player,team,arena.getMin_team(),arena.getMax_team()) );
@@ -329,7 +362,7 @@ public class HubVersusListener extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
-		ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
+		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eVersus Lobby "+manager.getId(), "§eShop.EpicPvP.de");
 		
 		if(creatures.isEmpty()){
@@ -360,40 +393,53 @@ public class HubVersusListener extends kListener{
 		load.add(ev.getPlayer());
 	}
 	
+	private String s;
 	@EventHandler
 	public void Entity(EntityDamageByEntityEvent ev){
 		if(ev.getEntity() instanceof Player && ev.getDamager() instanceof Player){
 			if(((Player)ev.getDamager()).getItemInHand().getType()==Material.DIAMOND_SWORD){
-					if(vs.containsKey( ((Player)ev.getEntity()) )){
-						if(vs.get(((Player)ev.getEntity())).getName().equalsIgnoreCase(((Player)ev.getDamager()).getName())){
-							boolean b = false;
-							for(ARENA_STATUS arena : status){
-								if(VersusType.withTeamAnzahl( arena.getTeams() )==VersusType._TEAMx2&&arena.getState() == GameState.LobbyPhase&&arena.getOnline()<=0){
-									arena.setMin_team(1);
-									arena.setMax_team(1);
-									getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getDamager()),VersusType._TEAMx2.getTeam()[0],1,1) );
-									UtilBG.sendToServer(((Player)ev.getDamager()), arena.getServer(), manager.getInstance());
-									getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getEntity()),VersusType._TEAMx2.getTeam()[1],1,1) );
-									UtilBG.sendToServer(((Player)ev.getEntity()), arena.getServer(), manager.getInstance());							
-									arena.setState(GameState.InGame);
-									arena.setKit(((Player)ev.getEntity()).getName());
-									vs.remove(((Player)ev.getEntity()));
-									vs.remove(((Player)ev.getDamager()));
-									b =true;
-									break;
+				
+					s=UtilTime.getTimeManager().check("VERSUS_SWORD", ((Player)ev.getDamager()));
+					if(s!=null){
+						((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
+					}else{
+						UtilTime.getTimeManager().add("VERSUS_SWORD", ((Player)ev.getDamager()), TimeSpan.SECOND*10);
+						if(vs.containsKey( ((Player)ev.getEntity()) )){
+							if(vs.get(((Player)ev.getEntity())).getName().equalsIgnoreCase(((Player)ev.getDamager()).getName())){
+								boolean b = false;
+								for(ARENA_STATUS arena : status){
+									if(VersusType.withTeamAnzahl( arena.getTeams() )==VersusType._TEAMx2){
+										System.out.println("ARENA: "+arena.getArena()+" "+arena.getOnline() +" "+arena.getServer()+" "+arena.getState().name());
+										if(arena.getState() == GameState.LobbyPhase&&arena.getOnline()<=0){
+											System.out.println("1ARENA: "+arena.getArena() +" "+arena.getServer()+" "+arena.getState().name());
+											System.out.println("1ARENA: "+((Player)ev.getEntity()).getName()+"  "+((Player)ev.getDamager()).getName());
+											arena.setMin_team(1);
+											arena.setMax_team(1);
+											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getDamager()),VersusType._TEAMx2.getTeam()[0],1,1) );
+											UtilBG.sendToServer(((Player)ev.getDamager()), arena.getServer(), manager.getInstance());
+											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getEntity()),VersusType._TEAMx2.getTeam()[1],1,1) );
+											UtilBG.sendToServer(((Player)ev.getEntity()), arena.getServer(), manager.getInstance());							
+											arena.setState(GameState.InGame);
+											arena.setKit(((Player)ev.getEntity()).getName());
+											vs.remove(((Player)ev.getEntity()));
+											vs.remove(((Player)ev.getDamager()));
+											b =true;
+											break;
+										}
+									}
 								}
+								if(!b){
+									((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_NO_FREE_ARENAS"));
+									((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_NO_FREE_ARENAS"));
+								}
+								return;
 							}
-							if(!b){
-								((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_NO_FREE_ARENAS"));
-								((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_NO_FREE_ARENAS"));
-							}
-							return;
 						}
+						vs.remove(((Player)ev.getDamager()));
+						vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
+						((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
+						((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
 					}
-					vs.remove(((Player)ev.getDamager()));
-					vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
-					((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
-					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
 			}
 		}
 	}
@@ -424,7 +470,7 @@ public class HubVersusListener extends kListener{
 		if(ev.getPacket() instanceof ARENA_STATUS){
 			packet = (ARENA_STATUS)ev.getPacket();
 			find=false;
-			
+			System.out.println("PACKET; "+packet.toString());
 			for(int i = 0 ; i < status.size(); i++){
 				//ÜBERPRÜFT OB DIE ARENA SCHONMAL ABGESPEICHERT WURDE
 				if(((ARENA_STATUS)status.toArray()[i]).getArena().equalsIgnoreCase(packet.getArena())){

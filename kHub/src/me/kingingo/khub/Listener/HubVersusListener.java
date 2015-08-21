@@ -57,7 +57,7 @@ public class HubVersusListener extends kListener{
 
 	@Getter
 	private HubManager manager;
-	private HashMap<ARENA_STATUS,TeamMinMax> status = new HashMap<>();
+	private ArrayList<ARENA_STATUS> status = new ArrayList<>();
 	private HashMap<VersusType,ArrayList<Player>> versus_warte_liste = new HashMap<>();
 	private StatsManager statsManager;
 	private String kit;
@@ -219,9 +219,6 @@ public class HubVersusListener extends kListener{
 	}
 	
 	HashMap<Team,ArrayList<Player>> list = new HashMap<>();
-	int minteam;
-	int maxteam;
-	String kit_name;
 	Player player;
 	boolean b=false;
 	VersusType type;
@@ -230,23 +227,20 @@ public class HubVersusListener extends kListener{
 	@EventHandler
 	public void WarteListe(UpdateEvent ev){
 		if(ev.getType()==UpdateType.SEC_3 && !status.isEmpty()){
-			for(ARENA_STATUS arena : status.keySet()){
+			for(ARENA_STATUS arena : status){
 				if(arena.getState()==GameState.LobbyPhase){
 					type=VersusType.withTeamAnzahl( arena.getTeams() );
 					if(versus_warte_liste.containsKey(type)){
 						
 						if(!versus_warte_liste.get(type).isEmpty()){
 							if(arena.getOnline()>1){
-								maxteam=status.get(arena).maxteam;
-								minteam=status.get(arena).minteam;
-								kit_name=status.get(arena).kit_name;
 								
 								for(int i = 0 ; i<versus_warte_liste.get(type).size(); i++){
-									if(arena.getOnline() >= maxteam*arena.getTeams())break;
+									if(arena.getOnline() >= arena.getMax_team()*arena.getTeams())break;
 									player=(Player)versus_warte_liste.get(type).get(i);
-									if(minteam <= statsManager.getInt(Stats.TEAM_MIN, player)){
-										if(maxteam >= statsManager.getInt(Stats.TEAM_MIN, player)){
-											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),kit_name,player,Team.SOLO) );
+									if(arena.getMin_team() <= statsManager.getInt(Stats.TEAM_MIN, player)){
+										if(arena.getMax_team() >= statsManager.getInt(Stats.TEAM_MIN, player)){
+											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),arena.getKit(),player,Team.SOLO,arena.getMin_team(),arena.getMax_team()) );
 											versus_warte_liste.get(type).remove(player);
 											UtilBG.sendToServer(player, arena.getServer(), manager.getInstance());
 											arena.setOnline(arena.getOnline()+1);
@@ -255,9 +249,9 @@ public class HubVersusListener extends kListener{
 								}
 							}else{
 								if(versus_warte_liste.get(type).size()>=arena.getTeams()){
-									minteam=statsManager.getInt(Stats.TEAM_MIN, versus_warte_liste.get(type).get(a));
-									maxteam=statsManager.getInt(Stats.TEAM_MAX, versus_warte_liste.get(type).get(a));
-									kit_name=versus_warte_liste.get(type).get(a).getName();
+									arena.setMin_team(statsManager.getInt(Stats.TEAM_MIN, versus_warte_liste.get(type).get(a)));
+									arena.setMax_team(statsManager.getInt(Stats.TEAM_MAX, versus_warte_liste.get(type).get(a)));
+									arena.setKit(versus_warte_liste.get(type).get(a).getName());
 									if(!list.isEmpty()){
 										list.clear();
 									}
@@ -265,9 +259,9 @@ public class HubVersusListener extends kListener{
 									for(Team team : type.getTeam())list.put(team, new ArrayList<Player>());
 									t=0;
 									for(Player player : versus_warte_liste.get(type)){
-										if(list.get(((Team)list.keySet().toArray()[t])).size()==maxteam&&t==list.size())break;
-										if(minteam <= statsManager.getInt(Stats.TEAM_MIN, player)){
-											if(maxteam >= statsManager.getInt(Stats.TEAM_MIN, player)){
+										if(list.get(((Team)list.keySet().toArray()[t])).size()==arena.getMax_team()&&t==list.size())break;
+										if(arena.getMin_team() <= statsManager.getInt(Stats.TEAM_MIN, player)){
+											if(arena.getMax_team() >= statsManager.getInt(Stats.TEAM_MIN, player)){
 												list.get(((Team)list.keySet().toArray()[t])).add(player);
 												t++;
 											}
@@ -277,19 +271,16 @@ public class HubVersusListener extends kListener{
 									if(!list.isEmpty()){
 										b=true;
 										for(Team team : type.getTeam()){
-											if(list.get(team).size()<minteam){
+											if(list.get(team).size()<arena.getMin_team()){
 												b=false;
 												break;
 											}
 										}
 										
 										if(b){
-											status.get(arena).maxteam=maxteam;
-											status.get(arena).minteam=minteam;
-											status.get(arena).kit_name=kit_name;
 											for(Team team : list.keySet()){
 												for(Player player : list.get(team)){
-													getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),kit_name,player,team) );
+													getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),arena.getKit(),player,team,arena.getMin_team(),arena.getMax_team()) );
 												}
 											}
 											
@@ -376,15 +367,16 @@ public class HubVersusListener extends kListener{
 					if(vs.containsKey( ((Player)ev.getEntity()) )){
 						if(vs.get(((Player)ev.getEntity())).getName().equalsIgnoreCase(((Player)ev.getDamager()).getName())){
 							boolean b = false;
-							for(ARENA_STATUS arena : status.keySet()){
+							for(ARENA_STATUS arena : status){
 								if(VersusType.withTeamAnzahl( arena.getTeams() )==VersusType._TEAMx2&&arena.getState() == GameState.LobbyPhase&&arena.getOnline()<=0){
-									getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getDamager()),VersusType._TEAMx2.getTeam()[0]) );
+									arena.setMin_team(1);
+									arena.setMax_team(1);
+									getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getDamager()),VersusType._TEAMx2.getTeam()[0],1,1) );
 									UtilBG.sendToServer(((Player)ev.getDamager()), arena.getServer(), manager.getInstance());
-									getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getEntity()),VersusType._TEAMx2.getTeam()[1]) );
-									UtilBG.sendToServer(((Player)ev.getEntity()), arena.getServer(), manager.getInstance());
-									status.get(arena).maxteam=1;
-									status.get(arena).minteam=1;
-									status.get(arena).kit_name=((Player)ev.getEntity()).getName();
+									getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getEntity()),VersusType._TEAMx2.getTeam()[1],1,1) );
+									UtilBG.sendToServer(((Player)ev.getEntity()), arena.getServer(), manager.getInstance());							
+									arena.setState(GameState.InGame);
+									arena.setKit(((Player)ev.getEntity()).getName());
 									vs.remove(((Player)ev.getEntity()));
 									vs.remove(((Player)ev.getDamager()));
 									b =true;
@@ -435,15 +427,15 @@ public class HubVersusListener extends kListener{
 			
 			for(int i = 0 ; i < status.size(); i++){
 				//ÜBERPRÜFT OB DIE ARENA SCHONMAL ABGESPEICHERT WURDE
-				if(((ARENA_STATUS)status.keySet().toArray()[i]).getArena().equalsIgnoreCase(packet.getArena())){
+				if(((ARENA_STATUS)status.toArray()[i]).getArena().equalsIgnoreCase(packet.getArena())){
 					//ÜBERSCHREIBT DAS BESTEHNDE PACKET
-					((ARENA_STATUS)status.keySet().toArray()[i]).Set(packet.toString());
+					((ARENA_STATUS)status.toArray()[i]).Set(packet.toString());
 					find=true;
 					break;
 				}
 			}
 			//SPEICHERT EINE NEUE ARENA AB!
-			if(!find)status.put(packet,new TeamMinMax());
+			if(!find)status.add(packet);
 		}
 	}
 	

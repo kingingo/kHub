@@ -41,6 +41,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Arrow.Spigot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -57,7 +58,7 @@ public class HubListener extends kListener{
 	@Getter
 	private HubManager manager;
 	@Getter
-	private Inventory GameInv = Bukkit.createInventory(null, 45, "§7Wähle einen §6Server");
+	private Inventory GameInv = Bukkit.createInventory(null, 45, "Â§7WÃ¤hle einen Â§6Server");
 	@Getter
 	private HashMap<GameType,ArrayList<Sign>> signs = new HashMap<>();
 	@Getter
@@ -88,7 +89,7 @@ public class HubListener extends kListener{
 					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "LANGUAGE_CHANGE"));
 				}
 				
-			}, UtilItem.RenameItem(new ItemStack(Material.PAPER), "§a"+type.getDef().toUpperCase())));
+			}, UtilItem.RenameItem(new ItemStack(Material.PAPER), "Â§a"+type.getDef().toUpperCase())));
 		}
 		this.language_inv.getMain().fill(Material.STAINED_GLASS_PANE,(byte)15);
 		
@@ -143,17 +144,17 @@ public class HubListener extends kListener{
 		GameInv.setItem(20, UtilItem.RenameItem(new ItemStack(160,1,(byte)1)," "));
 		GameInv.setItem(19, UtilItem.RenameItem(new ItemStack(160,1,(byte)1)," "));
 		
-		GameInv.setItem(22,UtilItem.RenameItem(new ItemStack(Material.ANVIL), "§6Spawn"));
-		GameInv.setItem(2, UtilItem.RenameItem(new ItemStack(Material.DIAMOND_HELMET),"§6PvP-Server"));
-		GameInv.setItem(6, UtilItem.RenameItem(new ItemStack(Material.GRASS),"§6Sky-Server"));
-		GameInv.setItem(10, UtilItem.RenameItem(new ItemStack(Material.WOOL,1,(byte)14),"§6SheepWars"));
-		GameInv.setItem(28, UtilItem.RenameItem(new ItemStack(Material.BED,1),"§6BedWars"));
-		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"§6TroubleInMinecraft"));
-		GameInv.setItem(40, UtilItem.Item( UtilItem.LSetColor(new ItemStack(Material.LEATHER_HELMET), org.bukkit.Color.RED) ,new String[]{""},"§6Coming Soon"));
-		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.CHEST),"§6DeathGames"));
-		GameInv.setItem(34, UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD),"§6SkyWars"));
-		GameInv.setItem(25, UtilItem.RenameItem(new ItemStack(Material.BEDROCK),"§cCOMING SOON"));
-		GameInv.setItem(16, UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD),"§6QuickSurvivalGames"));
+		GameInv.setItem(22,UtilItem.RenameItem(new ItemStack(Material.ANVIL), "Â§6Spawn"));
+		GameInv.setItem(2, UtilItem.RenameItem(new ItemStack(Material.DIAMOND_HELMET),"Â§6PvP-Server"));
+		GameInv.setItem(6, UtilItem.RenameItem(new ItemStack(Material.GRASS),"Â§6Sky-Server"));
+		GameInv.setItem(10, UtilItem.RenameItem(new ItemStack(Material.WOOL,1,(byte)14),"Â§6SheepWars"));
+		GameInv.setItem(28, UtilItem.RenameItem(new ItemStack(Material.BED,1),"Â§6BedWars"));
+		GameInv.setItem(38, UtilItem.RenameItem(new ItemStack(Material.STICK),"Â§6TroubleInMinecraft"));
+		GameInv.setItem(40, UtilItem.Item( UtilItem.LSetColor(new ItemStack(Material.LEATHER_HELMET), org.bukkit.Color.RED) ,new String[]{""},"Â§6Coming Soon"));
+		GameInv.setItem(42, UtilItem.RenameItem(new ItemStack(Material.CHEST),"Â§6DeathGames"));
+		GameInv.setItem(34, UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD),"Â§6SkyWars"));
+		GameInv.setItem(25, UtilItem.RenameItem(new ItemStack(Material.BEDROCK),"Â§cCOMING SOON"));
+		GameInv.setItem(16, UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD),"Â§6QuickSurvivalGames"));
 		for(int i = 0 ; i < GameInv.getSize(); i++){
 			if(GameInv.getItem(i)==null||GameInv.getItem(i).getType()==Material.AIR){
 				if(GameInv.getItem(i)==null)GameInv.setItem(i, new ItemStack(Material.IRON_FENCE));
@@ -207,7 +208,7 @@ public class HubListener extends kListener{
 			a=18;
 		}
 		
-		this.LobbyInv=Bukkit.createInventory(null, a, "§lLobby's: ");
+		this.LobbyInv=Bukkit.createInventory(null, a, "Â§lLobby's: ");
 		ItemStack[] items = new ItemStack[LobbyInv.getSize()];
 		for(String s : LobbyList.keySet()){
 			Lobby l = LobbyList.get(s);
@@ -215,18 +216,18 @@ public class HubListener extends kListener{
 				if(l.getIp().equalsIgnoreCase(Bukkit.getServer().getIp())){
 					ItemStack item = new ItemStack(Material.GLOWSTONE_DUST);
 					ItemMeta im = item.getItemMeta();
-					im.setDisplayName("§a"+l.getName());
+					im.setDisplayName("Â§a"+l.getName());
 					ArrayList<String> lore = new ArrayList<String>();
-			    	lore.add("§6Klicke um die Lobby "+ l.getName().split(" ")[1] + " zu betreten ");
+			    	lore.add("Â§6Klicke um die Lobby "+ l.getName().split(" ")[1] + " zu betreten ");
 			    	im.setLore(lore);
 			    	item.setItemMeta(im);
 			    	items[place]=item;	
 				}else{
 					ItemStack item = new ItemStack(289);
 					ItemMeta im = item.getItemMeta();
-					im.setDisplayName("§a"+l.getName());
+					im.setDisplayName("Â§a"+l.getName());
 					ArrayList<String> lore = new ArrayList<String>();
-			    	lore.add("§6Klicke um die Lobby "+ l.getName().split(" ")[1] + " zu betreten ");
+			    	lore.add("Â§6Klicke um die Lobby "+ l.getName().split(" ")[1] + " zu betreten ");
 			    	im.setLore(lore);
 			    	item.setItemMeta(im);
 			    	items[place]=item;
@@ -250,17 +251,17 @@ public class HubListener extends kListener{
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT",manager.getId()+" Hub"));
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eLobby "+manager.getId(), "§eShop.EpicPvP.de");
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "Â§eEPICPVP Â§7- Â§eLobby "+manager.getId(), "Â§eShop.EpicPvP.de");
 		ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.COMPASS), Language.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
 		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), Language.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
+		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" Â§cÂ§lBETA"));
 	}
 	
 	@EventHandler
 	public void StatusUpdate(UpdateEvent ev){
 		if(ev.getType()==UpdateType.SLOW){
-			manager.getPacketManager().SendPacket("DATA", new HUB_ONLINE("hub"+manager.getId(), UtilServer.getPlayers().size(),Lag.getTPS()));
+			manager.getPacketManager().SendPacket("DATA", new HUB_ONLINE("hub"+manager.getId(), UtilServer.getPlayers().size(),(int)Lag.getTPS()));
 		}
 	}
 	
@@ -287,7 +288,7 @@ public class HubListener extends kListener{
 			ss = (SERVER_STATUS)ev.getPacket();
 			if(!getSigns().containsKey(ss.getTyp()))return;
 			sign=getSigns().get(ss.getTyp()).get(ss.getSign());
-			sign.setLine(0, "- "+ Color.WHITE + ss.getTyp().getKürzel()+" "+ ss.getId().split("a")[1] + Color.BLACK + " -");
+			sign.setLine(0, "- "+ Color.WHITE + ss.getTyp().getKÃ¼rzel()+" "+ ss.getId().split("a")[1] + Color.BLACK + " -");
 			sign.setLine(1, ss.getMap());
 			if(ss.getOnline()>=ss.getMax_online()){
 				sign.setLine(2, "> "+Color.ORANGE+"Premium "+Color.BLACK+" <");
@@ -306,10 +307,10 @@ public class HubListener extends kListener{
 
 		if (p.isOp()) {
 			String sign = ev.getLine(0);
-			ev.setLine(0, ev.getLine(0).replaceAll("&", "§"));
-			ev.setLine(1, ev.getLine(1).replaceAll("&", "§"));
-			ev.setLine(2, ev.getLine(2).replaceAll("&", "§"));
-			ev.setLine(3, ev.getLine(3).replaceAll("&", "§"));
+			ev.setLine(0, ev.getLine(0).replaceAll("&", "Â§"));
+			ev.setLine(1, ev.getLine(1).replaceAll("&", "Â§"));
+			ev.setLine(2, ev.getLine(2).replaceAll("&", "Â§"));
+			ev.setLine(3, ev.getLine(3).replaceAll("&", "Â§"));
 
 			if (sign.equalsIgnoreCase("[S]") && p.isOp()) {
 				String typ = ev.getLine(1);
@@ -353,10 +354,10 @@ public class HubListener extends kListener{
 		}
 		Player p = (Player) e.getWhoClicked();
 
-		if (e.getInventory().getName().equalsIgnoreCase("§lLobby's: ")) {
+		if (e.getInventory().getName().equalsIgnoreCase("Â§lLobby's: ")) {
 			if (e.getCurrentItem().getType() == Material.GLOWSTONE_DUST) {
 				e.setCancelled(true);
-				p.sendMessage("§aDu bist bereits auf der Lobby.");
+				p.sendMessage("Â§aDu bist bereits auf der Lobby.");
 				p.closeInventory();
 			} else if (e.getCurrentItem().getTypeId() == 289) {
 				e.setCancelled(true);
@@ -366,7 +367,7 @@ public class HubListener extends kListener{
 				e.setCancelled(true);
 				p.closeInventory();
 			}
-		}else if(e.getInventory().getName().equalsIgnoreCase("§7Wähle einen §6Server")){
+		}else if(e.getInventory().getName().equalsIgnoreCase("Â§7WÃ¤hle einen Â§6Server")){
 			e.setCancelled(true);
 			p.closeInventory();
 			if(e.getCurrentItem().getType()==Material.DIAMOND_HELMET){

@@ -79,6 +79,7 @@ public class HubVersusListener extends kListener{
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
 		this.base=new InventoryBase(manager.getInstance(), "§bVersus");
+		
 		VersusKit k = new VersusKit();
 		k.helm=new ItemStack(Material.IRON_HELMET);
 		k.chestplate=new ItemStack(Material.IRON_CHESTPLATE);

@@ -3,7 +3,9 @@ package me.kingingo.khub.Login;
 import lombok.Getter;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
 import me.kingingo.kcore.Language.Language;
+import me.kingingo.khub.Login.Events.PlayerLoadInvEvent;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,7 +25,11 @@ public class CommandRegister implements CommandExecutor{
 	public boolean onCommand(CommandSender cs,org.bukkit.command.Command cmd, String cmdLabel, String[] args) {
 		if(!(cs instanceof Player))return false;
 		p=(Player)cs;
-		if(!getLoginManager().getRegister().contains(p))return false;
+		if(!getLoginManager().getRegister().containsKey(p))return false;
+		if(getLoginManager().getRegister().get(p)!=null){
+			p.kickPlayer(Language.getText(p, "CAPTCHA_FIRST_ENTER"));
+			return false;
+		}
 		if(args.length==0)p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "PREFIX"));
 		else if(args.length==1){
 			pw=args[0];
@@ -35,6 +41,7 @@ public class CommandRegister implements CommandExecutor{
 			getLoginManager().delLogin(p.getName());
 			getLoginManager().setUser(p, pw, "");
 			p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "REGISTER_ACCEPT"));
+			Bukkit.getPluginManager().callEvent(new PlayerLoadInvEvent(p));
 			return true;
 		}
 		return false;

@@ -13,6 +13,7 @@ import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.khub.Listener.HubListener;
+import me.kingingo.khub.Login.Events.PlayerLoadInvEvent;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -62,7 +63,7 @@ public class InvisibleManager extends kListener{
 			ev.setCancelled(true);
 		}
 		
-		if(listener!=null && listener.getLoginManager().getLogin().containsKey(ev.getPlayer())||listener!=null && listener.getLoginManager().getRegister().contains(ev.getPlayer()))return;
+		if(listener!=null && listener.getLoginManager().getLogin().containsKey(ev.getPlayer())||listener!=null && listener.getLoginManager().getRegister().containsKey(ev.getPlayer()))return;
 		
 		if(UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getTypeId()==351){
@@ -87,9 +88,13 @@ public class InvisibleManager extends kListener{
 		invisible.remove(ev.getPlayer());
 	}
 	
+	@EventHandler
+	public void load(PlayerLoadInvEvent ev){
+		ev.getPlayer().getInventory().setItem(7, UtilItem.RenameItem(new ItemStack(351,1,(byte)10),Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
+	}
+	
 	@EventHandler(priority=EventPriority.LOW)
 	public void Join(PlayerJoinEvent ev){
-		ev.getPlayer().getInventory().setItem(7, UtilItem.RenameItem(new ItemStack(351,1,(byte)10),Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
 		for(Player p : invisible.keySet())p.hidePlayer(ev.getPlayer());
 	}
 	

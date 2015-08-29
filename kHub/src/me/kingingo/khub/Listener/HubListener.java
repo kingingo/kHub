@@ -25,6 +25,9 @@ import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
+import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
+import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
+import me.kingingo.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import me.kingingo.kcore.Util.Color;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.UtilBG;
@@ -36,6 +39,7 @@ import me.kingingo.kcore.lag.Lag;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.Lobby.Lobby;
 import me.kingingo.khub.Login.LoginManager;
+import me.kingingo.khub.Login.Events.PlayerLoadInvEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -249,18 +253,22 @@ public class HubListener extends kListener{
 	}
 
 	@EventHandler
-	public void Join(PlayerJoinEvent ev){
-		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT",manager.getId()+" Hub"));
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eLobby "+manager.getId(), "§eShop.EpicPvP.de");
+	public void load(PlayerLoadInvEvent ev){
 		ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.COMPASS), Language.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
 		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), Language.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
-		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
 	}
 	
 	@EventHandler
-	public void StatusUpdate(UpdateEvent ev){
-		if(ev.getType()==UpdateType.SLOW){
+	public void Join(PlayerJoinEvent ev){
+		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT",manager.getId()+" Hub"));
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eLobby "+manager.getId(), "§eShop.EpicPvP.de");
+		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
+	}
+	
+	@EventHandler
+	public void StatusUpdate(UpdateAsyncEvent ev){
+		if(ev.getType()==UpdateAsyncType.SLOW){
 			manager.getPacketManager().SendPacket("DATA", new HUB_ONLINE("hub"+manager.getId(), UtilServer.getPlayers().size(),(int)Lag.getTPS()));
 		}
 	}
@@ -324,7 +332,7 @@ public class HubListener extends kListener{
 		if((UtilEvent.isAction(ev, ActionType.PHYSICAL)&& (ev.getClickedBlock().getType() == Material.SOIL))||(UtilEvent.isAction(ev, ActionType.BLOCK)&&!ev.getPlayer().isOp())){
 			ev.setCancelled(true);
 		}
-		if(getLoginManager().getLogin().containsKey(ev.getPlayer())||getLoginManager().getRegister().contains(ev.getPlayer()))return;
+		if(getLoginManager().getLogin().containsKey(ev.getPlayer())||getLoginManager().getRegister().containsKey(ev.getPlayer()))return;
 		if(UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getType()==Material.NETHER_STAR){
 				ev.getPlayer().openInventory(getLobbyInv());
@@ -333,7 +341,7 @@ public class HubListener extends kListener{
 				ev.getPlayer().openInventory(getGameInv());
 				ev.setCancelled(true);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.CHEST){
-				ev.getPlayer().openInventory(getManager().getShop().getMain());
+//				ev.getPlayer().openInventory(getManager().getShop().getMain());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.DIAMOND_PICKAXE){
 				UtilBG.sendToServer(ev.getPlayer(), "v", getManager().getInstance());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.BOOK_AND_QUILL){

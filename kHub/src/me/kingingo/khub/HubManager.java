@@ -15,6 +15,7 @@ import me.kingingo.kcore.Disguise.DisguiseShop;
 import me.kingingo.kcore.Hologram.Hologram;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.Item.ButtonOpenInventory;
+import me.kingingo.kcore.Monitor.LagMeter;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.PermissionManager;
@@ -22,6 +23,7 @@ import me.kingingo.kcore.Pet.PetManager;
 import me.kingingo.kcore.Pet.Shop.PetShop;
 import me.kingingo.kcore.Util.Coins;
 import me.kingingo.kcore.Util.UtilItem;
+import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.khub.Command.CommandBroadcast;
 import me.kingingo.khub.Command.CommandTraitor;
 import me.kingingo.khub.InvisbleManager.InvisibleManager;
@@ -55,14 +57,14 @@ public class HubManager{
 	CalendarType holiday=null;
 	@Getter
 	ArrayList<Player> invisble = new ArrayList<>();
-//	@Getter
-//	private InventoryBase shop;
-//	@Getter
-//	private PetManager pet;
+	@Getter
+	private InventoryBase shop;
+	@Getter
+	private PetManager pet;
 	@Getter
 	private InvisibleManager invisibleManager;
-//	@Getter
-//	private DisguiseManager disguiseManager;
+	@Getter
+	private DisguiseManager disguiseManager;
 	@Getter
 	private Hologram hologram;
 	
@@ -74,16 +76,16 @@ public class HubManager{
 		this.mysql=mysql;
 		this.hologram=new Hologram(instance);
 		this.coins=new Coins(instance,mysql);
-//		this.pet=new PetManager(instance);
-//		this.disguiseManager=new DisguiseManager(getInstance());
-//		this.shop=new InventoryBase(getInstance(), 9, "Shop");
-//		PetShop petShop = new PetShop(shop,pet,pManager, coins);
-//		this.shop.getMain().addButton(2, new ButtonOpenInventory(petShop, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop")));
-//		this.shop.addPage(petShop);
-//		DisguiseShop disguiseShop = new DisguiseShop(shop,pManager,coins,disguiseManager);
-//		this.shop.getMain().addButton(6, new ButtonOpenInventory(disguiseShop, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7DisguiseShop")));
-//		this.shop.addPage(disguiseShop);
-//		this.shop.getMain().fill(Material.STAINED_GLASS_PANE,(byte)7);
+		this.pet=new PetManager(instance);
+		this.disguiseManager=new DisguiseManager(getInstance());
+		this.shop=new InventoryBase(getInstance(), 9, "Shop");
+		PetShop petShop = new PetShop(shop,pet,pManager, coins);
+		this.shop.getMain().addButton(2, new ButtonOpenInventory(petShop, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop")));
+		this.shop.addPage(petShop);
+		DisguiseShop disguiseShop = new DisguiseShop(shop,pManager,coins,disguiseManager);
+		this.shop.getMain().addButton(6, new ButtonOpenInventory(disguiseShop, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7DisguiseShop")));
+		this.shop.addPage(disguiseShop);
+		this.shop.getMain().fill(Material.STAINED_GLASS_PANE,(byte)7);
 		this.holiday=Calendar.getHoliday();
 		
 		if(holiday!=null){
@@ -127,6 +129,7 @@ public class HubManager{
 		getCmd().register(CommandBroadcast.class, new CommandBroadcast());
 		getCmd().register(CommandFlyspeed.class, new CommandFlyspeed());
 		new Listener(this);
+		UtilServer.createLagListener(getInstance());
 	}
 	
 	public Coins getCoins(){

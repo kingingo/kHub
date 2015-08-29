@@ -25,9 +25,6 @@ import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
-import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
-import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
-import me.kingingo.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import me.kingingo.kcore.Util.Color;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.UtilBG;
@@ -35,7 +32,6 @@ import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilServer;
-import me.kingingo.kcore.lag.Lag;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.Lobby.Lobby;
 import me.kingingo.khub.Login.LoginManager;
@@ -45,7 +41,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Arrow.Spigot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -267,9 +262,9 @@ public class HubListener extends kListener{
 	}
 	
 	@EventHandler
-	public void StatusUpdate(UpdateAsyncEvent ev){
-		if(ev.getType()==UpdateAsyncType.SLOW){
-			manager.getPacketManager().SendPacket("DATA", new HUB_ONLINE("hub"+manager.getId(), UtilServer.getPlayers().size(),(int)Lag.getTPS()));
+	public void StatusUpdate(UpdateEvent ev){
+		if(ev.getType()==UpdateType.SLOW){
+			manager.getPacketManager().SendPacket("DATA", new HUB_ONLINE("hub"+manager.getId(), UtilServer.getPlayers().size(),(int)UtilServer.getLagMeter().getTicksPerSecond()));
 		}
 	}
 	
@@ -341,7 +336,7 @@ public class HubListener extends kListener{
 				ev.getPlayer().openInventory(getGameInv());
 				ev.setCancelled(true);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.CHEST){
-//				ev.getPlayer().openInventory(getManager().getShop().getMain());
+				ev.getPlayer().openInventory(getManager().getShop().getMain());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.DIAMOND_PICKAXE){
 				UtilBG.sendToServer(ev.getPlayer(), "v", getManager().getInstance());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.BOOK_AND_QUILL){

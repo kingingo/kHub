@@ -1,26 +1,24 @@
 package me.kingingo.khub;
 
-import me.kingingo.kcore.AACHack.AACHack;
 import me.kingingo.kcore.Client.Client;
 import me.kingingo.kcore.Command.Admin.CommandCMDMute;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
 import me.kingingo.kcore.Command.Admin.CommandCoins;
 import me.kingingo.kcore.Command.Admin.CommandFly;
-import me.kingingo.kcore.Command.Admin.CommandMem;
 import me.kingingo.kcore.Command.Admin.CommandMemFix;
+import me.kingingo.kcore.Command.Admin.CommandMySQL;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
+import me.kingingo.kcore.Command.Admin.CommandTrackingRange;
 import me.kingingo.kcore.Command.Admin.CommandgBroadcast;
-import me.kingingo.kcore.Disguise.DisguiseManager;
+import me.kingingo.kcore.Command.Commands.CommandPing;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
 import me.kingingo.kcore.Listener.Command.ListenerCMD;
 import me.kingingo.kcore.MySQL.MySQL;
-import me.kingingo.kcore.Nick.NickManager;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Update.Updater;
-import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
 import me.kingingo.kcore.Util.UtilException;
 import me.kingingo.kcore.memory.MemoryFix;
 import me.kingingo.khub.Command.CommandTime;
@@ -34,7 +32,6 @@ public class kHub extends JavaPlugin{
 
 	private Client c;
 	private Updater Updater;
-	private UpdaterAsync asyncUpdater;
 	public static MySQL mysql;
 	public static PermissionManager pManager;
 	private HubManager Manager;
@@ -47,7 +44,6 @@ public class kHub extends JavaPlugin{
 			this.mysql=new MySQL(getConfig().getString("Config.MySQL.User"),getConfig().getString("Config.MySQL.Password"),getConfig().getString("Config.MySQL.Host"),getConfig().getString("Config.MySQL.DB"),this);
 			Language.load(mysql);
 			this.Updater=new Updater(this);
-			this.asyncUpdater=new UpdaterAsync(this);
 			this.c = new Client(getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),getConfig().getString("Config.HubType").toUpperCase()+getConfig().getInt("Config.Lobby"),this,Updater);
 			this.PacketManager=new PacketManager(this,c);
 			new MemoryFix(this);
@@ -57,15 +53,18 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandCMDMute.class, new CommandCMDMute(this));	
 			Manager.getCmd().register(CommandChatMute.class, new CommandChatMute(this));
 			Manager.getCmd().register(CommandToggle.class, new CommandToggle(this));
-			Manager.getCmd().register(CommandMem.class, new CommandMem(pManager));
 			Manager.getCmd().register(CommandCoins.class, new CommandCoins(Manager.getCoins()));
 			Manager.getCmd().register(CommandMemFix.class, new CommandMemFix(pManager));
 			Manager.getCmd().register(CommandTime.class, new CommandTime());
 			Manager.getCmd().register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
+			Manager.getCmd().register(CommandPing.class, new CommandPing());
+			Manager.getCmd().register(CommandTrackingRange.class, new CommandTrackingRange());
+			Manager.getCmd().register(CommandMySQL.class, new CommandMySQL(mysql));
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
 			new ChatListener(this, null,this.pManager);
 			Manager.DebugLog(time, 45, this.getClass().getName());
 			new ListenerCMD(this);
+			
 			for(Entity e : Bukkit.getWorld("world").getEntities()){
 				if(!(e instanceof Player))e.remove();
 			}

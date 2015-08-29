@@ -77,11 +77,9 @@ public class LoginManager extends kListener{
 		}
 	}
 	
-	Player player;
 	@EventHandler
-	public void UpdateAsync(UpdateAsyncEvent ev){
-		if(ev.getType()==UpdateAsyncType.SEC){
-			
+	public void Update(UpdateEvent ev){
+		if((UtilServer.getLagMeter().getTicksPerSecond() > 14 ? ev.getType()==UpdateType.FAST : ev.getType()==UpdateType.SEC_2)){
 			if(captcha){
 				if(captcha_time-System.currentTimeMillis() <= 0){
 					captcha_time=System.currentTimeMillis()+TimeSpan.MINUTE*5;
@@ -92,36 +90,45 @@ public class LoginManager extends kListener{
 			}
 			
 			if(abfragen.isEmpty())return;
-			for(int i = 0; i< (abfragen.size() < 10 ? abfragen.size() : 10) ;i++){
-				player=abfragen.get(i);
-				
-				if(isLogin(player)){
-					if(!isRegestriert(player)){
-						if(captcha){
-							Register.put(player, captcha_string);
-							player.getInventory().clear();
-							player.getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.MAP), "§aCAPTCHA"));
-							player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "CAPTCHA_ENTER"));
-						}else{
-							Register.put(player, null);
-							player.getInventory().clear();
-							player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "REGISTER_MESSAGE"));
+			
+			new Thread(new Runnable(){
+				@Override
+				public void run(){
+					try{
+						Player player;
+						for(int i = 0; i< (abfragen.size() < 10 ? abfragen.size() : 10) ;i++){
+							player=abfragen.get(i);
+							
+							if(isLogin(player)){
+								if(!isRegestriert(player)){
+									if(captcha){
+										Register.put(player, captcha_string);
+										player.getInventory().clear();
+										player.getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.MAP), "§aCAPTCHA"));
+										player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "CAPTCHA_ENTER"));
+									}else{
+										Register.put(player, null);
+										player.getInventory().clear();
+										player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "REGISTER_MESSAGE"));
+									}
+								}else{
+									Login.put(player, getPW(player));
+									player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "LOGIN_MESSAGE"));
+									getManager().getMysql().Update("INSERT INTO list_users_1 (name,uuid,password) SELECT '" +player.getName().toLowerCase()+"','"+UtilPlayer.getRealUUID(player)+"','"+Login.get(player)+"' FROM DUAL WHERE NOT EXISTS (SELECT name FROM list_users_1 WHERE name='" +player.getName().toLowerCase()+"');");
+								}
+							}else{
+								Bukkit.getPluginManager().callEvent(new PlayerLoadInvEvent(player));
+							}
+							if(!abfragen.isEmpty())abfragen.remove(i);
 						}
-					}else{
-						Login.put(player, getPW(player));
-						player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "LOGIN_MESSAGE"));
-						getManager().getMysql().Update("INSERT INTO list_users_1 (name,uuid,password) SELECT '" +player.getName().toLowerCase()+"','"+UtilPlayer.getRealUUID(player)+"','"+Login.get(player)+"' FROM DUAL WHERE NOT EXISTS (SELECT name FROM list_users_1 WHERE name='" +player.getName().toLowerCase()+"');");
+					}catch(IndexOutOfBoundsException e){
+						
 					}
-				}else{
-					Bukkit.getPluginManager().callEvent(new PlayerLoadInvEvent(player));
+					
 				}
-				abfragen.remove(i);
-			}
+			}).start();
 		}
-	}
-	
-	@EventHandler
-	public void Update(UpdateEvent ev){
+		
 		if(ev.getType()==UpdateType.MIN_32){
 			UtilList.CleanList(Login);
 			UtilList.CleanList(Register);

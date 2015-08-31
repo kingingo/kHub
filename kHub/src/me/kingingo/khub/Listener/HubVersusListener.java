@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import lombok.Getter;
+import me.kingingo.kcore.DeliveryPet.DeliveryObject;
+import me.kingingo.kcore.DeliveryPet.DeliveryPet;
 import me.kingingo.kcore.Enum.GameState;
 import me.kingingo.kcore.Enum.GameType;
+import me.kingingo.kcore.Enum.ServerType;
 import me.kingingo.kcore.Enum.Team;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
@@ -20,6 +23,7 @@ import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.ARENA_STATUS;
 import me.kingingo.kcore.Packet.Packets.VERSUS_SETTINGS;
+import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.StatsManager.StatsManager;
 import me.kingingo.kcore.Update.UpdateType;
@@ -74,9 +78,31 @@ public class HubVersusListener extends kListener{
 	private HashMap<Creature,VersusType> creatures = new HashMap<>();
 	private HashMap<Player,Player> vs = new HashMap<>();
 	
+	private DeliveryPet deliveryPet;
+	
 	public HubVersusListener(HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
 		this.manager=manager;
+		
+		this.deliveryPet=new DeliveryPet(new DeliveryObject[]{
+				new DeliveryObject(new String[]{"","§7Click for Vote!","","§eRewards:","§7   100 Coins"},null,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						p.sendMessage(Language.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
+					}
+					
+				},24),
+				new DeliveryObject(new String[]{"","§eRewards:","§7   100 Coins"},null,12,"§cRank Day Reward",Material.CHEST,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						p.sendMessage(Language.getText(p,"PREFIX")+"CLICKED");
+					}
+					
+				},24),
+		},"§c§lEpicMen",EntityType.ENDERMAN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getManager().getHologram(),getManager().getMysql());
+		
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
 		this.base=new InventoryBase(manager.getInstance(), "§bVersus");

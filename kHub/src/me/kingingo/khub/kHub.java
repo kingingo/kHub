@@ -54,7 +54,6 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandChatMute.class, new CommandChatMute(this));
 			Manager.getCmd().register(CommandToggle.class, new CommandToggle(this));
 			Manager.getCmd().register(CommandCoins.class, new CommandCoins(Manager.getCoins()));
-			Manager.getCmd().register(CommandMemFix.class, new CommandMemFix(pManager));
 			Manager.getCmd().register(CommandTime.class, new CommandTime());
 			Manager.getCmd().register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
 			Manager.getCmd().register(CommandPing.class, new CommandPing());

@@ -30,6 +30,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -220,7 +221,7 @@ public class LoginManager extends kListener{
 	}
 	
 	@EventHandler
-	public void Chat(PlayerChatEvent ev){
+	public void Chat(AsyncPlayerChatEvent ev){
 		if(Login.containsKey(ev.getPlayer()))ev.setCancelled(true);
 		if(Register.containsKey(ev.getPlayer()))ev.setCancelled(true);
 		if(abfragen.contains(ev.getPlayer()))ev.setCancelled(true);
@@ -233,23 +234,13 @@ public class LoginManager extends kListener{
 		if(abfragen.contains(ev.getPlayer()))ev.setCancelled(true);
 	}
 	
-	Location from;
-	Location to;
-	double x;
-	double z;
 	@EventHandler
-	public void Move(PlayerMoveEvent ev){
-		if(Login.containsKey(ev.getPlayer())||Register.containsKey(ev.getPlayer())||abfragen.contains(ev.getPlayer())){
-			from = ev.getFrom();
-			to = ev.getTo();
-			x = Math.floor(from.getX());
-			z = Math.floor(from.getZ());
-			if(Math.floor(to.getX())!=x||Math.floor(to.getZ())!=z){
-			    x+=.5;
-			    z+=.5;
-			    ev.getPlayer().teleport(new Location(from.getWorld(),x,from.getY(),z,from.getYaw(),from.getPitch()));
-			}	
+	public void Movecancel(PlayerMoveEvent event){
+		if(Login.containsKey(event.getPlayer())||Register.containsKey(event.getPlayer())||abfragen.contains(event.getPlayer())){
+			if (UtilMath.offset2d(event.getFrom(), event.getTo()) == 0.0D) {
+			      return;
+			    }
+			    event.setTo(event.getFrom());
 		}
-	}
-	
+	  }
 }

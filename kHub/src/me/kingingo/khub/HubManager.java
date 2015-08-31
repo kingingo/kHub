@@ -129,7 +129,7 @@ public class HubManager{
 		getCmd().register(CommandBroadcast.class, new CommandBroadcast());
 		getCmd().register(CommandFlyspeed.class, new CommandFlyspeed());
 		new Listener(this);
-		UtilServer.createLagListener(getInstance());
+		UtilServer.createLagListener(this.cmd);
 	}
 	
 	public Coins getCoins(){

@@ -61,8 +61,6 @@ public class InvisibleManager extends kListener{
 			ev.setCancelled(true);
 		}
 		
-		if(listener!=null && listener.getLoginManager().getLogin().containsKey(ev.getPlayer())||listener!=null && listener.getLoginManager().getRegister().containsKey(ev.getPlayer()))return;
-		
 		if(UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getTypeId()==351){
 				if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 10){

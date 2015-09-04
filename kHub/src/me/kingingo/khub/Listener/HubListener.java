@@ -69,8 +69,6 @@ public class HubListener extends kListener{
 	private HashMap<String,Lobby> LobbyList = new HashMap<String,Lobby>();
 	@Getter
 	private Inventory LobbyInv;
-	@Getter
-	private LoginManager loginManager;
 	private InventoryBase language_inv;
 	
 	public HubListener(final HubManager manager) {
@@ -92,7 +90,6 @@ public class HubListener extends kListener{
 		}
 		this.language_inv.getMain().fill(Material.STAINED_GLASS_PANE,(byte)15);
 		
-		this.loginManager= new LoginManager(manager);
 		this.manager.getInvisibleManager().setListener(this);
 		
 		if(("HUB"+manager.getInstance().getConfig().getInt("Config.Lobby")).equalsIgnoreCase("HUB2")&&Bukkit.getPluginManager().getPlugin("Votifier")!=null){
@@ -327,7 +324,7 @@ public class HubListener extends kListener{
 		if((UtilEvent.isAction(ev, ActionType.PHYSICAL)&& (ev.getClickedBlock().getType() == Material.SOIL))||(UtilEvent.isAction(ev, ActionType.BLOCK)&&!ev.getPlayer().isOp())){
 			ev.setCancelled(true);
 		}
-		if(getLoginManager().getLogin().containsKey(ev.getPlayer())||getLoginManager().getRegister().containsKey(ev.getPlayer()))return;
+		
 		if(UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getType()==Material.NETHER_STAR){
 				ev.getPlayer().openInventory(getLobbyInv());

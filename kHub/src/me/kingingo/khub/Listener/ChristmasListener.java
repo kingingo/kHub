@@ -102,11 +102,9 @@ public class ChristmasListener extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void LobbyMenu(PlayerInteractEvent ev){
-		if(!listener.getLoginManager().getLogin().containsKey(ev.getPlayer())&&!listener.getLoginManager().getRegister().containsKey(ev.getPlayer())&&UtilEvent.isAction(ev, ActionType.R)){
-			if(ev.getPlayer().getItemInHand().getType()==Material.SNOW_BALL){
-				ev.getPlayer().openInventory(inventory);
-				ev.setCancelled(true);
-			}
+		if(ev.getPlayer().getItemInHand().getType()==Material.SNOW_BALL){
+			ev.getPlayer().openInventory(inventory);
+			ev.setCancelled(true);
 		}
 	}
 	

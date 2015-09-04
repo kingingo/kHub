@@ -80,27 +80,48 @@ public class HubVersusListener extends kListener{
 	
 	private DeliveryPet deliveryPet;
 	
-	public HubVersusListener(HubManager manager) {
+	public HubVersusListener(final HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
 		this.manager=manager;
 		
 		this.deliveryPet=new DeliveryPet(new DeliveryObject[]{
-				new DeliveryObject(new String[]{"","§7Click for Vote!","","§eRewards:","§7   100 Coins"},null,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
+				new DeliveryObject(new String[]{"","§7Click for Vote!","","§eRewards:","§7   100 Coins"},null,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
+						p.closeInventory();
+						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
+						p.sendMessage(Language.getText(p,"PREFIX")+" ");
 						p.sendMessage(Language.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
+						p.sendMessage(Language.getText(p,"PREFIX")+" ");
+						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
 					}
 					
-				},24),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   100 Coins"},null,12,"§cRank Day Reward",Material.CHEST,new Click(){
+				},-1),
+				new DeliveryObject(new String[]{"","§eRewards:","§7   100 Coins"},null,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
-						p.sendMessage(Language.getText(p,"PREFIX")+"CLICKED");
+						manager.getCoins().addCoinsWithScoreboardUpdate(p, true, 100);
 					}
 					
-				},24),
+				},TimeSpan.DAY),
+				new DeliveryObject(new String[]{"","§eRewards:","§7   1000 Coins"},null,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						manager.getCoins().addCoinsWithScoreboardUpdate(p, true, 100);
+					}
+					
+				},TimeSpan.DAY*30),
+				new DeliveryObject(new String[]{"","§eRewards:","§7   1000 Coins"},null,true,16,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						
+					}
+					
+				},TimeSpan.DAY*7),
 		},"§c§lEpicMen",EntityType.ENDERMAN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getManager().getHologram(),getManager().getMysql());
 		
 		UtilTime.setTimeManager(manager.getPermissionManager());

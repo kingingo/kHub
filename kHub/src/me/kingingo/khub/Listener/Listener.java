@@ -11,6 +11,7 @@ import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilString;
 import me.kingingo.khub.HubManager;
+import me.kingingo.khub.kHub;
 import me.kingingo.khub.Login.Events.PlayerLoadInvEvent;
 
 import org.bukkit.Bukkit;
@@ -61,14 +62,14 @@ public class Listener extends kListener{
 	
 	@EventHandler
 	public void AddBoard(PlayerSetScoreboardEvent ev){
-		UtilPlayer.setScoreboard(ev.getPlayer(), getManager().getCoins(), getManager().getPermissionManager());
+		if(!kHub.hubType.equalsIgnoreCase("HubLogin"))UtilPlayer.setScoreboard(ev.getPlayer(), getManager().getCoins(), getManager().getPermissionManager());
 	}
 	
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void load(PlayerLoadInvEvent ev){
 		ev.getPlayer().getInventory().setHelmet(null);
 		ev.getPlayer().getInventory().clear();
-		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
+		if(!kHub.hubType.equalsIgnoreCase("HubLogin"))ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
 	}
 	
 	@EventHandler(priority=EventPriority.LOWEST)

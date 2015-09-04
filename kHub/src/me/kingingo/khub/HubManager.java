@@ -15,9 +15,11 @@ import me.kingingo.kcore.Disguise.DisguiseShop;
 import me.kingingo.kcore.Hologram.Hologram;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.Item.ButtonOpenInventory;
+import me.kingingo.kcore.Listener.Chat.ChatListener;
 import me.kingingo.kcore.Monitor.LagMeter;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
+import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Pet.PetManager;
 import me.kingingo.kcore.Pet.Shop.PetShop;
@@ -29,6 +31,7 @@ import me.kingingo.khub.Command.CommandTraitor;
 import me.kingingo.khub.InvisbleManager.InvisibleManager;
 import me.kingingo.khub.Listener.BirthdayListener;
 import me.kingingo.khub.Listener.HubListener;
+import me.kingingo.khub.Listener.HubLoginListener;
 import me.kingingo.khub.Listener.HubVersusListener;
 import me.kingingo.khub.Listener.Listener;
 import me.kingingo.khub.Listener.SilvesterListener;
@@ -68,64 +71,70 @@ public class HubManager{
 	@Getter
 	private Hologram hologram;
 	
-	public HubManager(JavaPlugin instance,MySQL mysql,PermissionManager pManager,PacketManager pmana){
+	public HubManager(JavaPlugin instance,MySQL mysql,PacketManager pmana){
 		this.instance=instance;
 		this.id=instance.getConfig().getInt("Config.Lobby");
 		this.cmd=new CommandHandler(instance);
-		this.permissionManager=pManager;
 		this.mysql=mysql;
-		this.hologram=new Hologram(instance);
-		this.coins=new Coins(instance,mysql);
-		this.pet=new PetManager(instance);
-		this.disguiseManager=new DisguiseManager(getInstance());
-		this.shop=new InventoryBase(getInstance(), 9, "Shop");
-		PetShop petShop = new PetShop(shop,pet,pManager, coins);
-		this.shop.getMain().addButton(2, new ButtonOpenInventory(petShop, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop")));
-		this.shop.addPage(petShop);
-		DisguiseShop disguiseShop = new DisguiseShop(shop,pManager,coins,disguiseManager);
-		this.shop.getMain().addButton(6, new ButtonOpenInventory(disguiseShop, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7DisguiseShop")));
-		this.shop.addPage(disguiseShop);
-		this.shop.getMain().fill(Material.STAINED_GLASS_PANE,(byte)7);
-		this.holiday=Calendar.getHoliday();
+		this.PacketManager=pmana;
 		
-		if(holiday!=null){
-			switch(holiday){
-			case HELLOWEEN:
-				new AddonNight(getInstance(), Bukkit.getWorld("world"));
-				break;
-			case GEBURSTAG:
-				if(Calendar.isFixHolidayDate(CalendarType.GEBURSTAG)){
-					new BirthdayListener(this);
-				}
-				new AddonNight(instance, Bukkit.getWorld("world"));
-				break;
-			case WEIHNACHTEN:
-				break;
-			case SILVESTER:
-					new SilvesterListener(this);
+		if(!kHub.hubType.equalsIgnoreCase("HubLogin")){
+			this.permissionManager=new PermissionManager(instance,GroupTyp.GAME,PacketManager,mysql);
+			new ChatListener(instance, null,permissionManager);
+			this.hologram=new Hologram(instance);
+			this.coins=new Coins(instance,mysql);
+			this.pet=new PetManager(instance);
+			this.disguiseManager=new DisguiseManager(getInstance());
+			this.shop=new InventoryBase(getInstance(), 9, "Shop");
+			PetShop petShop = new PetShop(shop,pet,permissionManager, coins);
+			this.shop.getMain().addButton(2, new ButtonOpenInventory(petShop, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop")));
+			this.shop.addPage(petShop);
+			DisguiseShop disguiseShop = new DisguiseShop(shop,permissionManager,coins,disguiseManager);
+			this.shop.getMain().addButton(6, new ButtonOpenInventory(disguiseShop, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7DisguiseShop")));
+			this.shop.addPage(disguiseShop);
+			this.shop.getMain().fill(Material.STAINED_GLASS_PANE,(byte)7);
+			this.holiday=Calendar.getHoliday();
+			
+			if(holiday!=null){
+				switch(holiday){
+				case HELLOWEEN:
 					new AddonNight(getInstance(), Bukkit.getWorld("world"));
-				break;
-			default:
+					break;
+				case GEBURSTAG:
+					if(Calendar.isFixHolidayDate(CalendarType.GEBURSTAG)){
+						new BirthdayListener(this);
+					}
+					new AddonNight(instance, Bukkit.getWorld("world"));
+					break;
+				case WEIHNACHTEN:
+					break;
+				case SILVESTER:
+						new SilvesterListener(this);
+						new AddonNight(getInstance(), Bukkit.getWorld("world"));
+					break;
+				default:
+					new AddonDay(instance, Bukkit.getWorld("world"));
+				}
+			}else{
 				new AddonDay(instance, Bukkit.getWorld("world"));
 			}
-		}else{
-			new AddonDay(instance, Bukkit.getWorld("world"));
 		}
-
-		this.PacketManager=pmana;
-		this.invisibleManager=new InvisibleManager(getInstance(),null);
 		
 		switch(instance.getConfig().getString("Config.HubType")){
+			case "HubLogin":
+			new HubLoginListener(this);
+				break;
 			case "Versus":
 				new HubVersusListener(this);
 				break;
 			default:
 				new HubListener(this);
+				this.invisibleManager=new InvisibleManager(getInstance(),null);
 				break;
 		}
 		
 		getCmd().register(CommandTraitor.class, new CommandTraitor());
-		getCmd().register(CommandGroup.class, new CommandGroup(pManager));
+		getCmd().register(CommandGroup.class, new CommandGroup(permissionManager));
 		getCmd().register(CommandBroadcast.class, new CommandBroadcast());
 		getCmd().register(CommandFlyspeed.class, new CommandFlyspeed());
 		new Listener(this);

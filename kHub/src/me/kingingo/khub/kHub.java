@@ -33,7 +33,7 @@ public class kHub extends JavaPlugin{
 	private Client c;
 	private Updater Updater;
 	public static MySQL mysql;
-	public static PermissionManager pManager;
+	public static String hubType;
 	private HubManager Manager;
 	private PacketManager PacketManager;
 	
@@ -41,14 +41,14 @@ public class kHub extends JavaPlugin{
 		try{
 			long time = System.currentTimeMillis();
 			loadConfig();
+			this.hubType=getConfig().getString("Config.HubType");
 			this.mysql=new MySQL(getConfig().getString("Config.MySQL.User"),getConfig().getString("Config.MySQL.Password"),getConfig().getString("Config.MySQL.Host"),getConfig().getString("Config.MySQL.DB"),this);
 			Language.load(mysql);
 			this.Updater=new Updater(this);
 			this.c = new Client(getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),getConfig().getString("Config.HubType").toUpperCase()+getConfig().getInt("Config.Lobby"),this,Updater);
 			this.PacketManager=new PacketManager(this,c);
 			new MemoryFix(this);
-			this.pManager=new PermissionManager(this,GroupTyp.GAME,PacketManager,mysql);
-			this.Manager=new HubManager(this,mysql,pManager,PacketManager);
+			this.Manager=new HubManager(this,mysql,PacketManager);
 			Manager.getCmd().register(CommandFly.class, new CommandFly(this));
 			Manager.getCmd().register(CommandCMDMute.class, new CommandCMDMute(this));	
 			Manager.getCmd().register(CommandChatMute.class, new CommandChatMute(this));
@@ -59,8 +59,6 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandPing.class, new CommandPing());
 			Manager.getCmd().register(CommandTrackingRange.class, new CommandTrackingRange());
 			Manager.getCmd().register(CommandMySQL.class, new CommandMySQL(mysql));
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/muteall");
-			new ChatListener(this, null,this.pManager);
 			Manager.DebugLog(time, 45, this.getClass().getName());
 			new ListenerCMD(this);
 			

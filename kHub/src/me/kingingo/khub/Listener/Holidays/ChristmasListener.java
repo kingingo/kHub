@@ -1,4 +1,4 @@
-package me.kingingo.khub.Listener;
+package me.kingingo.khub.Listener.Holidays;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,6 +12,7 @@ import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilMath;
 import me.kingingo.kcore.Util.UtilParticle;
 import me.kingingo.khub.HubManager;
+import me.kingingo.khub.Listener.HubListener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

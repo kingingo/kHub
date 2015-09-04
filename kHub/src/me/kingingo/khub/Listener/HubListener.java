@@ -33,6 +33,7 @@ import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.khub.HubManager;
+import me.kingingo.khub.Listener.Holidays.ChristmasListener;
 import me.kingingo.khub.Lobby.Lobby;
 import me.kingingo.khub.Login.Events.PlayerLoadInvEvent;
 

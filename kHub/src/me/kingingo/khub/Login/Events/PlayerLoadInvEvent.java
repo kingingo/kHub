@@ -1,7 +1,6 @@
 package me.kingingo.khub.Login.Events;
 
 import lombok.Getter;
-import me.kingingo.kcore.AntiLogout.AntiLogoutManager;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

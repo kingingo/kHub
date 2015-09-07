@@ -1,5 +1,6 @@
 package me.kingingo.khub;
 
+import me.kingingo.kcore.ChunkGenerator.CleanroomChunkGenerator;
 import me.kingingo.kcore.Client.Client;
 import me.kingingo.kcore.Command.Admin.CommandCMDMute;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
@@ -20,6 +21,7 @@ import me.kingingo.kcore.memory.MemoryFix;
 import me.kingingo.khub.Command.CommandTime;
 
 import org.bukkit.Bukkit;
+import org.bukkit.WorldCreator;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

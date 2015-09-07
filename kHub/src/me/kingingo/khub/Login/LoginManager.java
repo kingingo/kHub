@@ -20,9 +20,7 @@ import me.kingingo.kcore.Util.UtilMath;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.khub.HubManager;
-import me.kingingo.khub.Login.Events.PlayerLoadInvEvent;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -113,7 +111,7 @@ public class LoginManager extends kListener{
 									getManager().getMysql().Update("INSERT INTO list_users_1 (name,uuid,password) SELECT '" +player.getName().toLowerCase()+"','"+UtilPlayer.getRealUUID(player)+"','"+Login.get(player)+"' FROM DUAL WHERE NOT EXISTS (SELECT name FROM list_users_1 WHERE name='" +player.getName().toLowerCase()+"');");
 								}
 							}else{
-								Bukkit.getPluginManager().callEvent(new PlayerLoadInvEvent(player));
+								//LOGGED IN
 							}
 							if(!abfragen.isEmpty())abfragen.remove(i);
 						}

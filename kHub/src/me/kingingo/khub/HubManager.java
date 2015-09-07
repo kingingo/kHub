@@ -77,7 +77,7 @@ public class HubManager{
 		this.mysql=mysql;
 		this.PacketManager=pmana;
 		
-		if(!kHub.hubType.equalsIgnoreCase("HubLogin")){
+		if(!kHub.hubType.equalsIgnoreCase("LoginHub")){
 			this.permissionManager=new PermissionManager(instance,GroupTyp.GAME,PacketManager,mysql);
 			new ChatListener(instance, null,permissionManager);
 			this.hologram=new Hologram(instance);
@@ -120,15 +120,15 @@ public class HubManager{
 		}
 		
 		switch(instance.getConfig().getString("Config.HubType")){
-			case "HubLogin":
+			case "LoginHub":
 			new HubLoginListener(this);
 				break;
 			case "Versus":
 				new HubVersusListener(this);
 				break;
 			default:
-				new HubListener(this);
 				this.invisibleManager=new InvisibleManager(getInstance(),null);
+				new HubListener(this);
 				break;
 		}
 		

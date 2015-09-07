@@ -12,7 +12,6 @@ import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilString;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.kHub;
-import me.kingingo.khub.Login.Events.PlayerLoadInvEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -66,19 +65,15 @@ public class Listener extends kListener{
 	}
 	
 	@EventHandler(priority=EventPriority.LOWEST)
-	public void load(PlayerLoadInvEvent ev){
-		ev.getPlayer().getInventory().setHelmet(null);
-		ev.getPlayer().getInventory().clear();
-		if(!kHub.hubType.equalsIgnoreCase("HubLogin"))ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
-	}
-	
-	@EventHandler(priority=EventPriority.LOWEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
 		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
 		ev.getPlayer().getWorld().setWeatherDuration(0);
 		ev.getPlayer().getWorld().setStorm(false);
 		ev.getPlayer().setFoodLevel(20);
+		ev.getPlayer().getInventory().setHelmet(null);
+		ev.getPlayer().getInventory().clear();
+		if(!kHub.hubType.equalsIgnoreCase("LoginHub"))ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
 	}
 	
 	@EventHandler

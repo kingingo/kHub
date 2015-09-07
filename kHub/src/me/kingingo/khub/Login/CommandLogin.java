@@ -3,9 +3,7 @@ package me.kingingo.khub.Login;
 import lombok.Getter;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
 import me.kingingo.kcore.Language.Language;
-import me.kingingo.khub.Login.Events.PlayerLoadInvEvent;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,7 +31,6 @@ public class CommandLogin implements CommandExecutor{
 				getLoginManager().getLogin().remove(p);
 				getLoginManager().delLogin(p.getName());
 				p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "LOGIN_ACCEPT"));
-				Bukkit.getPluginManager().callEvent(new PlayerLoadInvEvent(p));
 				return true;
 			}else{
 				p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "LOGIN_DENY"));

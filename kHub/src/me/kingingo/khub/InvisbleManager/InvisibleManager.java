@@ -12,7 +12,6 @@ import me.kingingo.kcore.Util.UtilInv;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.khub.Listener.HubListener;
-import me.kingingo.khub.Login.Events.PlayerLoadInvEvent;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -84,14 +83,10 @@ public class InvisibleManager extends kListener{
 		invisible.remove(ev.getPlayer());
 	}
 	
-	@EventHandler
-	public void load(PlayerLoadInvEvent ev){
-		ev.getPlayer().getInventory().setItem(7, UtilItem.RenameItem(new ItemStack(351,1,(byte)10),Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
-	}
-	
 	@EventHandler(priority=EventPriority.LOW)
 	public void Join(PlayerJoinEvent ev){
 		for(Player p : invisible.keySet())p.hidePlayer(ev.getPlayer());
+		ev.getPlayer().getInventory().setItem(7, UtilItem.RenameItem(new ItemStack(351,1,(byte)10),Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
 	}
 	
 }

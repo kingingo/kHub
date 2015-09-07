@@ -3,9 +3,7 @@ package me.kingingo.khub.Login;
 import lombok.Getter;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
 import me.kingingo.kcore.Language.Language;
-import me.kingingo.khub.Login.Events.PlayerLoadInvEvent;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,7 +39,6 @@ public class CommandRegister implements CommandExecutor{
 			getLoginManager().delLogin(p.getName());
 			getLoginManager().setUser(p, pw, "");
 			p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "REGISTER_ACCEPT"));
-			Bukkit.getPluginManager().callEvent(new PlayerLoadInvEvent(p));
 			return true;
 		}
 		return false;

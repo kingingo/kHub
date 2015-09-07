@@ -61,7 +61,7 @@ public class HubLoginListener extends kListener{
 		if(ev.getType()==UpdateType.SEC){
 			for(int i = 0; i < list.size(); i++){
 				player=(Player)list.keySet().toArray()[i];
-				if( (System.currentTimeMillis()-list.get(player)) > TimeSpan.SECOND*20){
+				if( (System.currentTimeMillis()-list.get(player)) > TimeSpan.SECOND*40){
 					if(UtilLocation.isSameLocation(player.getLocation(), spawn)){
 						Log("detected Bot "+player.getName());
 						player.kickPlayer("§dEs joinen grad zu viele Spieler bitte versuch es später erneut!");

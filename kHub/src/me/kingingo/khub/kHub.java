@@ -1,12 +1,10 @@
 package me.kingingo.khub;
 
-import me.kingingo.kcore.ChunkGenerator.CleanroomChunkGenerator;
 import me.kingingo.kcore.Client.Client;
 import me.kingingo.kcore.Command.Admin.CommandCMDMute;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
 import me.kingingo.kcore.Command.Admin.CommandCoins;
 import me.kingingo.kcore.Command.Admin.CommandFly;
-import me.kingingo.kcore.Command.Admin.CommandMySQL;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
 import me.kingingo.kcore.Command.Admin.CommandTrackingRange;
 import me.kingingo.kcore.Command.Admin.CommandgBroadcast;
@@ -21,7 +19,6 @@ import me.kingingo.kcore.memory.MemoryFix;
 import me.kingingo.khub.Command.CommandTime;
 
 import org.bukkit.Bukkit;
-import org.bukkit.WorldCreator;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -56,7 +53,6 @@ public class kHub extends JavaPlugin{
 			Manager.getCmd().register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
 			Manager.getCmd().register(CommandPing.class, new CommandPing());
 			Manager.getCmd().register(CommandTrackingRange.class, new CommandTrackingRange());
-			Manager.getCmd().register(CommandMySQL.class, new CommandMySQL(mysql));
 			Manager.DebugLog(time, 45, this.getClass().getName());
 			new ListenerCMD(this);
 			

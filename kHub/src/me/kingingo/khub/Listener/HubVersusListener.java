@@ -120,7 +120,7 @@ public class HubVersusListener extends kListener{
 					}
 					
 				},TimeSpan.DAY*7),
-		},"§c§lEpicMen",EntityType.ENDERMAN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getManager().getHologram(),getManager().getMysql());
+		},"§c§lEpicMen",EntityType.ENDERMAN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getManager().getHologram(),getManager().getPermissionManager(),new StatsManager(getManager().getInstance(),getManager().getMysql(), GameType.PVP),getManager().getCoins());
 		
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);

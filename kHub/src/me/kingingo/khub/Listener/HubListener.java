@@ -281,18 +281,29 @@ public class HubListener extends kListener{
 	public void Packet(PacketReceiveEvent ev){
 		if(ev.getPacket() instanceof SERVER_STATUS){
 			ss = (SERVER_STATUS)ev.getPacket();
-			if(!getSigns().containsKey(ss.getTyp()))return;
-			sign=getSigns().get(ss.getTyp()).get(ss.getSign());
-			sign.setLine(0, "- "+ Color.WHITE + ss.getTyp().getKürzel()+" "+ ss.getId().split("a")[1] + Color.BLACK + " -");
-			sign.setLine(1, ss.getMap());
-			if(ss.getOnline()>=ss.getMax_online()){
-				sign.setLine(2, "> "+Color.ORANGE+"Premium "+Color.BLACK+" <");
-			}else{
-				sign.setLine(2, "> "+Color.GREEN+"Join "+Color.BLACK+" <");
+			try{
+				if(!getSigns().containsKey(ss.getTyp()))return;
+				sign=getSigns().get(ss.getTyp()).get(ss.getSign());
+				sign.setLine(0, "- "+ Color.WHITE + ss.getTyp().getKürzel()+" "+ ss.getId().split("a")[1] + Color.BLACK + " -");
+				sign.setLine(1, ss.getMap());
+				if(ss.getOnline()>=ss.getMax_online()){
+					sign.setLine(2, "> "+Color.ORANGE+"Premium "+Color.BLACK+" <");
+				}else{
+					sign.setLine(2, "> "+Color.GREEN+"Join "+Color.BLACK+" <");
+				}
+				sign.setLine(3, ss.getOnline()+Color.GRAY.toString()+"/"+Color.BLACK+ss.getMax_online());
+				sign.update();
+				getSign_server().put(sign, ss);
+			}catch(Exception e){
+				e.printStackTrace();
+				if(getSigns().containsKey(ss.getTyp())){
+					System.err.println("Find in Array: "+ss.getTyp());
+					if(getSigns().get(ss.getTyp()).contains(ss.getSign())){
+						System.err.println("Find in Array: "+ss.getSign());
+					}
+				}
+				System.err.println("Sign: "+ss.getSign());
 			}
-			sign.setLine(3, ss.getOnline()+Color.GRAY.toString()+"/"+Color.BLACK+ss.getMax_online());
-			sign.update();
-			getSign_server().put(sign, ss);
 		}
 	}
 	

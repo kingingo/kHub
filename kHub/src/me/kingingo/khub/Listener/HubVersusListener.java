@@ -23,6 +23,7 @@ import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.ARENA_STATUS;
 import me.kingingo.kcore.Packet.Packets.VERSUS_SETTINGS;
+import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.StatsManager.StatsManager;
 import me.kingingo.kcore.Update.UpdateType;
@@ -76,14 +77,12 @@ public class HubVersusListener extends kListener{
 	private HashMap<Creature,VersusType> creatures = new HashMap<>();
 	private HashMap<Player,Player> vs = new HashMap<>();
 	
-	private DeliveryPet deliveryPet;
-	
 	public HubVersusListener(final HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
 		this.manager=manager;
 		
-		this.deliveryPet=new DeliveryPet(new DeliveryObject[]{
-				new DeliveryObject(new String[]{"","§7Click for Vote!","","§eRewards:","§7   100 Coins"},null,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
+		new DeliveryPet(new DeliveryObject[]{
+				new DeliveryObject(new String[]{"","§7Click for Vote!","","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
@@ -96,7 +95,7 @@ public class HubVersusListener extends kListener{
 					}
 					
 				},-1),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   100 Coins"},null,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
+				new DeliveryObject(new String[]{"","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
@@ -104,7 +103,7 @@ public class HubVersusListener extends kListener{
 					}
 					
 				},TimeSpan.DAY),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   1000 Coins"},null,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
+				new DeliveryObject(new String[]{"","§eRewards:","§7   1000 Coins"},kPermission.RANK_COINS_MONTH,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
@@ -120,7 +119,7 @@ public class HubVersusListener extends kListener{
 					}
 					
 				},TimeSpan.DAY*7),
-		},"§c§lEpicMen",EntityType.ENDERMAN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getManager().getHologram(),getManager().getPermissionManager(),new StatsManager(getManager().getInstance(),getManager().getMysql(), GameType.PVP),getManager().getCoins());
+		},"§bThe Delivery Jockey!",EntityType.CHICKEN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getManager().getHologram(),getManager().getPermissionManager(),new StatsManager(getManager().getInstance(),getManager().getMysql(), GameType.PVP),getManager().getCoins());
 		
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);

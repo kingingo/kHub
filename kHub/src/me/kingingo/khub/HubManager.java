@@ -10,21 +10,31 @@ import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandFlyspeed;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
+import me.kingingo.kcore.DeliveryPet.DeliveryObject;
+import me.kingingo.kcore.DeliveryPet.DeliveryPet;
 import me.kingingo.kcore.Disguise.DisguiseManager;
 import me.kingingo.kcore.Disguise.DisguiseShop;
+import me.kingingo.kcore.Enum.GameType;
+import me.kingingo.kcore.Enum.ServerType;
 import me.kingingo.kcore.Hologram.Hologram;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.Item.ButtonOpenInventory;
+import me.kingingo.kcore.Inventory.Item.Click;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.PermissionManager;
+import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Pet.PetManager;
 import me.kingingo.kcore.Pet.Shop.PetShop;
+import me.kingingo.kcore.StatsManager.StatsManager;
 import me.kingingo.kcore.Util.Coins;
+import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilServer;
+import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.khub.Command.CommandBroadcast;
 import me.kingingo.khub.Command.CommandTraitor;
 import me.kingingo.khub.InvisbleManager.InvisibleManager;
@@ -37,6 +47,7 @@ import me.kingingo.khub.Listener.Holidays.SilvesterListener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -125,6 +136,48 @@ public class HubManager{
 				break;
 			case "Versus":
 				new HubVersusListener(this);
+				
+				UtilServer.createDeliveryPet(new DeliveryPet(null,new DeliveryObject[]{
+				new DeliveryObject(new String[]{"","§7Click for Vote!","","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						p.closeInventory();
+						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
+						p.sendMessage(Language.getText(p,"PREFIX")+" ");
+						p.sendMessage(Language.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
+						p.sendMessage(Language.getText(p,"PREFIX")+" ");
+						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
+					}
+					
+				},-1),
+				new DeliveryObject(new String[]{"","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						getCoins().addCoinsWithScoreboardUpdate(p, true, 100);
+					}
+					
+				},TimeSpan.DAY),
+				new DeliveryObject(new String[]{"","§eRewards:","§7   1000 Coins"},kPermission.RANK_COINS_MONTH,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						getCoins().addCoinsWithScoreboardUpdate(p, true, 1000);
+					}
+					
+				},TimeSpan.DAY*30),
+				new DeliveryObject(new String[]{"","§eRewards:","§7   300 Coins"},null,true,16,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						getCoins().addCoinsWithScoreboardUpdate(p, true, 300);
+					}
+					
+				},TimeSpan.DAY*7),
+		},"§bThe Delivery Jockey!",EntityType.CHICKEN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getHologram(),getMysql())
+		);
+				
 				break;
 			default:
 				this.invisibleManager=new InvisibleManager(getInstance(),null);

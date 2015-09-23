@@ -81,46 +81,6 @@ public class HubVersusListener extends kListener{
 		super(manager.getInstance(),"VersusListener");
 		this.manager=manager;
 		
-		new DeliveryPet(new DeliveryObject[]{
-				new DeliveryObject(new String[]{"","§7Click for Vote!","","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						p.closeInventory();
-						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
-						p.sendMessage(Language.getText(p,"PREFIX")+" ");
-						p.sendMessage(Language.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
-						p.sendMessage(Language.getText(p,"PREFIX")+" ");
-						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
-					}
-					
-				},-1),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						manager.getCoins().addCoinsWithScoreboardUpdate(p, true, 100);
-					}
-					
-				},TimeSpan.DAY),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   1000 Coins"},kPermission.RANK_COINS_MONTH,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						manager.getCoins().addCoinsWithScoreboardUpdate(p, true, 100);
-					}
-					
-				},TimeSpan.DAY*30),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   1000 Coins"},null,true,16,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						
-					}
-					
-				},TimeSpan.DAY*7),
-		},"§bThe Delivery Jockey!",EntityType.CHICKEN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getManager().getHologram(),getManager().getPermissionManager(),new StatsManager(getManager().getInstance(),getManager().getMysql(), GameType.PVP),getManager().getCoins());
-		
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
 		this.base=new InventoryBase(manager.getInstance(), "§bVersus");

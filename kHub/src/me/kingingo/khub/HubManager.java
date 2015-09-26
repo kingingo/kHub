@@ -8,6 +8,7 @@ import me.kingingo.kcore.Addons.AddonNight;
 import me.kingingo.kcore.Calendar.Calendar;
 import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Command.CommandHandler;
+import me.kingingo.kcore.Command.Admin.CommandCoins;
 import me.kingingo.kcore.Command.Admin.CommandFlyspeed;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
 import me.kingingo.kcore.DeliveryPet.DeliveryObject;
@@ -23,6 +24,7 @@ import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
+import me.kingingo.kcore.Packet.Packets.TWIITTER_IS_PLAYER_FOLLOWER;
 import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Permission.kPermission;
@@ -32,8 +34,10 @@ import me.kingingo.kcore.Util.Coins;
 import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
+import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.khub.Command.CommandBroadcast;
+import me.kingingo.khub.Command.CommandDelivery;
 import me.kingingo.khub.Command.CommandTraitor;
 import me.kingingo.khub.InvisbleManager.InvisibleManager;
 import me.kingingo.khub.Listener.HubListener;
@@ -79,10 +83,10 @@ public class HubManager{
 	@Getter
 	private Hologram hologram;
 	
-	public HubManager(JavaPlugin instance,MySQL mysql,PacketManager pmana){
+	public HubManager(JavaPlugin instance,CommandHandler cmd,MySQL mysql,PacketManager pmana){
 		this.instance=instance;
 		this.id=instance.getConfig().getInt("Config.Lobby");
-		this.cmd=new CommandHandler(instance);
+		this.cmd=cmd;
 		this.mysql=mysql;
 		this.PacketManager=pmana;
 		
@@ -134,52 +138,58 @@ public class HubManager{
 				break;
 			case "Versus":
 				new HubVersusListener(this);
-				
-				UtilServer.createDeliveryPet(new DeliveryPet(null,new DeliveryObject[]{
-				new DeliveryObject(new String[]{"","§7Click for Vote!","","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						p.closeInventory();
-						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
-						p.sendMessage(Language.getText(p,"PREFIX")+" ");
-						p.sendMessage(Language.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
-						p.sendMessage(Language.getText(p,"PREFIX")+" ");
-						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
-					}
-					
-				},-1),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						getCoins().addCoinsWithScoreboardUpdate(p, true, 100);
-					}
-					
-				},TimeSpan.DAY),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   1000 Coins"},kPermission.RANK_COINS_MONTH,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						getCoins().addCoinsWithScoreboardUpdate(p, true, 1000);
-					}
-					
-				},TimeSpan.DAY*30),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   300 Coins"},null,true,16,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						getCoins().addCoinsWithScoreboardUpdate(p, true, 300);
-					}
-					
-				},TimeSpan.DAY*7),
-		},"§bThe Delivery Jockey!",EntityType.CHICKEN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getHologram(),getMysql())
-		);
-				
 				break;
 			default:
 				this.invisibleManager=new InvisibleManager(getInstance(),null);
 				new HubListener(this);
+				
+				UtilServer.createDeliveryPet(new DeliveryPet(null,new DeliveryObject[]{
+						new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   150 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},null,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
+
+							@Override
+							public void onClick(Player p, ActionType a,Object obj) {
+								p.closeInventory();
+								p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
+								p.sendMessage(Language.getText(p,"PREFIX")+" ");
+								p.sendMessage(Language.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
+								p.sendMessage(Language.getText(p,"PREFIX")+" ");
+								p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
+							}
+							
+						},-1),
+						new DeliveryObject(new String[]{"§aOnly for Premium Players!","","§ePvP Rewards:","§7   200 Epics","§7   10 Level","","§eGame Rewards:","§7   200 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},kPermission.RANK_COINS_DAILY,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
+
+							@Override
+							public void onClick(Player p, ActionType a,Object obj) {
+								getCoins().addCoins(p, true, 200);
+							}
+							
+						},TimeSpan.DAY),
+						new DeliveryObject(new String[]{"§aOnly for Premium Players!","","§ePvP Rewards:","§7   5000 Epics","§7   5x Golden Apple","","§eGame Rewards:","§7   5000 Coins","§7   5x TTT Paesse","","§eSkyBlock Rewards:","§7   5000 Epics","§7   15x Diamonds","§7   15x Iron Ingot","§7   15x Gold Ingot"},kPermission.RANK_COINS_MONTH,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
+
+							@Override
+							public void onClick(Player p, ActionType a,Object obj) {
+								getCoins().addCoins(p, true, 5000);
+							}
+							
+						},TimeSpan.DAY*30),
+						new DeliveryObject(new String[]{"§7/twitter [TwitterName]","","§ePvP Rewards:","§7   300 Epics","§7   15 Level","","§eGame Rewards:","§7   300 Coins","","§eSkyBlock Rewards:","§7   300 Epics","§7   15 Level"},null,false,16,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
+
+							@Override
+							public void onClick(Player p, ActionType a,Object obj) {
+								String s1 = getMysql().getString("SELECT twitter FROM BG_TWITTER WHERE uuid='"+UtilPlayer.getRealUUID(p)+"'");
+								if(s1.equalsIgnoreCase("null")){
+									p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_ACC_NOT"));
+								}else{
+									getPacketManager().SendPacket("DATA", new TWIITTER_IS_PLAYER_FOLLOWER(s1, p.getName()));
+									p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_CHECK"));
+								}
+							}
+							
+						},TimeSpan.DAY*7),
+				},"§bThe Delivery Jockey!",EntityType.CHICKEN,CommandDelivery.getDelivery(),ServerType.GAME,getHologram(),getMysql())
+				);
+				
 				break;
 		}
 		
@@ -187,6 +197,7 @@ public class HubManager{
 		getCmd().register(CommandGroup.class, new CommandGroup(permissionManager));
 		getCmd().register(CommandBroadcast.class, new CommandBroadcast());
 		getCmd().register(CommandFlyspeed.class, new CommandFlyspeed());
+		cmd.register(CommandCoins.class, new CommandCoins(getCoins()));
 		new Listener(this);
 		UtilServer.createLagListener(this.cmd);
 	}

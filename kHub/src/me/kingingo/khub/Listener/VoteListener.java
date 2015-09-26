@@ -14,6 +14,7 @@ import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
@@ -43,12 +44,12 @@ public class VoteListener extends kListener{
 		 
 		 if(UtilServer.createDeliveryPet(null)!=null){
 			 if(UtilPlayer.isOnline(vote.getUsername())){
-				 UtilServer.createDeliveryPet(null).deliveryUSE(Bukkit.getPlayer(vote.getUsername()), "§aVote for EpicPvP",false);
+				 UtilServer.createDeliveryPet(null).deliveryUSE(Bukkit.getPlayer(vote.getUsername()), Material.PAPER,false);
 			 }else{
-				 UtilServer.createDeliveryPet(null).deliveryUSE(vote.getUsername(), uuid, "§aVote for EpicPvP");
+				 UtilServer.createDeliveryPet(null).deliveryUSE(vote.getUsername(), uuid, Material.PAPER);
 			 }
 		 }
-		 
+		 coins.addCoins(uuid, 150);
 	     packetManager.SendPacket("hub", new NOT_SAVE_COINS(uuid));
 		 packetManager.SendPacket("BG", new BROADCAST(Language.getText( "PREFIX")+"§6Ein Spieler hat gevotet!§a Vote jetzt auch §l/Vote"));
 		 vpacket = new PLAYER_VOTE(vote.getUsername(), uuid);

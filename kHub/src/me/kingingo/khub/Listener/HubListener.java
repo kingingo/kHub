@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,7 @@ import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.HUB_ONLINE;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
+import me.kingingo.kcore.Packet.Packets.TWITTER_PLAYER_FOLLOW;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
@@ -31,7 +33,9 @@ import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
+import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
+import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.Listener.Holidays.ChristmasListener;
 import me.kingingo.khub.Lobby.Lobby;
@@ -303,6 +307,20 @@ public class HubListener extends kListener{
 					}
 				}
 				System.err.println("Sign: "+ss.getSign());
+			}
+		}else if(ev.getPacket() instanceof TWITTER_PLAYER_FOLLOW){
+			TWITTER_PLAYER_FOLLOW tw = (TWITTER_PLAYER_FOLLOW)ev.getPacket();
+			
+			if(UtilPlayer.isOnline(tw.getPlayer())){
+				Player p = Bukkit.getPlayer(tw.getPlayer());
+				if(!tw.isFollow()){
+					getManager().getMysql().Update("DELETE FROM BG_TWITTER WHERE uuid='" + UtilPlayer.getRealUUID(p) + "'");
+					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_FOLLOW_N"));
+					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_REMOVE"));
+				}else{
+					UtilServer.getDeliveryPet().deliveryBlock(p, Material.getMaterial(351));
+					getManager().getCoins().addCoins(p, true, 300);
+				}
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package me.kingingo.khub;
 
 import me.kingingo.kcore.Client.Client;
+import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandCMDMute;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
 import me.kingingo.kcore.Command.Admin.CommandCoins;
@@ -15,7 +16,9 @@ import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.Util.UtilException;
+import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.memory.MemoryFix;
+import me.kingingo.khub.Command.CommandDelivery;
 import me.kingingo.khub.Command.CommandTime;
 
 import org.bukkit.Bukkit;
@@ -43,22 +46,25 @@ public class kHub extends JavaPlugin{
 			this.c = new Client(getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),getConfig().getString("Config.HubType").toUpperCase()+getConfig().getInt("Config.Lobby"),this,Updater);
 			this.PacketManager=new PacketManager(this,c);
 			new MemoryFix(this);
-			this.Manager=new HubManager(this,mysql,PacketManager);
-			Manager.getCmd().register(CommandFly.class, new CommandFly(this));
-			Manager.getCmd().register(CommandCMDMute.class, new CommandCMDMute(this));	
-			Manager.getCmd().register(CommandChatMute.class, new CommandChatMute(this));
-			Manager.getCmd().register(CommandToggle.class, new CommandToggle(this));
-			Manager.getCmd().register(CommandCoins.class, new CommandCoins(Manager.getCoins()));
-			Manager.getCmd().register(CommandTime.class, new CommandTime());
-			Manager.getCmd().register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
-			Manager.getCmd().register(CommandPing.class, new CommandPing());
-			Manager.getCmd().register(CommandTrackingRange.class, new CommandTrackingRange());
-			Manager.DebugLog(time, 45, this.getClass().getName());
+			CommandHandler cmd = new CommandHandler(this);
+			cmd.register(CommandFly.class, new CommandFly(this));
+			cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
+			cmd.register(CommandChatMute.class, new CommandChatMute(this));
+			cmd.register(CommandToggle.class, new CommandToggle(this));
+			cmd.register(CommandTime.class, new CommandTime());
+			cmd.register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
+			cmd.register(CommandPing.class, new CommandPing());
+			cmd.register(CommandTrackingRange.class, new CommandTrackingRange());
+			cmd.register(CommandDelivery.class, new CommandDelivery(this));
+			
 			new ListenerCMD(this);
 			
 			for(Entity e : Bukkit.getWorld("world").getEntities()){
 				if(!(e instanceof Player))e.remove();
 			}
+			
+			this.Manager=new HubManager(this,cmd,mysql,PacketManager);
+			Manager.DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
 			UtilException.catchException(e, "hub"+getConfig().getInt("Config.Lobby"), Bukkit.getIp(), mysql);
 		}
@@ -68,6 +74,7 @@ public class kHub extends JavaPlugin{
 		c.disconnect(false);
 		mysql.close();
 		Updater.stop();
+		if(UtilServer.getDeliveryPet()!=null)UtilServer.getDeliveryPet().onDisable();
 	}
 	
 	public void loadConfig(){

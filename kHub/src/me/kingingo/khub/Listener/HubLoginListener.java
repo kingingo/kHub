@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.TimeZone;
-import java.util.UUID;
 
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Update.UpdateType;

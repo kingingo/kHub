@@ -42,9 +42,9 @@ public class VoteListener extends kListener{
 		 vote = event.getVote();
 		 uuid = UtilPlayer.getUUID(vote.getUsername(), mysql);
 		 
-		 if(UtilServer.createDeliveryPet(null)!=null){
+		 if(UtilServer.getDeliveryPet()!=null){
 			 if(UtilPlayer.isOnline(vote.getUsername())){
-				 UtilServer.createDeliveryPet(null).deliveryUSE(Bukkit.getPlayer(vote.getUsername()), Material.PAPER,false);
+				 UtilServer.createDeliveryPet(null).deliveryUSE(Bukkit.getPlayer(vote.getUsername()), Material.PAPER,true);
 			 }else{
 				 UtilServer.createDeliveryPet(null).deliveryUSE(vote.getUsername(), uuid, Material.PAPER);
 			 }

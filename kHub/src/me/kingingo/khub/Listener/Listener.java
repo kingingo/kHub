@@ -61,7 +61,7 @@ public class Listener extends kListener{
 	
 	@EventHandler
 	public void AddBoard(PlayerSetScoreboardEvent ev){
-		if(!kHub.hubType.equalsIgnoreCase("HubLogin"))UtilPlayer.setScoreboard(ev.getPlayer(), getManager().getCoins(), getManager().getPermissionManager());
+		if(!kHub.hubType.equalsIgnoreCase("HubLogin"))UtilPlayer.setScoreboard(ev.getPlayer(),getManager().getGems(), getManager().getCoins());
 	}
 	
 	@EventHandler(priority=EventPriority.LOWEST)

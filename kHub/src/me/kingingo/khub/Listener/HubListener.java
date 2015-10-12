@@ -13,7 +13,7 @@ import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
-import me.kingingo.kcore.Inventory.Item.ButtonBase;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonBase;
 import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Language.LanguageType;
@@ -96,7 +96,7 @@ public class HubListener extends kListener{
 		this.manager.getInvisibleManager().setListener(this);
 		
 		if(("HUB"+manager.getInstance().getConfig().getInt("Config.Lobby")).equalsIgnoreCase("HUB2")&&Bukkit.getPluginManager().getPlugin("Votifier")!=null){
-			new VoteListener(manager.getMysql(),manager.getCoins(),manager.getPacketManager());
+			new VoteListener(manager.getGems(),manager.getCoins(),manager.getPacketManager());
 		}
 		
 		if(manager.getHoliday()!=null&&manager.getHoliday()==CalendarType.WEIHNACHTEN){
@@ -253,8 +253,8 @@ public class HubListener extends kListener{
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §aHub "+manager.getId(), "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.COMPASS), Language.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
-		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), Language.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
+		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), Language.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 	}
 	
 	@EventHandler

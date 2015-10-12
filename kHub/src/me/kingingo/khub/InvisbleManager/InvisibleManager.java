@@ -64,13 +64,13 @@ public class InvisibleManager extends kListener{
 			if(ev.getPlayer().getItemInHand().getTypeId()==351){
 				if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 10){
 					ev.getPlayer().getItemInHand().setDurability((byte)8);
-					ev.getPlayer().getItemInHand().getItemMeta().setDisplayName(Language.getText(ev.getPlayer(), "HUB_ITEM_GRAY.DYE_PLAYERS_OFF"));
+					ev.getPlayer().setItemInHand(UtilItem.RenameItem(ev.getPlayer().getItemInHand(), Language.getText(ev.getPlayer(), "HUB_ITEM_GRAY.DYE_PLAYERS_OFF")));
 					ev.getPlayer().updateInventory();
 					invisible(ev.getPlayer());
 				}else if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 8){
 					if(visible(ev.getPlayer())){
 						ev.getPlayer().getItemInHand().setDurability((byte)10);
-						ev.getPlayer().getItemInHand().getItemMeta().setDisplayName(Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON"));
+						ev.getPlayer().setItemInHand(UtilItem.RenameItem(ev.getPlayer().getItemInHand(), Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
 						ev.getPlayer().updateInventory();
 					}
 				}

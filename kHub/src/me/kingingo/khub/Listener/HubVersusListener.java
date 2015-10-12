@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import lombok.Getter;
+import me.kingingo.kcore.Command.Admin.CommandGive;
+import me.kingingo.kcore.Command.Admin.CommandItem;
 import me.kingingo.kcore.Enum.GameState;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.Team;
@@ -12,8 +14,8 @@ import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
 import me.kingingo.kcore.Inventory.Inventory.InventoryChoose;
 import me.kingingo.kcore.Inventory.Inventory.InventoryYesNo;
-import me.kingingo.kcore.Inventory.Item.ButtonBase;
 import me.kingingo.kcore.Inventory.Item.Click;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonBase;
 import me.kingingo.kcore.Kit.InventorySetting.KitSettingInventorys;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
@@ -36,6 +38,7 @@ import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.kcore.Versus.VersusKit;
 import me.kingingo.kcore.Versus.VersusType;
 import me.kingingo.khub.HubManager;
+import me.kingingo.khub.Command.CommandItemName;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -76,6 +79,9 @@ public class HubVersusListener extends kListener{
 	public HubVersusListener(final HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
 		this.manager=manager;
+		manager.getCmd().register(CommandGive.class, new CommandGive());
+		manager.getCmd().register(CommandItem.class, new CommandItem());
+		manager.getCmd().register(CommandItemName.class, new CommandItemName());
 		
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
@@ -231,25 +237,36 @@ public class HubVersusListener extends kListener{
 	int t=0;
 	@EventHandler
 	public void WarteListe(UpdateEvent ev){
+		//Führt die Überprüfung alle 3 sekunden durch & prüft ob Arenen vorhanden sind
 		if(ev.getType()==UpdateType.SEC_3 && !status.isEmpty()){
+			//Geht Alle Arenen durch
 			for(ARENA_STATUS arena : status){
+				//Prüft ob sie in der LobbyPhase sind!
 				if(arena.getState()==GameState.LobbyPhase/*||arena.getState()==GameState.Laden*/){
+					//Prüft den die Team Anzahl
 					type=VersusType.withTeamAnzahl( arena.getTeams() );
+					//Prüft ob Spieler auf der Warte Liste für diese Team Anzahl stehen
 					if(versus_warte_liste.containsKey(type)){
-						
+						//Prüft ob schon Server ,die noch nicht gestartet sind, mit Spieler bereitsteht
 						if(!versus_warte_liste.get(type).isEmpty()){
 							System.out.println(arena.getServer()+"  "+ arena.getArena()+"   "+arena.getOnline()+">1&&"+arena.getOnline()+">="+(arena.getMax_team()*arena.getTeams())+"&&"+arena.getState()+"==GameState.Laden");
+							//Arena Spieler Online Anzahl ist größer als 1
 							if(arena.getOnline()>1/*&&arena.getOnline()>=(arena.getMax_team()*arena.getTeams())&&arena.getState()==GameState.Laden*/){
 								System.out.println("1");
+								//Geht die Warte liste mit den Spieler durch
 								for(int i = 0 ; i<versus_warte_liste.get(type).size(); i++){
 									System.out.println("3  "+arena.getOnline()+" >= "+arena.getMax_team()+"*"+arena.getTeams());
+									//Prüft ob die Spieler Anzahl ob sie größer ist als die Insgesamte erlaubte Spieler anzahl vom Spieler selber
 									if(arena.getOnline() >= arena.getMax_team()*arena.getTeams())break;
 									System.out.println("4");
 									player=(Player)versus_warte_liste.get(type).get(i);
 									System.out.println("5 "+player.getName());
+									//Prüft ob die Arena min Team ansprüche mit den vom Spieler vereinbar sind
 									if(arena.getMin_team() <= statsManager.getInt(Stats.TEAM_MIN, player)){
 										System.out.println("6");
+										//Prüft ob die Arena max Team ansprüche mit den vom Spieler vereinbar sind
 										if(arena.getMax_team() >= statsManager.getInt(Stats.TEAM_MIN, player)){
+											//Schickt den Spieler zu der Arena!
 											System.out.println("7");
 											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),arena.getKit(),player,Team.SOLO,arena.getMin_team(),arena.getMax_team()) );
 											versus_warte_liste.get(type).remove(player);
@@ -259,8 +276,10 @@ public class HubVersusListener extends kListener{
 									}
 								}
 							}else{
+								//Prüft ob genug Spieler für die Arena verfügbar sind und ob die Arena LEER ist
 								if(versus_warte_liste.get(type).size()>=arena.getTeams()&&arena.getOnline()<=0){
 									System.out.println("2");
+									//Setzt die Team MAX u. MIN anzahl fest
 									if(VersusType.byInt(arena.getTeams()) == VersusType._TEAMx2){
 										arena.setMin_team(1);
 										arena.setMax_team(1);
@@ -268,18 +287,27 @@ public class HubVersusListener extends kListener{
 										arena.setMin_team(statsManager.getInt(Stats.TEAM_MIN, versus_warte_liste.get(type).get(a)));
 										arena.setMax_team(statsManager.getInt(Stats.TEAM_MAX, versus_warte_liste.get(type).get(a)));
 									}
+									
+									//Hollt sich den ERSTEN Spieler und nimmt sein Kit!
 									arena.setKit(versus_warte_liste.get(type).get(a).getName());
 									if(!list.isEmpty()){
+										for(int i = 0; i<list.size();i++)list.get(i).clear();
 										list.clear();
 									}
-										
+									
+									//Setzt die Team List auf
 									for(Team team : type.getTeam())list.put(team, new ArrayList<Player>());
 									t=0;
 									boolean b = false;
+									
+									//Geht die Warte List nach Spielern durch
 									for(Player player : versus_warte_liste.get(type)){
 										System.out.println("T: "+t+" "+list.size() +" "+arena.getMax_team());
+										//Prüft ob die MIN Team anzahl mit den Spieler einstellungen vereinbar sind
 										if(arena.getMin_team() <= statsManager.getInt(Stats.TEAM_MIN, player)){
+											//Prüft ob die MAX Team anzahl mit den Spieler einstellungen vereinbar sind
 											if(arena.getMax_team() >= statsManager.getInt(Stats.TEAM_MIN, player)){
+												//Fügt den Spieler hinzu
 												list.get(((Team)list.keySet().toArray()[t])).add(player);
 												System.out.println("T: "+((Team)list.keySet().toArray()[t]).name()+" "+player.getName());
 												if( (t+1)==list.size() ){
@@ -290,6 +318,7 @@ public class HubVersusListener extends kListener{
 											}
 										}
 										
+										//Prüft ob die Teams voll genug sind!
 										for(Team t : list.keySet()){
 											if( list.get(t).size() >= arena.getMax_team() ){
 												b=true;
@@ -299,11 +328,14 @@ public class HubVersusListener extends kListener{
 											}
 										}
 										
-										if(b)break;
+										if(b){
+											break;
+										}
 									}
 									
 									if(!list.isEmpty()){
 										b=true;
+										//Prüft ob die Teams voll genug sind!
 										for(Team team : type.getTeam()){
 											if(list.get(team).size()<arena.getMin_team()){
 												b=false;
@@ -313,12 +345,14 @@ public class HubVersusListener extends kListener{
 										
 										if(b){
 //											arena.setState(GameState.Laden);
+											//Schickt alle Spieler informationen zu den Server
 											for(Team team : list.keySet()){
 												for(Player player : list.get(team)){
 													getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),arena.getKit(),player,team,arena.getMin_team(),arena.getMax_team()) );
 												}
 											}
 											
+											//Schickt alle Spieler los und entfernt sie von der Liste.
 											for(Team team : list.keySet()){
 												for(Player player : list.get(team)){
 													versus_warte_liste.get(type).remove(player);
@@ -377,7 +411,7 @@ public class HubVersusListener extends kListener{
 			for(Creature creature : creatures.keySet()){
 				((Villager)creature).setProfession(Profession.BUTCHER);
 				((Villager)creature).setAdult();
-				manager.getHologram().setName(creature, creature.getCustomName());
+				manager.getHologram().setCreatureName(creature, creature.getCustomName());
 				creature.setCustomName("");
 				UtilEnt.setNoAI(creature, true);
 			}
@@ -385,12 +419,13 @@ public class HubVersusListener extends kListener{
 			this.creature_option=manager.getPet().AddPetWithOutOwner("§5Optionen", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),231.491,70,181.7));
 			((Villager)this.creature_option).setProfession(Profession.LIBRARIAN);
 			((Villager)this.creature_option).setAdult();
-			manager.getHologram().setName(this.creature_option, this.creature_option.getCustomName());
+			manager.getHologram().setCreatureName(this.creature_option, this.creature_option.getCustomName());
 			creature_option.setCustomName("");
 			UtilEnt.setNoAI(creature_option, true);
 		}
 		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
 		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
+		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		load.add(ev.getPlayer());
 	}

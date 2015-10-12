@@ -10,15 +10,17 @@ import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandCoins;
 import me.kingingo.kcore.Command.Admin.CommandFlyspeed;
+import me.kingingo.kcore.Command.Admin.CommandGiveGems;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
 import me.kingingo.kcore.DeliveryPet.DeliveryObject;
 import me.kingingo.kcore.DeliveryPet.DeliveryPet;
 import me.kingingo.kcore.Disguise.DisguiseManager;
 import me.kingingo.kcore.Disguise.DisguiseShop;
 import me.kingingo.kcore.Enum.ServerType;
+import me.kingingo.kcore.GemsShop.CommandGems;
 import me.kingingo.kcore.Hologram.Hologram;
 import me.kingingo.kcore.Inventory.InventoryBase;
-import me.kingingo.kcore.Inventory.Item.ButtonOpenInventory;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
 import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
@@ -30,7 +32,9 @@ import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Pet.PetManager;
 import me.kingingo.kcore.Pet.Shop.PetShop;
+import me.kingingo.kcore.Pet.Shop.PlayerPetHandler;
 import me.kingingo.kcore.Util.Coins;
+import me.kingingo.kcore.Util.Gems;
 import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
@@ -62,6 +66,7 @@ public class HubManager{
 	@Getter
 	private PermissionManager permissionManager;
 	private Coins coins;
+	private Gems gems;
 	@Getter
 	private PacketManager PacketManager;
 	@Getter
@@ -94,11 +99,13 @@ public class HubManager{
 			this.permissionManager=new PermissionManager(instance,GroupTyp.GAME,PacketManager,mysql);
 			new ChatListener(instance, null,permissionManager);
 			this.hologram=new Hologram(instance);
-			this.coins=new Coins(instance,mysql);
+			cmd.register(CommandCoins.class, new CommandCoins(getCoins(),getPacketManager()));
+			cmd.register(CommandGiveGems.class, new CommandGiveGems(getGems(),getPacketManager()));
 			this.pet=new PetManager(instance);
 			this.disguiseManager=new DisguiseManager(getInstance());
 			this.shop=new InventoryBase(getInstance(), 9, "Shop");
-			PetShop petShop = new PetShop(shop,pet,permissionManager, coins);
+			PlayerPetHandler petHandler = new PlayerPetHandler(ServerType.GAME, getPet(), shop, getPermissionManager());
+			PetShop petShop = new PetShop(petHandler, getCoins());
 			this.shop.getMain().addButton(2, new ButtonOpenInventory(petShop, UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop")));
 			this.shop.addPage(petShop);
 			DisguiseShop disguiseShop = new DisguiseShop(shop,permissionManager,coins,disguiseManager);
@@ -143,8 +150,8 @@ public class HubManager{
 				this.invisibleManager=new InvisibleManager(getInstance(),null);
 				new HubListener(this);
 				
-				UtilServer.createDeliveryPet(new DeliveryPet(null,new DeliveryObject[]{
-						new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   150 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},null,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
+				UtilServer.createDeliveryPet(new DeliveryPet(getShop(),null,new DeliveryObject[]{
+						new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},null,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
 
 							@Override
 							public void onClick(Player p, ActionType a,Object obj) {
@@ -197,9 +204,13 @@ public class HubManager{
 		getCmd().register(CommandGroup.class, new CommandGroup(permissionManager));
 		getCmd().register(CommandBroadcast.class, new CommandBroadcast());
 		getCmd().register(CommandFlyspeed.class, new CommandFlyspeed());
-		cmd.register(CommandCoins.class, new CommandCoins(getCoins()));
 		new Listener(this);
 		UtilServer.createLagListener(this.cmd);
+	}
+	
+	public Gems getGems(){
+		if(gems==null)gems=new Gems(getMysql());
+		return gems;
 	}
 	
 	public Coins getCoins(){

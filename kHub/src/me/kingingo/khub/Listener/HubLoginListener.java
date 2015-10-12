@@ -69,7 +69,7 @@ public class HubLoginListener extends kListener{
 		if(ev.getType()==UpdateType.SEC){
 			for(int i = 0; i < list.size(); i++){
 				player=(Player)list.keySet().toArray()[i];
-				if( (System.currentTimeMillis()-list.get(player)) > TimeSpan.SECOND*10){
+				if( (System.currentTimeMillis()-list.get(player)) > TimeSpan.SECOND*13){
 					if(UtilLocation.isSameLocation(player.getLocation(), spawn)){
 						Log("detected Bot "+player.getName());
 						addBot(player);
@@ -80,6 +80,10 @@ public class HubLoginListener extends kListener{
 					}
 				}
 			}
+		} 
+			
+		if(ev.getType()==UpdateType.MIN_32){
+			bot.clear();
 		}
 	}
 	
@@ -88,15 +92,16 @@ public class HubLoginListener extends kListener{
 			int i = bot.get(p.getAddress().getAddress().getHostAddress());
 			i++;
 			bot.remove(p.getAddress().getAddress().getHostAddress());
-			if(i>2){
+			if(i>1){
+				bot.remove(p.getAddress().getAddress().getHostAddress());
 				Date MyDate = new Date();
 				SimpleDateFormat df2 = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 				df2.setTimeZone(TimeZone.getDefault());
 				df2.format(MyDate);
 				Calendar gc2 = new GregorianCalendar();
 				Date now = gc2.getTime();
-				manager.getMysql().Update("INSERT INTO BG_Ban (name,name_uuid, nameip,banner,banner_uuid,bannerip,time,reason, level,aktiv) VALUES ('" + p.getName() + "','"+UtilPlayer.getRealUUID(p)+"', 'null', 'CONSOLE','CONSOLE', 'null', '" + df2.format(now) + "', 'Bot Detection', '5', 'true')");
-				System.err.println("[Bot-Detection] "+p.getName()+" wurde gebannt");
+				manager.getMysql().Update("INSERT INTO BG_ZEITBAN (name,name_uuid, nameip,banner,banner_uuid,bannerip,date,time,reason,aktiv) VALUES ('" + p.getName() + "','"+UtilPlayer.getRealUUID(p)+"', '"+p.getAddress().getAddress().getHostAddress()+"', 'CONSOLE','CONSOLE', 'null', '" + df2.format(now) + "','"+((long)System.currentTimeMillis()+TimeSpan.DAY*1)+"', 'Bot Detection', 'true')");
+				System.err.println("[Bot-Detection] "+p.getName()+" wurde zeit gebannt für 1 Tage");
 			}else{
 				bot.put(p.getAddress().getAddress().getHostAddress(), i);
 			}

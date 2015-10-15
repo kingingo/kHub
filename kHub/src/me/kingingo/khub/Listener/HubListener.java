@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,8 +12,8 @@ import me.kingingo.kcore.Calendar.Calendar.CalendarType;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
-import me.kingingo.kcore.Inventory.Item.Buttons.ButtonBase;
 import me.kingingo.kcore.Inventory.Item.Click;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonBase;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Language.LanguageType;
 import me.kingingo.kcore.Listener.kListener;
@@ -35,7 +34,6 @@ import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
-import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.Listener.Holidays.ChristmasListener;
 import me.kingingo.khub.Lobby.Lobby;
@@ -252,7 +250,7 @@ public class HubListener extends kListener{
 		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT",manager.getId()+" Hub"));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §aHub "+manager.getId(), "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-		ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.COMPASS), Language.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
+		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.COMPASS), Language.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
 		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
 		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), Language.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 	}

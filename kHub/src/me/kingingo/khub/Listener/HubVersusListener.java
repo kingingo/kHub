@@ -1,22 +1,20 @@
 package me.kingingo.khub.Listener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import lombok.Getter;
-import me.kingingo.kcore.Command.Admin.CommandGive;
-import me.kingingo.kcore.Command.Admin.CommandItem;
 import me.kingingo.kcore.Enum.GameState;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.Team;
+import me.kingingo.kcore.Hologram.nametags.NameTagMessage;
+import me.kingingo.kcore.Hologram.nametags.NameTagType;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
 import me.kingingo.kcore.Inventory.Inventory.InventoryChoose;
 import me.kingingo.kcore.Inventory.Inventory.InventoryYesNo;
 import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonBase;
-import me.kingingo.kcore.Kit.InventorySetting.KitSettingInventorys;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
@@ -32,17 +30,15 @@ import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEnt;
 import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
-import me.kingingo.kcore.Util.UtilInv;
 import me.kingingo.kcore.Util.UtilItem;
+import me.kingingo.kcore.Util.UtilMath;
+import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilTime;
-import me.kingingo.kcore.Versus.VersusKit;
 import me.kingingo.kcore.Versus.VersusType;
 import me.kingingo.khub.HubManager;
-import me.kingingo.khub.Command.CommandItemName;
+import me.kingingo.khub.Command.CommandVersus;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.EntityType;
@@ -52,6 +48,7 @@ import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -62,39 +59,27 @@ public class HubVersusListener extends kListener{
 
 	@Getter
 	private HubManager manager;
-	private ArrayList<ARENA_STATUS> status = new ArrayList<>();
+	private HashMap<VersusType,HashMap<GameState,ArrayList<ARENA_STATUS>>> status = new HashMap<>();
 	private HashMap<VersusType,ArrayList<Player>> versus_warte_liste = new HashMap<>();
 	private StatsManager statsManager;
-	private String kit;
 	private InventoryBase base;
 	private Creature creature_option;
 	private InventoryPageBase optionen;
 	private InventoryYesNo kit_random;
 	private InventoryChoose team_min;
 	private InventoryChoose team_max;
-	private KitSettingInventorys kits;
 	private HashMap<Creature,VersusType> creatures = new HashMap<>();
 	private HashMap<Player,Player> vs = new HashMap<>();
 	
 	public HubVersusListener(final HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
 		this.manager=manager;
-		manager.getCmd().register(CommandGive.class, new CommandGive());
-		manager.getCmd().register(CommandItem.class, new CommandItem());
-		manager.getCmd().register(CommandItemName.class, new CommandItemName());
+		manager.getCmd().register(CommandVersus.class, new CommandVersus(manager.getInstance()));
 		
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
 		this.base=new InventoryBase(manager.getInstance(), "§bVersus");
 		
-		VersusKit k = new VersusKit();
-		k.helm=new ItemStack(Material.IRON_HELMET);
-		k.chestplate=new ItemStack(Material.IRON_CHESTPLATE);
-		k.leggings=new ItemStack(Material.IRON_LEGGINGS);
-		k.boots=new ItemStack(Material.IRON_BOOTS);
-		k.inv=new ItemStack[]{new ItemStack(Material.DIAMOND_SWORD)};
-		this.kit=UtilInv.itemStackArrayToBase64(k.toItemArray());
-		this.kits=new KitSettingInventorys(manager.getInstance(), statsManager);
 		for(VersusType type : VersusType.values())versus_warte_liste.put(type, new ArrayList<Player>());
 		
 		this.optionen=new InventoryChoose(null, "§5Optionen", 9, new ItemStack[]{});
@@ -131,27 +116,6 @@ public class HubVersusListener extends kListener{
 			}
 			
 		}, UtilItem.Item(new ItemStack(Material.IRON_SWORD), new String[]{"§7Einstellung nur für 1vs1"}, "Kit Random")));
-	
-		this.optionen.addButton(7, new ButtonBase(new Click(){
-
-			@Override
-			public void onClick(Player player, ActionType type, Object obj) {
-				if( ((ItemStack)obj).getType()==Material.DIAMOND_CHESTPLATE ){
-					player.closeInventory();
-					if(kits.getInventorys().containsKey(player)){
-						kits.addKitInventory(player);
-					}else{
-						try {
-							kits.addKitInventory(player, new VersusKit().fromItemArray( UtilInv.itemStackArrayFromBase64(statsManager.getString(Stats.KIT, player))));
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-			
-		},UtilItem.Item(new ItemStack(Material.DIAMOND_CHESTPLATE), new String[]{"§7Hier kannst du","§7dein Kit einstellen."}, "§eKit einstellen")));
-		this.base.addPage(optionen);
 		
 		this.team_max = new InventoryChoose(new Click(){
 
@@ -169,7 +133,6 @@ public class HubVersusListener extends kListener{
 			}
 			
 		}, "Team maximal: ", 9, new ItemStack[]{ UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), " "),UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,2,(short)3), " "),UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,3,(short)3), " ") });
-		this.base.addPage(team_max);
 		
 		this.team_min = new InventoryChoose(new Click(){
 
@@ -187,7 +150,6 @@ public class HubVersusListener extends kListener{
 			}
 			
 		}, "Team mindestens: ", 9, new ItemStack[]{ UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), " "),UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,2,(short)3), " "),UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,3,(short)3), " ") });
-		this.base.addPage(team_min);
 		
 		this.kit_random= new InventoryYesNo("Kit Random", new Click(){
 
@@ -206,13 +168,65 @@ public class HubVersusListener extends kListener{
 			}
 			
 		});
+		
+		this.base.addPage(optionen);
+		this.base.addPage(team_min);
+		this.base.addPage(team_max);
 		this.base.addPage(kit_random);
+		
+		if(creatures.isEmpty()){
+			creatures.put(manager.getPet().AddPetWithOutOwner("§aRandom 1vs1", true, EntityType.VILLAGER, CommandVersus.getVs()) ,VersusType._TEAMx2);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx3.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandVersus.getTeam_3()) ,VersusType._TEAMx3);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx4.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandVersus.getTeam_4()) ,VersusType._TEAMx4);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx5.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandVersus.getTeam_5()) ,VersusType._TEAMx5);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx6.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandVersus.getTeam_6()) ,VersusType._TEAMx6);
+			NameTagMessage m;
+			
+			for(Creature creature : creatures.keySet()){
+				((Villager)creature).setProfession(Profession.BUTCHER);
+				((Villager)creature).setAdult();
+				m=new NameTagMessage(NameTagType.SERVER, creature.getLocation().add(0, 2, 0), creature.getCustomName());
+				m.send();
+				creature.setCustomName("");
+				UtilEnt.setNoAI(creature, true);
+			}
+			
+			this.creature_option=manager.getPet().AddPetWithOutOwner("§5Optionen", true, EntityType.VILLAGER, CommandVersus.getOptionen());
+			((Villager)this.creature_option).setProfession(Profession.LIBRARIAN);
+			((Villager)this.creature_option).setAdult();
+			m=new NameTagMessage(NameTagType.SERVER, creature_option.getLocation().add(0, 2, 0), creature_option.getCustomName());
+			m.send();
+			creature_option.setCustomName("");
+			UtilEnt.setNoAI(creature_option, true);
+		}
 	}
 	
 	public void removeFromList(Player player){
 		for(ArrayList<Player> list : versus_warte_liste.values()){
 			if(list.contains(player)){
 				list.remove(player);
+			}
+		}
+	}
+	
+	@EventHandler
+	public void gamemode(PlayerGameModeChangeEvent ev){
+		if(ev.getNewGameMode() == GameMode.CREATIVE){
+			
+		}else{
+			ev.getPlayer().getInventory().clear();
+			ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
+			ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
+		}
+	}
+	
+	@EventHandler
+	public void Portal(UpdateEvent ev){
+		if(ev.getType()==UpdateType.SEC){
+			for(Player player : UtilServer.getPlayers()){
+				if(player.getEyeLocation().getBlock().getType()==Material.PORTAL){
+					UtilBG.sendToServer(player, "hub1", manager.getInstance());
+				}
 			}
 		}
 	}
@@ -230,6 +244,7 @@ public class HubVersusListener extends kListener{
 	}
 	
 	HashMap<Team,ArrayList<Player>> list = new HashMap<>();
+	ARENA_STATUS arena;
 	Player player;
 	boolean b=false;
 	VersusType type;
@@ -240,34 +255,25 @@ public class HubVersusListener extends kListener{
 		//Führt die Überprüfung alle 3 sekunden durch & prüft ob Arenen vorhanden sind
 		if(ev.getType()==UpdateType.SEC_3 && !status.isEmpty()){
 			//Geht Alle Arenen durch
-			for(ARENA_STATUS arena : status){
-				//Prüft ob sie in der LobbyPhase sind!
-				if(arena.getState()==GameState.LobbyPhase/*||arena.getState()==GameState.Laden*/){
-					//Prüft den die Team Anzahl
-					type=VersusType.withTeamAnzahl( arena.getTeams() );
-					//Prüft ob Spieler auf der Warte Liste für diese Team Anzahl stehen
-					if(versus_warte_liste.containsKey(type)){
-						//Prüft ob schon Server ,die noch nicht gestartet sind, mit Spieler bereitsteht
-						if(!versus_warte_liste.get(type).isEmpty()){
-							System.out.println(arena.getServer()+"  "+ arena.getArena()+"   "+arena.getOnline()+">1&&"+arena.getOnline()+">="+(arena.getMax_team()*arena.getTeams())+"&&"+arena.getState()+"==GameState.Laden");
-							//Arena Spieler Online Anzahl ist größer als 1
-							if(arena.getOnline()>1/*&&arena.getOnline()>=(arena.getMax_team()*arena.getTeams())&&arena.getState()==GameState.Laden*/){
-								System.out.println("1");
+			for(VersusType type : status.keySet()){
+				//PRÜFT OB MOMENTAN SPIELER DA SIND!
+				if(versus_warte_liste.containsKey(type)){
+					
+					//PRÜFT OB SERVER NOCH NICHT GESTARTET SIND UND WO NOCH PLATZ IST!
+					if(status.get(type).containsKey(GameState.Laden) && !status.get(type).get(GameState.Laden).isEmpty()){
+						
+						for(ARENA_STATUS arena : status.get(type).get(GameState.Laden)){
+							if(arena.getOnline()>1){
 								//Geht die Warte liste mit den Spieler durch
 								for(int i = 0 ; i<versus_warte_liste.get(type).size(); i++){
-									System.out.println("3  "+arena.getOnline()+" >= "+arena.getMax_team()+"*"+arena.getTeams());
 									//Prüft ob die Spieler Anzahl ob sie größer ist als die Insgesamte erlaubte Spieler anzahl vom Spieler selber
 									if(arena.getOnline() >= arena.getMax_team()*arena.getTeams())break;
-									System.out.println("4");
 									player=(Player)versus_warte_liste.get(type).get(i);
-									System.out.println("5 "+player.getName());
 									//Prüft ob die Arena min Team ansprüche mit den vom Spieler vereinbar sind
 									if(arena.getMin_team() <= statsManager.getInt(Stats.TEAM_MIN, player)){
-										System.out.println("6");
 										//Prüft ob die Arena max Team ansprüche mit den vom Spieler vereinbar sind
 										if(arena.getMax_team() >= statsManager.getInt(Stats.TEAM_MIN, player)){
 											//Schickt den Spieler zu der Arena!
-											System.out.println("7");
 											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),arena.getKit(),player,Team.SOLO,arena.getMin_team(),arena.getMax_team()) );
 											versus_warte_liste.get(type).remove(player);
 											UtilBG.sendToServer(player, arena.getServer(), manager.getInstance());
@@ -275,10 +281,15 @@ public class HubVersusListener extends kListener{
 										}
 									}
 								}
-							}else{
+							}
+						}
+						
+					}else{
+						if(status.get(type).containsKey(GameState.LobbyPhase)){
+								arena=(ARENA_STATUS)status.get(type).get(GameState.LobbyPhase).get(UtilMath.r(status.get(type).get(GameState.LobbyPhase).size()));
+								
 								//Prüft ob genug Spieler für die Arena verfügbar sind und ob die Arena LEER ist
 								if(versus_warte_liste.get(type).size()>=arena.getTeams()&&arena.getOnline()<=0){
-									System.out.println("2");
 									//Setzt die Team MAX u. MIN anzahl fest
 									if(VersusType.byInt(arena.getTeams()) == VersusType._TEAMx2){
 										arena.setMin_team(1);
@@ -291,7 +302,9 @@ public class HubVersusListener extends kListener{
 									//Hollt sich den ERSTEN Spieler und nimmt sein Kit!
 									arena.setKit(versus_warte_liste.get(type).get(a).getName());
 									if(!list.isEmpty()){
-										for(int i = 0; i<list.size();i++)list.get(i).clear();
+										for(int i = 0; i<list.size();i++){
+											if(list.get(i)!=null&&!list.get(i).isEmpty())list.get(i).clear();
+										}
 										list.clear();
 									}
 									
@@ -302,14 +315,12 @@ public class HubVersusListener extends kListener{
 									
 									//Geht die Warte List nach Spielern durch
 									for(Player player : versus_warte_liste.get(type)){
-										System.out.println("T: "+t+" "+list.size() +" "+arena.getMax_team());
 										//Prüft ob die MIN Team anzahl mit den Spieler einstellungen vereinbar sind
 										if(arena.getMin_team() <= statsManager.getInt(Stats.TEAM_MIN, player)){
 											//Prüft ob die MAX Team anzahl mit den Spieler einstellungen vereinbar sind
 											if(arena.getMax_team() >= statsManager.getInt(Stats.TEAM_MIN, player)){
 												//Fügt den Spieler hinzu
 												list.get(((Team)list.keySet().toArray()[t])).add(player);
-												System.out.println("T: "+((Team)list.keySet().toArray()[t]).name()+" "+player.getName());
 												if( (t+1)==list.size() ){
 													t=0;
 												}else{
@@ -344,7 +355,11 @@ public class HubVersusListener extends kListener{
 										}
 										
 										if(b){
-//											arena.setState(GameState.Laden);
+											arena.setState(GameState.Laden);
+											
+											if(!status.get(type).containsKey(GameState.Laden))status.get(type).put(GameState.Laden, new ArrayList<>());
+											status.get(type).get(GameState.Laden).add(arena);
+											status.get(type).get(GameState.LobbyPhase).remove(arena);
 											//Schickt alle Spieler informationen zu den Server
 											for(Team team : list.keySet()){
 												for(Player player : list.get(team)){
@@ -364,9 +379,11 @@ public class HubVersusListener extends kListener{
 										a++;
 									}
 								}
-							}
+								
+							
 						}
 					}
+					
 				}
 			}
 		}	
@@ -385,7 +402,6 @@ public class HubVersusListener extends kListener{
 		if(ev.getType()==UpdateType.SEC_3){
 			for(Player player : load){
 				if(!statsManager.ExistPlayer(player)){
-					statsManager.setString(player, this.kit, Stats.KIT);
 					statsManager.setString(player, "true", Stats.KIT_RANDOM);
 					statsManager.setInt(player, 1, Stats.TEAM_MIN);
 					statsManager.setInt(player, 3, Stats.TEAM_MAX);
@@ -401,31 +417,7 @@ public class HubVersusListener extends kListener{
 		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eVersus Lobby "+manager.getId(), "§eShop.EpicPvP.de");
 		
-		if(creatures.isEmpty()){
-			creatures.put(manager.getPet().AddPetWithOutOwner("§aRandom 1vs1", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),259.434,71.5,192.585)) ,VersusType._TEAMx2);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx3.getTeam().length+"x Teams", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),238.524,71.5,202.596)) ,VersusType._TEAMx3);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx4.getTeam().length+"x Teams", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),241.518,71.5,205.421)) ,VersusType._TEAMx4);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx5.getTeam().length+"x Teams", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),249.709,71.5,205.210)) ,VersusType._TEAMx5);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx6.getTeam().length+"x Teams", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),252.516,71.5,202.543)) ,VersusType._TEAMx6);
-			
-			for(Creature creature : creatures.keySet()){
-				((Villager)creature).setProfession(Profession.BUTCHER);
-				((Villager)creature).setAdult();
-				manager.getHologram().setCreatureName(creature, creature.getCustomName());
-				creature.setCustomName("");
-				UtilEnt.setNoAI(creature, true);
-			}
-			
-			this.creature_option=manager.getPet().AddPetWithOutOwner("§5Optionen", true, EntityType.VILLAGER, new Location(Bukkit.getWorld("world"),231.491,70,181.7));
-			((Villager)this.creature_option).setProfession(Profession.LIBRARIAN);
-			((Villager)this.creature_option).setAdult();
-			manager.getHologram().setCreatureName(this.creature_option, this.creature_option.getCustomName());
-			creature_option.setCustomName("");
-			UtilEnt.setNoAI(creature_option, true);
-		}
 		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
-		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
-		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		load.add(ev.getPlayer());
 	}
@@ -443,29 +435,21 @@ public class HubVersusListener extends kListener{
 						UtilTime.getTimeManager().add("VERSUS_SWORD", ((Player)ev.getDamager()), TimeSpan.SECOND*10);
 						if(vs.containsKey( ((Player)ev.getEntity()) )){
 							if(vs.get(((Player)ev.getEntity())).getName().equalsIgnoreCase(((Player)ev.getDamager()).getName())){
-								boolean b = false;
-								for(ARENA_STATUS arena : status){
-									if(VersusType.withTeamAnzahl( arena.getTeams() )==VersusType._TEAMx2){
-										System.out.println("ARENA: "+arena.getArena()+" "+arena.getOnline() +" "+arena.getServer()+" "+arena.getState().name());
-										if(arena.getState() == GameState.LobbyPhase&&arena.getOnline()<=0){
-											System.out.println("1ARENA: "+arena.getArena() +" "+arena.getServer()+" "+arena.getState().name());
-											System.out.println("1ARENA: "+((Player)ev.getEntity()).getName()+"  "+((Player)ev.getDamager()).getName());
-											arena.setMin_team(1);
-											arena.setMax_team(1);
-											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getDamager()),VersusType._TEAMx2.getTeam()[0],1,1) );
-											UtilBG.sendToServer(((Player)ev.getDamager()), arena.getServer(), manager.getInstance());
-											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getEntity()),VersusType._TEAMx2.getTeam()[1],1,1) );
-											UtilBG.sendToServer(((Player)ev.getEntity()), arena.getServer(), manager.getInstance());							
-											arena.setState(GameState.InGame);
-											arena.setKit(((Player)ev.getEntity()).getName());
-											vs.remove(((Player)ev.getEntity()));
-											vs.remove(((Player)ev.getDamager()));
-											b =true;
-											break;
-										}
-									}
-								}
-								if(!b){
+								
+								if(!status.get(VersusType._TEAMx2).get(GameState.LobbyPhase).isEmpty()){
+									ARENA_STATUS arena = status.get(VersusType._TEAMx2).get(GameState.LobbyPhase).get( UtilMath.r(status.get(VersusType._TEAMx2).get(GameState.LobbyPhase).size()) );
+								
+									arena.setMin_team(1);
+									arena.setMax_team(1);
+									getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getDamager()),VersusType._TEAMx2.getTeam()[0],1,1) );
+									UtilBG.sendToServer(((Player)ev.getDamager()), arena.getServer(), manager.getInstance());
+									getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType.withTeamAnzahl(arena.getTeams()),arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getEntity()),VersusType._TEAMx2.getTeam()[1],1,1) );
+									UtilBG.sendToServer(((Player)ev.getEntity()), arena.getServer(), manager.getInstance());							
+									arena.setState(GameState.InGame);
+									arena.setKit(((Player)ev.getEntity()).getName());
+									vs.remove(((Player)ev.getEntity()));
+									vs.remove(((Player)ev.getDamager()));
+									
 									((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_NO_FREE_ARENAS"));
 									((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_NO_FREE_ARENAS"));
 								}
@@ -506,19 +490,25 @@ public class HubVersusListener extends kListener{
 	public void Receive(PacketReceiveEvent ev){
 		if(ev.getPacket() instanceof ARENA_STATUS){
 			packet = (ARENA_STATUS)ev.getPacket();
-			find=false;
-			System.out.println("PACKET; "+packet.toString());
-			for(int i = 0 ; i < status.size(); i++){
-				//ÜBERPRÜFT OB DIE ARENA SCHONMAL ABGESPEICHERT WURDE
-				if(((ARENA_STATUS)status.toArray()[i]).getArena().equalsIgnoreCase(packet.getArena())){
-					//ÜBERSCHREIBT DAS BESTEHNDE PACKET
-					((ARENA_STATUS)status.toArray()[i]).Set(packet.toString());
-					find=true;
-					break;
+			
+			if(!status.containsKey(VersusType.withTeamAnzahl( packet.getTeams() )))status.put(VersusType.withTeamAnzahl( packet.getTeams() ), new HashMap<>());
+			if(!status.get(VersusType.withTeamAnzahl( packet.getTeams() )).containsKey(packet.getState()))status.get(VersusType.withTeamAnzahl( packet.getTeams() )).put(packet.getState(), new ArrayList<>());
+			
+			for(VersusType type : VersusType.values()){
+				if(status.containsKey(type)){
+					for(GameState state : GameState.values()){
+						if(status.get(type).containsKey(state)){
+							for(int i = 0; i<status.get(type).get(state).size(); i++){
+								if(status.get( type ).get(state).get(i).getArena().equalsIgnoreCase(packet.getArena())){
+									status.get( type ).get(state).remove(i);
+								}
+							}
+						}
+					}
 				}
 			}
-			//SPEICHERT EINE NEUE ARENA AB!
-			if(!find)status.add(packet);
+			
+			status.get(VersusType.withTeamAnzahl( packet.getTeams() )).get(packet.getState()).add(packet);
 		}
 	}
 	

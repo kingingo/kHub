@@ -73,7 +73,7 @@ public class Listener extends kListener{
 		ev.getPlayer().setFoodLevel(20);
 		ev.getPlayer().getInventory().setHelmet(null);
 		ev.getPlayer().getInventory().clear();
-		if(!kHub.hubType.equalsIgnoreCase("LoginHub"))ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
+		if(!kHub.hubType.equalsIgnoreCase("LoginHub"))ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
 	}
 	
 	@EventHandler

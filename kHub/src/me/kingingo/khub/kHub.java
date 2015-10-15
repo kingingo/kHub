@@ -4,15 +4,11 @@ import me.kingingo.kcore.Client.Client;
 import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandCMDMute;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
-import me.kingingo.kcore.Command.Admin.CommandCoins;
 import me.kingingo.kcore.Command.Admin.CommandFly;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
 import me.kingingo.kcore.Command.Admin.CommandTrackingRange;
 import me.kingingo.kcore.Command.Admin.CommandgBroadcast;
 import me.kingingo.kcore.Command.Commands.CommandPing;
-import me.kingingo.kcore.Command.Commands.CommandSetSpawn;
-import me.kingingo.kcore.Command.Commands.CommandSpawn;
-import me.kingingo.kcore.Command.Commands.CommandkSpawn;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.Command.ListenerCMD;
 import me.kingingo.kcore.MySQL.MySQL;
@@ -77,6 +73,7 @@ public class kHub extends JavaPlugin{
 		c.disconnect(false);
 		mysql.close();
 		Updater.stop();
+		Manager.getHologram().RemoveText();
 		if(UtilServer.getDeliveryPet()!=null)UtilServer.getDeliveryPet().onDisable();
 	}
 	

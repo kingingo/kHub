@@ -12,7 +12,6 @@ import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilMath;
 import me.kingingo.kcore.Util.UtilParticle;
 import me.kingingo.khub.HubManager;
-import me.kingingo.khub.Listener.HubListener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,17 +30,15 @@ public class ChristmasListener extends kListener{
 
 	@Getter
 	private HubManager manager;
-	@Getter
-	private HubListener listener;
 	private int day;
 	private ItemStack christmas;
 	private Location center;
 	private Inventory inventory;
 	private ItemStack item;
 	
-	public ChristmasListener(HubListener listener){
-		super(listener.getManager().getInstance(),"[ChristmasListener]");
-		this.manager=listener.getManager();
+	public ChristmasListener(HubManager manager){
+		super(manager.getInstance(),"[ChristmasListener]");
+		this.manager=manager;
 	    this.day=Integer.valueOf(new SimpleDateFormat ("dd").format(new Date()));
 	    this.center=Bukkit.getWorld("world").getSpawnLocation().add(0, 3, 0);
 	    this.inventory=Bukkit.createInventory(null, 27, "§aAdventskalender:");

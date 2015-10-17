@@ -25,9 +25,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -50,7 +52,14 @@ public class Listener extends kListener{
 	
 	@EventHandler
 	public void soilChangeEntity(EntityInteractEvent event){
-	    if ((event.getEntityType() != EntityType.PLAYER) && (event.getBlock().getType() == Material.SOIL)) event.setCancelled(true);
+	    if ((event.getEntityType() != EntityType.PLAYER) && (event.getBlock().getType() == Material.SOIL)){
+	    	event.setCancelled(true);
+	    }
+	}
+	
+	@EventHandler
+	public void BlockRedstoneEventon(BlockRedstoneEvent ev){
+		ev.setNewCurrent(ev.getOldCurrent());
 	}
 	
 	@EventHandler
@@ -166,6 +175,12 @@ public class Listener extends kListener{
 	}
 	
 	@EventHandler
+	public void ex(EntityExplodeEvent ev) {
+		ev.setCancelled(true);
+	}
+
+	
+	@EventHandler
 	public void Break(BlockBreakEvent ev) {
 		if (ev.getPlayer().isOp())return;
 		
@@ -174,8 +189,7 @@ public class Listener extends kListener{
 
 	@EventHandler
 	public void Break(BlockPlaceEvent ev) {
-		if (ev.getPlayer().isOp())
-			return;
+		if (ev.getPlayer().isOp()) return;
 		ev.setCancelled(true);
 	}
 

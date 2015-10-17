@@ -32,5 +32,4 @@ public class SilvesterListener extends kListener{
 		UtilFirework.start(getSpawn().clone().add(UtilMath.RandomInt(5, -5), UtilMath.RandomInt(8,5), UtilMath.RandomInt(5, -5)), null, null);
 	}
 	
-
 }

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import lombok.Setter;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
+import me.kingingo.kcore.Permission.kPermission;
+import me.kingingo.kcore.Permission.Event.PlayerLoadPermissionEvent;
 import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
@@ -50,7 +52,7 @@ public class InvisibleManager extends kListener{
 		invisible.put(player, System.currentTimeMillis()+(TimeSpan.SECOND*3));
 		for(Player p : UtilServer.getPlayers()){
 			if(p.getName().equalsIgnoreCase(player.getName()))continue;
-			player.hidePlayer(p);
+			if(!p.hasPermission(kPermission.TEAM_MESSAGE.getPermissionToString()))player.hidePlayer(p);
 		}
 	}
 	
@@ -83,9 +85,13 @@ public class InvisibleManager extends kListener{
 		invisible.remove(ev.getPlayer());
 	}
 	
+	@EventHandler
+	public void load(PlayerLoadPermissionEvent ev){
+		if(!ev.getPlayer().hasPermission(kPermission.TEAM_MESSAGE.getPermissionToString())) for(Player p : invisible.keySet())p.hidePlayer(ev.getPlayer());
+	}
+	
 	@EventHandler(priority=EventPriority.LOW)
 	public void Join(PlayerJoinEvent ev){
-		for(Player p : invisible.keySet())p.hidePlayer(ev.getPlayer());
 		ev.getPlayer().getInventory().setItem(7, UtilItem.RenameItem(new ItemStack(351,1,(byte)10),Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
 	}
 	

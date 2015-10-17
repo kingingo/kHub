@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import lombok.Getter;
+import me.kingingo.kcore.Command.Admin.CommandLocations;
 import me.kingingo.kcore.Enum.GameState;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.Team;
@@ -36,7 +37,7 @@ import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.kcore.Versus.VersusType;
 import me.kingingo.khub.HubManager;
-import me.kingingo.khub.Command.CommandVersus;
+import me.kingingo.khub.kHub;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -66,6 +67,7 @@ public class HubVersusListener extends kListener{
 	private Creature creature_option;
 	private InventoryPageBase optionen;
 	private InventoryYesNo kit_random;
+	private InventoryYesNo kit_choise;
 	private InventoryChoose team_min;
 	private InventoryChoose team_max;
 	private HashMap<Creature,VersusType> creatures = new HashMap<>();
@@ -74,11 +76,9 @@ public class HubVersusListener extends kListener{
 	public HubVersusListener(final HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
 		this.manager=manager;
-		manager.getCmd().register(CommandVersus.class, new CommandVersus(manager.getInstance()));
-		
-		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
 		this.base=new InventoryBase(manager.getInstance(), "§bVersus");
+		UtilTime.setTimeManager(manager.getPermissionManager());
 		
 		for(VersusType type : VersusType.values())versus_warte_liste.put(type, new ArrayList<Player>());
 		
@@ -169,17 +169,20 @@ public class HubVersusListener extends kListener{
 			
 		});
 		
+		
+		
+		this.base.addPage(kit_choise);
 		this.base.addPage(optionen);
 		this.base.addPage(team_min);
 		this.base.addPage(team_max);
 		this.base.addPage(kit_random);
 		
 		if(creatures.isEmpty()){
-			creatures.put(manager.getPet().AddPetWithOutOwner("§aRandom 1vs1", true, EntityType.VILLAGER, CommandVersus.getVs()) ,VersusType._TEAMx2);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx3.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandVersus.getTeam_3()) ,VersusType._TEAMx3);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx4.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandVersus.getTeam_4()) ,VersusType._TEAMx4);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx5.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandVersus.getTeam_5()) ,VersusType._TEAMx5);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx6.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandVersus.getTeam_6()) ,VersusType._TEAMx6);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§aRandom 1vs1", true, EntityType.VILLAGER, CommandLocations.getLocation("1vs1")) ,VersusType._TEAMx2);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx3.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandLocations.getLocation("Team_3")) ,VersusType._TEAMx3);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx4.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandLocations.getLocation("Team_4")) ,VersusType._TEAMx4);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx5.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandLocations.getLocation("Team_5")) ,VersusType._TEAMx5);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx6.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandLocations.getLocation("Team_6")) ,VersusType._TEAMx6);
 			NameTagMessage m;
 			
 			for(Creature creature : creatures.keySet()){
@@ -191,7 +194,7 @@ public class HubVersusListener extends kListener{
 				UtilEnt.setNoAI(creature, true);
 			}
 			
-			this.creature_option=manager.getPet().AddPetWithOutOwner("§5Optionen", true, EntityType.VILLAGER, CommandVersus.getOptionen());
+			this.creature_option=manager.getPet().AddPetWithOutOwner("§5Optionen", true, EntityType.VILLAGER, CommandLocations.getLocation("Optionen"));
 			((Villager)this.creature_option).setProfession(Profession.LIBRARIAN);
 			((Villager)this.creature_option).setAdult();
 			m=new NameTagMessage(NameTagType.SERVER, creature_option.getLocation().add(0, 2, 0), creature_option.getCustomName());
@@ -415,7 +418,7 @@ public class HubVersusListener extends kListener{
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §eVersus Lobby "+manager.getId(), "§eShop.EpicPvP.de");
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §e"+kHub.hubType+" "+kHub.hubID, "§eShop.EpicPvP.de");
 		
 		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());

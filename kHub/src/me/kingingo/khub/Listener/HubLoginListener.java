@@ -16,6 +16,7 @@ import me.kingingo.kcore.Util.UtilLocation;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.khub.HubManager;
+import me.kingingo.khub.kHub;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -54,7 +55,7 @@ public class HubLoginListener extends kListener{
 	
 	@EventHandler
 	public void join(PlayerJoinEvent ev){
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §aLoginHub "+manager.getId(), "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §a"+kHub.hubType+" "+kHub.hubID, "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
 		list.put(ev.getPlayer(), System.currentTimeMillis());
 		for(Player player : UtilServer.getPlayers()){
 			if(!player.isOp())player.hidePlayer(ev.getPlayer());

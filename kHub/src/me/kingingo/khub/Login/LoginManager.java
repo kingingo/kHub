@@ -61,7 +61,6 @@ public class LoginManager extends kListener{
 		getManager().getCmd().register(CommandLogin.class, new CommandLogin(this));
 		getManager().getCmd().register(CommandRegister.class, new CommandRegister(this));
 		getManager().getCmd().register(CommandCaptcha.class, new CommandCaptcha(this));
-		getManager().getMysql().Update("CREATE TABLE IF NOT EXISTS list_users_1(name varchar(30), uuid varchar(100),password varchar(30))");
 	}
 	
 	@EventHandler

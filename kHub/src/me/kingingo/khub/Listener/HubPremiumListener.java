@@ -9,6 +9,7 @@ public class HubPremiumListener extends HubListener{
 
 	public HubPremiumListener(final HubManager manager) {
 		super(manager,true);
+//		manager.getPermissionManager().setTyp(GroupTyp.PREMIUM_HUB);
 	}	
 	
 	@EventHandler

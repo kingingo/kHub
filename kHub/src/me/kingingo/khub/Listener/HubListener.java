@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import lombok.Getter;
-import lombok.Setter;
 import me.kingingo.kcore.Addons.AddonDoubleJump;
 import me.kingingo.kcore.Command.Admin.CommandLocations;
 import me.kingingo.kcore.DeliveryPet.DeliveryObject;
@@ -49,7 +48,6 @@ import me.kingingo.khub.Lobby.Lobby;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -62,7 +60,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.spigotmc.AsyncCatcher;
 
 public class HubListener extends kListener{
 

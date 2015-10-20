@@ -38,6 +38,7 @@ import me.kingingo.khub.Listener.HubVersusListener;
 import me.kingingo.khub.Listener.Listener;
 import me.kingingo.khub.Listener.Holidays.BirthdayListener;
 import me.kingingo.khub.Listener.Holidays.ChristmasListener;
+import me.kingingo.khub.Listener.Holidays.HelloweenListener;
 import me.kingingo.khub.Listener.Holidays.SilvesterListener;
 
 import org.bukkit.Bukkit;
@@ -98,11 +99,13 @@ public class HubManager{
 			this.shop.getMain().addButton(6, new ButtonOpenInventory(disguiseShop, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7DisguiseShop")));
 			this.shop.addPage(disguiseShop);
 			this.shop.getMain().fill(Material.STAINED_GLASS_PANE,(byte)7);
-			this.holiday=Calendar.getHoliday();
+//			this.holiday=Calendar.getHoliday();
+			this.holiday=CalendarType.HELLOWEEN;
 			
 			if(holiday!=null){
 				switch(holiday){
 				case HELLOWEEN:
+					new HelloweenListener(this);
 					new AddonNight(getInstance(), Bukkit.getWorld("world"));
 					break;
 				case GEBURSTAG:

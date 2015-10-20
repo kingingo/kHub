@@ -87,7 +87,7 @@ public class HubListener extends kListener{
 		Bukkit.getWorld("world").setAutoSave(false);
 		if(initialize)initialize();
 	}	
-	
+
 	public void initialize(){
 		manager.getMysql().Update("CREATE TABLE IF NOT EXISTS BG_Lobby(ip varchar(30),name varchar(30),bg varchar(30), count int,place int)");
 		manager.getMysql().Update("CREATE TABLE IF NOT EXISTS "+kHub.hubType+"_signs(typ varchar(30),world varchar(30), x double, z double, y double)");
@@ -208,7 +208,7 @@ public class HubListener extends kListener{
 		
 		getManager().getShop().addPage(this.GameInv);
 	}	
-	
+
 	Sign s;
 	public void loadSigns(){
 		try

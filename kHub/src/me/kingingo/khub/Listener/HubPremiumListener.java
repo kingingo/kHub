@@ -18,5 +18,4 @@ public class HubPremiumListener extends HubListener{
 			ev.getManager().getGroups().get(ev.getGroup()).setPrefix("§e");
 		}
 	}
-	
 }

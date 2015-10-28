@@ -51,10 +51,10 @@ public class VoteListener extends kListener{
 				 UtilServer.createDeliveryPet(null).deliveryUSE(vote.getUsername(), uuid, Material.PAPER);
 			 }
 		 }
-		 gems.giveGems(packetManager, vote.getUsername(), 25);
+		 gems.giveGems(packetManager, vote.getUsername(), 20);
 		 coins.giveCoins(packetManager, vote.getUsername(), 100);
 		 
-		 packetManager.SendPacket("BG", new BROADCAST(Language.getText( "PREFIX")+"§b"+vote.getUsername()+" hat gevotet und §a25 Gems + 100 Coins §berhalten§l! §7>>§5§l /Vote"));
+		 packetManager.SendPacket("BG", new BROADCAST(Language.getText( "PREFIX")+"§b"+vote.getUsername()+" hat gevotet und §a20 Gems + 100 Coins §berhalten§l! §7>>§5§l /Vote"));
 		 vpacket = new PLAYER_VOTE(vote.getUsername(), uuid);
 		 packetManager.SendPacket("PVP", vpacket);
 		 packetManager.SendPacket("SKYBLOCK", vpacket);

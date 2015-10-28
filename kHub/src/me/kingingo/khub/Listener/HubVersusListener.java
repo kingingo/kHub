@@ -182,23 +182,23 @@ public class HubVersusListener extends kListener{
 		this.base.addPage(kit_random);
 		
 		if(creatures.isEmpty()){
-			creatures.put(manager.getPet().AddPetWithOutOwner("§aRandom 1vs1", true, EntityType.VILLAGER, CommandLocations.getLocation("1vs1")) ,VersusType._TEAMx2);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx3.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandLocations.getLocation("Team_3")) ,VersusType._TEAMx3);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx4.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandLocations.getLocation("Team_4")) ,VersusType._TEAMx4);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx5.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandLocations.getLocation("Team_5")) ,VersusType._TEAMx5);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§b"+VersusType._TEAMx6.getTeam().length+"x Teams", true, EntityType.VILLAGER, CommandLocations.getLocation("Team_6")) ,VersusType._TEAMx6);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§6§lRandom 1vs1", true, EntityType.VILLAGER, CommandLocations.getLocation("1vs1")) ,VersusType._TEAMx2);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§c§lFFA für "+VersusType._TEAMx3.getTeam().length, true, EntityType.VILLAGER, CommandLocations.getLocation("Team_3")) ,VersusType._TEAMx3);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§c§lFFA für "+VersusType._TEAMx4.getTeam().length, true, EntityType.VILLAGER, CommandLocations.getLocation("Team_4")) ,VersusType._TEAMx4);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§c§lFFA für "+VersusType._TEAMx5.getTeam().length, true, EntityType.VILLAGER, CommandLocations.getLocation("Team_5")) ,VersusType._TEAMx5);
+			creatures.put(manager.getPet().AddPetWithOutOwner("§c§lFFA für "+VersusType._TEAMx6.getTeam().length, true, EntityType.VILLAGER, CommandLocations.getLocation("Team_6")) ,VersusType._TEAMx6);
 			NameTagMessage m;
 			
 			for(Creature creature : creatures.keySet()){
 				((Villager)creature).setProfession(Profession.BUTCHER);
 				((Villager)creature).setAdult();
-				m=new NameTagMessage(NameTagType.SERVER, creature.getLocation().add(0, 2, 0), creature.getCustomName());
+				m=new NameTagMessage(NameTagType.SERVER, creature.getLocation().add(0, 2, 0),creature.getCustomName());
 				m.send();
 				creature.setCustomName("");
 				UtilEnt.setNoAI(creature, true);
 			}
 			
-			this.creature_option=manager.getPet().AddPetWithOutOwner("§5Optionen", true, EntityType.VILLAGER, CommandLocations.getLocation("Optionen"));
+			this.creature_option=manager.getPet().AddPetWithOutOwner("§b§lEinstellungen", true, EntityType.VILLAGER, CommandLocations.getLocation("Optionen"));
 			((Villager)this.creature_option).setProfession(Profession.LIBRARIAN);
 			((Villager)this.creature_option).setAdult();
 			m=new NameTagMessage(NameTagType.SERVER, creature_option.getLocation().add(0, 2, 0), creature_option.getCustomName());

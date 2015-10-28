@@ -16,14 +16,14 @@ import me.kingingo.khub.HubManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 
-public class HelloweenListener extends kListener{
+public class HalloweenListener extends kListener{
 
 	@Getter
 	private HubManager manager;
 	private DisguiseType[] types;
 	
-	public HelloweenListener(HubManager manager) {
-		super(manager.getInstance(),"HelloweenListener");
+	public HalloweenListener(HubManager manager) {
+		super(manager.getInstance(),"HalloweenListener");
 		this.manager=manager;
 		this.types=new DisguiseType[]{DisguiseType.ZOMBIE,DisguiseType.SKELETON,DisguiseType.SPIDER,DisguiseType.BLAZE,DisguiseType.CAVE_SPIDER,DisguiseType.PIG_ZOMBIE,DisguiseType.ENDERMAN,DisguiseType.WOLF,DisguiseType.WITCH};
 	}

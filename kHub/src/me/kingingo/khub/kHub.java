@@ -5,6 +5,7 @@ import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandCMDMute;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
 import me.kingingo.kcore.Command.Admin.CommandFlyspeed;
+import me.kingingo.kcore.Command.Admin.CommandHubFly;
 import me.kingingo.kcore.Command.Admin.CommandLocations;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
 import me.kingingo.kcore.Command.Admin.CommandTrackingRange;
@@ -55,7 +56,7 @@ public class kHub extends JavaPlugin{
 			this.PacketManager=new PacketManager(this,c);
 			new MemoryFix(this);
 			CommandHandler cmd = new CommandHandler(this);
-			cmd.register(CommandFly.class, new CommandFly(this));
+			cmd.register(CommandHubFly.class, new CommandHubFly(this));
 			cmd.register(CommandFlyspeed.class, new CommandFlyspeed());
 			cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
 			cmd.register(CommandChatMute.class, new CommandChatMute(this));

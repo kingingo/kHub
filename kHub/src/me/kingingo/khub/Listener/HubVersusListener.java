@@ -16,10 +16,12 @@ import me.kingingo.kcore.Inventory.Inventory.InventoryChoose;
 import me.kingingo.kcore.Inventory.Inventory.InventoryCopy;
 import me.kingingo.kcore.Inventory.Inventory.InventoryYesNo;
 import me.kingingo.kcore.Inventory.Item.Click;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonCopy;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonForMultiButtonsCopy;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonMultiCopy;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonMultiSlotBase;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonUpDownStats;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
@@ -97,38 +99,37 @@ public class HubVersusListener extends kListener{
 		
 		this.base.setMain(new InventoryCopy(InventorySize._27.getSize(), "§bVersus"));
 		
-		this.base.getMain().addButton(new ButtonMultiCopy(new ButtonForMultiButtonsCopy[]{
+		this.base.getMain().addButton(new ButtonUpDownStats(this.base.getMain(), UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), "§bMin. Team"), 11, statsManager, Stats.TEAM_MIN));
+		this.base.getMain().addButton(new ButtonUpDownStats(this.base.getMain(), UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), "§6Max. Team"), 13, statsManager, Stats.TEAM_MIN));
+		this.base.getMain().addButton(15, new ButtonCopy(new Click(){
+
+			@Override
+			public void onClick(Player p, ActionType a, Object o) {
+				if(statsManager.getString(Stats.KIT_RANDOM, p).equalsIgnoreCase("true")){
+					p.getOpenInventory().setItem(15, UtilItem.RenameItem(new ItemStack(Material.EMERALD), "§aon"));
+					statsManager.setString(p, "true", Stats.KIT_RANDOM);
+				}else{
+					p.getOpenInventory().setItem(15, UtilItem.RenameItem(new ItemStack(Material.REDSTONE), "§coff"));
+					statsManager.setString(p, "false", Stats.KIT_RANDOM);
+				}
+			}
 			
-				new ButtonForMultiButtonsCopy(this.base.getMain(), 1, new Click(){
+		}, new Click(){
 
-					@Override
-					public void onClick(Player p, ActionType a,Object o) {
-						statsManager.addInt(p, 1, Stats.TEAM_MIN);
-						p.getOpenInventory().getItem(10).setAmount(statsManager.getInt(Stats.TEAM_MIN, p));
-					}
-					
-				}, UtilItem.Item(new ItemStack(Material.STONE_BUTTON), new String[]{""}, "§6+"), null)
-				
-				,new ButtonForMultiButtonsCopy(this.base.getMain(), 10, null , UtilItem.Item(new ItemStack(Material.SKULL_ITEM,1,(short)3), new String[]{""}, "§7Team min."), new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object o) {
-						p.getOpenInventory().getItem(10).setAmount(statsManager.getInt(Stats.TEAM_MIN, p));
-					}
-					
-				})
-				
-				,new ButtonForMultiButtonsCopy(this.base.getMain(), 19, new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object o) {
-						statsManager.addInt(p, -1, Stats.TEAM_MIN);
-						p.getOpenInventory().getItem(10).setAmount(statsManager.getInt(Stats.TEAM_MIN, p));
-					}
-					
-				}, UtilItem.Item(new ItemStack(Material.WOOD_BUTTON), new String[]{""}, "§c-"), null)
-				
-		}));
+			@Override
+			public void onClick(Player p, ActionType a, Object o) {
+				if(!statsManager.getString(Stats.KIT_RANDOM, p).equalsIgnoreCase("true")){
+					p.getOpenInventory().setItem(15, UtilItem.RenameItem(new ItemStack(Material.EMERALD), "§on"));
+					statsManager.setString(p, "true", Stats.KIT_RANDOM);
+				}else{
+					p.getOpenInventory().setItem(15, UtilItem.RenameItem(new ItemStack(Material.REDSTONE), "§off"));
+					statsManager.setString(p, "false", Stats.KIT_RANDOM);
+				}
+			}
+			
+		}, new ItemStack(Material.BEDROCK)));
+//		this.base.getMain().addButton(17, new B);
+		
 		
 		for(VersusType type : VersusType.values())versus_warte_liste.put(type, new ArrayList<Player>());
 		if(creatures.isEmpty()){

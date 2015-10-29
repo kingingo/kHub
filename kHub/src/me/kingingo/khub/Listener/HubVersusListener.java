@@ -13,8 +13,12 @@ import me.kingingo.kcore.Hologram.nametags.NameTagType;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
 import me.kingingo.kcore.Inventory.Inventory.InventoryChoose;
+import me.kingingo.kcore.Inventory.Inventory.InventoryCopy;
 import me.kingingo.kcore.Inventory.Inventory.InventoryYesNo;
 import me.kingingo.kcore.Inventory.Item.Click;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonForMultiButtonsCopy;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonMultiCopy;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonMultiSlotBase;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
@@ -29,6 +33,7 @@ import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
 import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
 import me.kingingo.kcore.UpdateAsync.Event.UpdateAsyncEvent;
+import me.kingingo.kcore.Util.InventorySize;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilBG;
@@ -75,10 +80,6 @@ public class HubVersusListener extends kListener{
 	private InventoryBase base;
 	private Creature creature_option;
 	private InventoryPageBase optionen;
-	private InventoryYesNo kit_random;
-	private InventoryChoose kit_choose;
-	private InventoryChoose team_min;
-	private InventoryChoose team_max;
 	private HashMap<Creature,VersusType> creatures = new HashMap<>();
 	private HashMap<Player,Player> vs = new HashMap<>();
 	@Getter
@@ -91,96 +92,45 @@ public class HubVersusListener extends kListener{
 		this.manager=manager;
 		this.kitManager=new PlayerKitManager(manager.getMysql(), GameType.Versus);
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
-		this.base=new InventoryBase(manager.getInstance(), "§bVersus");
 		UtilTime.setTimeManager(manager.getPermissionManager());
+		this.base=new InventoryBase(manager.getInstance());
 		
-		for(VersusType type : VersusType.values())versus_warte_liste.put(type, new ArrayList<Player>());
+		this.base.setMain(new InventoryCopy(InventorySize._27.getSize(), "§bVersus"));
 		
-		this.team_max = new InventoryChoose(new Click(){
-
-			@Override
-			public void onClick(Player player, ActionType type, Object obj) {
-				if(obj instanceof ItemStack){
-					if( ((ItemStack)obj).getAmount() < statsManager.getInt(Stats.TEAM_MIN, player)){
-						player.sendMessage(Language.getText(player, "PREFIX")+"Die Team maximal anzahl kann kleiner als die mindest anzahl sein!");
-						player.closeInventory();
-					}else{
-						statsManager.setInt(player, ((ItemStack)obj).getAmount(), Stats.TEAM_MAX);
-						player.openInventory(optionen);
-					}
-				}
-			}
+		this.base.getMain().addButton(new ButtonMultiCopy(new ButtonForMultiButtonsCopy[]{
 			
-		}, "Team maximal: ", 9, new ItemStack[]{ UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), " "),UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,2,(short)3), " "),UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,3,(short)3), " ") });
-		
-		this.team_min = new InventoryChoose(new Click(){
+				new ButtonForMultiButtonsCopy(this.base.getMain(), 1, new Click(){
 
-			@Override
-			public void onClick(Player player, ActionType type, Object obj) {
-				if(obj instanceof ItemStack){
-					if( ((ItemStack)obj).getAmount() > statsManager.getInt(Stats.TEAM_MAX, player)){
-						player.sendMessage(Language.getText(player, "PREFIX")+"Die Team mindest anzahl kann nicht größer als die maximal anzahl sein!");
-						player.closeInventory();
-					}else{
-						statsManager.setInt(player, ((ItemStack)obj).getAmount(), Stats.TEAM_MIN);
-						player.openInventory(optionen);
-					}
-				}
-			}
-			
-		}, "Team mindestens: ", 9, new ItemStack[]{ UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), " "),UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,2,(short)3), " "),UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,3,(short)3), " ") });
-		
-		this.kit_random= new InventoryYesNo("Kit Random", new Click(){
-
-			@Override
-			public void onClick(Player player, ActionType type, Object obj) {
-				statsManager.setString(player, "true", Stats.KIT_RANDOM);
-				player.openInventory(optionen);
-			}
-			
-		}, new Click(){
-
-			@Override
-			public void onClick(Player player, ActionType type, Object obj) {
-				statsManager.setString(player, "false", Stats.KIT_RANDOM);
-				player.openInventory(optionen);
-			}
-			
-		});
-		
-		this.kit_choose = new InventoryChoose(new Click(){
-
-			@Override
-			public void onClick(Player player, ActionType type, Object obj) {
-				player.openInventory(optionen);
-				if(obj instanceof ItemStack){
-					if( ((ItemStack)obj).getAmount() > 1){
-						if(!player.hasPermission(kPermission.VERSUS_SLOTS.getPermissionToString())){
-							player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "PREMIUM_MUST_BUYED_IN_SHOP"));
-							return;
-						}
+					@Override
+					public void onClick(Player p, ActionType a,Object o) {
+						statsManager.addInt(p, 1, Stats.TEAM_MIN);
+						p.getOpenInventory().getItem(10).setAmount(statsManager.getInt(Stats.TEAM_MIN, p));
 					}
 					
-					statsManager.setInt(player, ((ItemStack)obj).getAmount(), Stats.KIT_ID);
-					player.sendMessage(Language.getText(player, "PREFIX")+"§aDein Kit wurde geändert!");
-				}
-			}
-			
-		}, "Kit choose", 9, new ItemStack[]{UtilItem.RenameItem(new ItemStack(Material.ARROW,1), "§aKit 1"),UtilItem.RenameItem(new ItemStack(Material.ARROW,2), "§aKit 2"),UtilItem.RenameItem(new ItemStack(Material.ARROW,3), "§aKit 3"),UtilItem.RenameItem(new ItemStack(Material.ARROW,4), "§aKit 4")});
+				}, UtilItem.Item(new ItemStack(Material.STONE_BUTTON), new String[]{""}, "§6+"), null)
+				
+				,new ButtonForMultiButtonsCopy(this.base.getMain(), 10, null , UtilItem.Item(new ItemStack(Material.SKULL_ITEM,1,(short)3), new String[]{""}, "§7Team min."), new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object o) {
+						p.getOpenInventory().getItem(10).setAmount(statsManager.getInt(Stats.TEAM_MIN, p));
+					}
+					
+				})
+				
+				,new ButtonForMultiButtonsCopy(this.base.getMain(), 19, new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object o) {
+						statsManager.addInt(p, -1, Stats.TEAM_MIN);
+						p.getOpenInventory().getItem(10).setAmount(statsManager.getInt(Stats.TEAM_MIN, p));
+					}
+					
+				}, UtilItem.Item(new ItemStack(Material.WOOD_BUTTON), new String[]{""}, "§c-"), null)
+				
+		}));
 		
-		this.optionen=new InventoryChoose(null, "§5Optionen", 9, new ItemStack[]{});
-		this.optionen.addButton(1, new ButtonOpenInventory(team_min, UtilItem.Item(new ItemStack(Material.REDSTONE), new String[]{"§7Hier kannst du die ","§7Team mindest anzahl","§7setzten!"}, "§eTeam mindest anzahl")));
-		this.optionen.addButton(3, new ButtonOpenInventory(team_max, UtilItem.Item(new ItemStack(Material.GLOWSTONE_DUST), new String[]{"§7Hier kannst du die ","§7Team maximal anzahl","§7setzten!"}, "§eTeam maximal anzahl")));
-		this.optionen.addButton(5, new ButtonOpenInventory(this.kit_random, UtilItem.Item(new ItemStack(Material.IRON_SWORD), new String[]{"§7Einstellung nur für 1vs1"}, "Kit Random")));
-		this.optionen.addButton(7, new ButtonOpenInventory(this.kit_choose, UtilItem.Item(new ItemStack(Material.DIAMOND_CHESTPLATE), new String[]{"§7Hier kannst du dein Kit Slot auswählen!"}, "§7Kit Slot")));
-		this.optionen.fill(Material.STAINED_GLASS_PANE, 14);
-		
-		this.base.addPage(kit_choose);
-		this.base.addPage(optionen);
-		this.base.addPage(team_min);
-		this.base.addPage(team_max);
-		this.base.addPage(kit_random);
-		
+		for(VersusType type : VersusType.values())versus_warte_liste.put(type, new ArrayList<Player>());
 		if(creatures.isEmpty()){
 			creatures.put(manager.getPet().AddPetWithOutOwner("§6§lRandom 1vs1", true, EntityType.VILLAGER, CommandLocations.getLocation("1vs1")) ,VersusType._TEAMx2);
 			creatures.put(manager.getPet().AddPetWithOutOwner("§c§lFFA für "+VersusType._TEAMx3.getTeam().length, true, EntityType.VILLAGER, CommandLocations.getLocation("Team_3")) ,VersusType._TEAMx3);

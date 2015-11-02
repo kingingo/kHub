@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.kingingo.kcore.Disguise.DisguiseType;
 import me.kingingo.kcore.Disguise.Events.DisguiseCreateEvent;
 import me.kingingo.kcore.Disguise.Events.DisguisePlayerLoadEvent;
-import me.kingingo.kcore.Disguise.disguises.DisguiseBase;
 import me.kingingo.kcore.Disguise.disguises.livings.DisguiseWolf;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Permission.kPermission;
@@ -47,20 +46,6 @@ public class HalloweenListener extends kListener{
 			ev.setType( types[UtilMath.r(types.length)] );
 		}
 	}
-	
-//	kPacketPlayOutEntityEquipment packet;
-//	@EventHandler
-//	public void Head(PlayerJoinEvent ev){
-//		if(packet==null){
-//			this.packet=new kPacketPlayOutEntityEquipment(ev.getPlayer().getEntityId(), 1, UtilItem.RenameItem(new ItemStack(Material.PUMPKIN), "§6§lHelloween Pumpkin"));
-//		}
-//		
-//		for(Player player : UtilServer.getPlayers()){
-//			if(player.getUniqueId()==ev.getPlayer().getUniqueId())continue;
-//			this.packet.setEntityID(player.getEntityId());
-//			UtilPlayer.sendPacket(ev.getPlayer(), packet);
-//		}
-//	}
 	
 	@EventHandler
 	public void rdm(UpdateEvent ev){

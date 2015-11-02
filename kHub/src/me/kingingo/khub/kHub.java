@@ -23,7 +23,6 @@ import me.kingingo.kcore.Util.UtilEnt;
 import me.kingingo.kcore.Util.UtilException;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.memory.MemoryFix;
-import me.kingingo.khub.Command.CommandFly;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

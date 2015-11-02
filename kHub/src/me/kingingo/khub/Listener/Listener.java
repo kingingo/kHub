@@ -6,6 +6,7 @@ import lombok.Getter;
 import me.kingingo.kcore.Client.Events.ClientReceiveMessageEvent;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
+import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilPlayer;
@@ -27,6 +28,7 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -55,6 +57,16 @@ public class Listener extends kListener{
 	    if ((event.getEntityType() != EntityType.PLAYER) && (event.getBlock().getType() == Material.SOIL)){
 	    	event.setCancelled(true);
 	    }
+	}
+	
+	@EventHandler
+	public void Sign(SignChangeEvent ev){
+		if(ev.getPlayer().hasPermission(kPermission.CHAT_FARBIG.getPermissionToString())){
+			ev.setLine(0, ev.getLine(0).replaceAll("&", "§"));
+			ev.setLine(1, ev.getLine(1).replaceAll("&", "§"));
+			ev.setLine(2, ev.getLine(2).replaceAll("&", "§"));
+			ev.setLine(3, ev.getLine(3).replaceAll("&", "§"));
+		}
 	}
 	
 	@EventHandler

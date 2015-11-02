@@ -133,7 +133,7 @@ public class HubManager{
 			case "LoginHub":
 			new HubLoginListener(this);
 				break;
-			case "Versus":
+			case "VersusHub":
 				new HubVersusListener(this);
 				break;
 			case "PremiumHub":
@@ -163,7 +163,6 @@ public class HubManager{
 	public void DebugLog(long time,int zeile,String c){
 		System.err.println("[DebugMode]: Class: "+c);
 		System.err.println("[DebugMode]: Zeile: "+zeile);
-		//System.err.println("[DebugMode]: Zeit: "+UtilTime.convertString(System.currentTimeMillis() - time, 1, UtilTime.TimeUnit.FIT));
 	}
 	
 	public void DebugLog(String m){

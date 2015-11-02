@@ -5,6 +5,11 @@ import java.util.HashMap;
 
 import lombok.Getter;
 import me.kingingo.kcore.Command.Admin.CommandLocations;
+import me.kingingo.kcore.Command.Commands.CommandVersusDurability;
+import me.kingingo.kcore.Command.Commands.CommandVersusMore;
+import me.kingingo.kcore.Disguise.DisguiseType;
+import me.kingingo.kcore.Disguise.disguises.DisguiseBase;
+import me.kingingo.kcore.Disguise.disguises.livings.DisguisePlayer;
 import me.kingingo.kcore.Enum.GameState;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.Team;
@@ -12,22 +17,16 @@ import me.kingingo.kcore.Hologram.nametags.NameTagMessage;
 import me.kingingo.kcore.Hologram.nametags.NameTagType;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
-import me.kingingo.kcore.Inventory.Inventory.InventoryChoose;
 import me.kingingo.kcore.Inventory.Inventory.InventoryCopy;
-import me.kingingo.kcore.Inventory.Inventory.InventoryYesNo;
 import me.kingingo.kcore.Inventory.Item.Click;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonBase;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonCopy;
-import me.kingingo.kcore.Inventory.Item.Buttons.ButtonForMultiButtonsCopy;
-import me.kingingo.kcore.Inventory.Item.Buttons.ButtonMultiCopy;
-import me.kingingo.kcore.Inventory.Item.Buttons.ButtonMultiSlotBase;
-import me.kingingo.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
-import me.kingingo.kcore.Inventory.Item.Buttons.ButtonUpDownStats;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonUpDownVersus;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
+import me.kingingo.kcore.Packet.Packets.ARENA_SETTINGS;
 import me.kingingo.kcore.Packet.Packets.ARENA_STATUS;
-import me.kingingo.kcore.Packet.Packets.VERSUS_SETTINGS;
-import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.StatsManager.StatsManager;
 import me.kingingo.kcore.Update.UpdateType;
@@ -44,6 +43,7 @@ import me.kingingo.kcore.Util.UtilEnt;
 import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
+import me.kingingo.kcore.Util.UtilLocation;
 import me.kingingo.kcore.Util.UtilMath;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
@@ -55,12 +55,12 @@ import me.kingingo.khub.HubManager;
 import me.kingingo.khub.kHub;
 
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.Villager.Profession;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -81,36 +81,42 @@ public class HubVersusListener extends kListener{
 	private StatsManager statsManager;
 	private InventoryBase base;
 	private Creature creature_option;
-	private InventoryPageBase optionen;
-	private HashMap<Creature,VersusType> creatures = new HashMap<>();
+	private Creature wait_list;
+	private InventoryPageBase wait_list_inv;
 	private HashMap<Player,Player> vs = new HashMap<>();
 	@Getter
 	private PlayerKitManager kitManager;
 	private ArrayList<Player> creative = new ArrayList<>();
+	private Location spawn;
 	
 	public HubVersusListener(final HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
 		new UpdaterAsync(manager.getInstance());
 		this.manager=manager;
+		this.manager.getCmd().register(CommandVersusDurability.class, new CommandVersusDurability());
+		this.manager.getCmd().register(CommandVersusMore.class, new CommandVersusMore());
 		this.kitManager=new PlayerKitManager(manager.getMysql(), GameType.Versus);
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
 		UtilTime.setTimeManager(manager.getPermissionManager());
+		this.spawn=CommandLocations.getLocation("spawn");
 		this.base=new InventoryBase(manager.getInstance());
 		
 		this.base.setMain(new InventoryCopy(InventorySize._27.getSize(), "§bVersus"));
-		
-		this.base.getMain().addButton(new ButtonUpDownStats(this.base.getMain(), UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), "§bMin. Team"), 11, statsManager, Stats.TEAM_MIN));
-		this.base.getMain().addButton(new ButtonUpDownStats(this.base.getMain(), UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), "§6Max. Team"), 13, statsManager, Stats.TEAM_MIN));
-		this.base.getMain().addButton(15, new ButtonCopy(new Click(){
+		((InventoryCopy)this.base.getMain()).setCreate_new_inv(true);
+		this.base.getMain().addButton(new ButtonUpDownVersus(this.base.getMain(), UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), "§bMin. Team"), 10, statsManager, Stats.TEAM_MIN,1,3));
+		this.base.getMain().addButton(new ButtonUpDownVersus(this.base.getMain(), UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), "§6Max. Team"), 12, statsManager, Stats.TEAM_MAX,1,3));
+		this.base.getMain().addButton(14, new ButtonCopy(new Click(){
 
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
-				if(statsManager.getString(Stats.KIT_RANDOM, p).equalsIgnoreCase("true")){
-					p.getOpenInventory().setItem(15, UtilItem.RenameItem(new ItemStack(Material.EMERALD), "§aon"));
-					statsManager.setString(p, "true", Stats.KIT_RANDOM);
-				}else{
-					p.getOpenInventory().setItem(15, UtilItem.RenameItem(new ItemStack(Material.REDSTONE), "§coff"));
-					statsManager.setString(p, "false", Stats.KIT_RANDOM);
+				if(o instanceof InventoryPageBase){
+					if(statsManager.getString(Stats.KIT_RANDOM, p).equalsIgnoreCase("true")){
+						((InventoryPageBase)o).setItem(14, UtilItem.RenameItem(new ItemStack(Material.EMERALD), "§7Kit zufall: §aan"));
+						statsManager.setString(p, "true", Stats.KIT_RANDOM);
+					}else{
+						((InventoryPageBase)o).setItem(14, UtilItem.RenameItem(new ItemStack(Material.REDSTONE), "§7Kit zufall: §caus"));
+						statsManager.setString(p, "false", Stats.KIT_RANDOM);
+					}
 				}
 			}
 			
@@ -119,43 +125,105 @@ public class HubVersusListener extends kListener{
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
 				if(!statsManager.getString(Stats.KIT_RANDOM, p).equalsIgnoreCase("true")){
-					p.getOpenInventory().setItem(15, UtilItem.RenameItem(new ItemStack(Material.EMERALD), "§on"));
+					p.getOpenInventory().setItem(14, UtilItem.RenameItem(new ItemStack(Material.EMERALD), "§7Kit zufall: §aan"));
 					statsManager.setString(p, "true", Stats.KIT_RANDOM);
 				}else{
-					p.getOpenInventory().setItem(15, UtilItem.RenameItem(new ItemStack(Material.REDSTONE), "§off"));
+					p.getOpenInventory().setItem(14, UtilItem.RenameItem(new ItemStack(Material.REDSTONE), "§7Kit zufall: §caus"));
 					statsManager.setString(p, "false", Stats.KIT_RANDOM);
 				}
+				
 			}
 			
 		}, new ItemStack(Material.BEDROCK)));
-//		this.base.getMain().addButton(17, new B);
-		
+		this.base.getMain().setItem(16, UtilItem.RenameItem(new ItemStack(Material.IRON_CHESTPLATE), "§7Kit Slots §4§lCOMING SOON!"));
+		this.base.getMain().fill(Material.STAINED_GLASS_PANE, 7);
 		
 		for(VersusType type : VersusType.values())versus_warte_liste.put(type, new ArrayList<Player>());
-		if(creatures.isEmpty()){
-			creatures.put(manager.getPet().AddPetWithOutOwner("§6§lRandom 1vs1", true, EntityType.VILLAGER, CommandLocations.getLocation("1vs1")) ,VersusType._TEAMx2);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§c§lFFA für "+VersusType._TEAMx3.getTeam().length, true, EntityType.VILLAGER, CommandLocations.getLocation("Team_3")) ,VersusType._TEAMx3);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§c§lFFA für "+VersusType._TEAMx4.getTeam().length, true, EntityType.VILLAGER, CommandLocations.getLocation("Team_4")) ,VersusType._TEAMx4);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§c§lFFA für "+VersusType._TEAMx5.getTeam().length, true, EntityType.VILLAGER, CommandLocations.getLocation("Team_5")) ,VersusType._TEAMx5);
-			creatures.put(manager.getPet().AddPetWithOutOwner("§c§lFFA für "+VersusType._TEAMx6.getTeam().length, true, EntityType.VILLAGER, CommandLocations.getLocation("Team_6")) ,VersusType._TEAMx6);
+		if(wait_list==null){
+			this.wait_list=manager.getPet().AddPetWithOutOwner("§c§lVersus", true, EntityType.ZOMBIE, CommandLocations.getLocation("Versus"));
 			NameTagMessage m;
 			
-			for(Creature creature : creatures.keySet()){
-				((Villager)creature).setProfession(Profession.BUTCHER);
-				((Villager)creature).setAdult();
-				m=new NameTagMessage(NameTagType.SERVER, creature.getLocation().add(0, 2, 0),creature.getCustomName());
-				m.send();
-				creature.setCustomName("");
-				UtilEnt.setNoAI(creature, true);
-			}
+			((Zombie)this.wait_list).getEquipment().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
+			((Zombie)this.wait_list).getEquipment().setItemInHand(new ItemStack(Material.BOW));
+			m=new NameTagMessage(NameTagType.SERVER, this.wait_list.getLocation().add(0, 2, 0),this.wait_list.getCustomName());
+			m.send();
+			this.wait_list.setCustomName("");
+			UtilEnt.setNoAI(this.wait_list, true);
+			DisguiseBase dbase = DisguiseType.newDisguise(wait_list, DisguiseType.PLAYER, new Object[]{" "});
+			((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("EpicPvPMC"));
+			manager.getDisguiseManager().disguise(dbase);
+			this.wait_list_inv=new InventoryPageBase(InventorySize._18, "§6§lVersus");
+			this.wait_list_inv.addButton(4, new ButtonBase(new Click(){
+
+				@Override
+				public void onClick(Player p, ActionType a, Object o) {
+					removeFromList(p);
+					versus_warte_liste.get(VersusType._TEAMx2).add(p);
+					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "VERSUS_ADDED"));
+					p.closeInventory();
+				}
+				
+			}, UtilItem.Item(new ItemStack(Material.DIAMOND_SWORD), new String[]{}, "§61vs1")));
 			
-			this.creature_option=manager.getPet().AddPetWithOutOwner("§b§lEinstellungen", true, EntityType.VILLAGER, CommandLocations.getLocation("Optionen"));
-			((Villager)this.creature_option).setProfession(Profession.LIBRARIAN);
-			((Villager)this.creature_option).setAdult();
+			this.wait_list_inv.addButton(10, new ButtonBase(new Click(){
+
+				@Override
+				public void onClick(Player p, ActionType a, Object o) {
+					removeFromList(p);
+					versus_warte_liste.get(VersusType._TEAMx3).add(p);
+					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "VERSUS_ADDED"));
+					p.closeInventory();
+				}
+				
+			}, UtilItem.Item(new ItemStack(Material.IRON_SWORD), new String[]{}, "§cFFA for 3")));
+			
+			this.wait_list_inv.addButton(12, new ButtonBase(new Click(){
+
+				@Override
+				public void onClick(Player p, ActionType a, Object o) {
+					removeFromList(p);
+					versus_warte_liste.get(VersusType._TEAMx4).add(p);
+					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "VERSUS_ADDED"));
+					p.closeInventory();
+				}
+				
+			}, UtilItem.Item(new ItemStack(Material.IRON_SWORD), new String[]{}, "§cFFA for 4")));
+			
+			this.wait_list_inv.addButton(14, new ButtonBase(new Click(){
+
+				@Override
+				public void onClick(Player p, ActionType a, Object o) {
+					removeFromList(p);
+					versus_warte_liste.get(VersusType._TEAMx5).add(p);
+					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "VERSUS_ADDED"));
+					p.closeInventory();
+				}
+				
+			}, UtilItem.Item(new ItemStack(Material.IRON_SWORD), new String[]{}, "§cFFA for 5")));
+			
+			this.wait_list_inv.addButton(16, new ButtonBase(new Click(){
+
+				@Override
+				public void onClick(Player p, ActionType a, Object o) {
+					removeFromList(p);
+					versus_warte_liste.get(VersusType._TEAMx6).add(p);
+					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "VERSUS_ADDED"));
+					p.closeInventory();
+				}
+				
+			}, UtilItem.Item(new ItemStack(Material.IRON_SWORD), new String[]{}, "§cFFA for 6")));
+			this.wait_list_inv.fill(Material.STAINED_GLASS_PANE, 7);
+			this.base.addPage(this.wait_list_inv);
+			
+			this.creature_option=manager.getPet().AddPetWithOutOwner("§b§lEinstellungen", true, EntityType.ZOMBIE, CommandLocations.getLocation("Optionen"));
 			m=new NameTagMessage(NameTagType.SERVER, creature_option.getLocation().add(0, 2, 0), creature_option.getCustomName());
 			m.send();
 			creature_option.setCustomName("");
 			UtilEnt.setNoAI(creature_option, true);
+			
+			dbase = DisguiseType.newDisguise(creature_option, DisguiseType.PLAYER, new Object[]{"  "});
+			((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("_rorschach"));
+			manager.getDisguiseManager().disguise(dbase);
 		}
 	}
 	
@@ -182,6 +250,7 @@ public class HubVersusListener extends kListener{
 			}else{
 				getKitManager().addKit(ev.getPlayer().getName(),ev.getPlayer().getUniqueId(), ev.getPlayer().getInventory(), statsManager.getInt(Stats.KIT_ID, ev.getPlayer()));
 			}
+			ev.getPlayer().setVelocity(ev.getPlayer().getLocation().getDirection().multiply(2D).setY(0.7));
 		}else if(ev.getNewGameMode() != GameMode.CREATIVE){
 			if(creative.contains(ev.getPlayer())){
 				getKitManager().updateKit(UtilPlayer.getRealUUID(ev.getPlayer()), statsManager.getInt(Stats.KIT_ID, ev.getPlayer()), ev.getPlayer().getInventory());
@@ -192,6 +261,7 @@ public class HubVersusListener extends kListener{
 				ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
 				ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
 				creative.remove(ev.getPlayer());
+				ev.getPlayer().setVelocity(UtilLocation.calculateVector(ev.getPlayer().getLocation(), this.wait_list.getLocation()).multiply(2D).setY(0.7));
 			}
 		}
 	}
@@ -209,9 +279,6 @@ public class HubVersusListener extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void LobbyMenu(PlayerInteractEvent ev){
-//		if((UtilEvent.isAction(ev, ActionType.PHYSICAL)&& (ev.getClickedBlock().getType() == Material.SOIL))||(UtilEvent.isAction(ev, ActionType.BLOCK)&&!ev.getPlayer().isOp())){
-//			ev.setCancelled(true);
-//		}
 		if(UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getType()==Material.CHEST){
 				ev.getPlayer().openInventory(getManager().getShop().getMain());
@@ -245,7 +312,6 @@ public class HubVersusListener extends kListener{
 	public void WarteListe(UpdateAsyncEvent ev){
 		//Führt die Überprüfung alle 3 sekunden durch & prüft ob Arenen vorhanden sind
 		if(ev.getType()==UpdateAsyncType.SLOW && !UtilServer.getPlayers().isEmpty() && !status.isEmpty()){
-			
 			if(sort.containsKey(GameState.Laden)&&!sort.get(GameState.Laden).isEmpty()){
 				if(UtilDebug.debug)Log("[LOAD] 1");
 				for(ARENA_STATUS arena : sort.get(GameState.Laden)){
@@ -272,7 +338,7 @@ public class HubVersusListener extends kListener{
 									if(arena.getMax_team() >= statsManager.getInt(Stats.TEAM_MIN, player)){
 										if(UtilDebug.debug)Log("[LOAD] "+arena.getMax_team()+">="+statsManager.getInt(Stats.TEAM_MAX, player));
 										//Schickt den Spieler zu der Arena!
-										getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),arena.getKit(),player,Team.SOLO,arena.getMin_team(),arena.getMax_team()) );
+										getManager().getPacketManager().SendPacket(arena.getServer(), new ARENA_SETTINGS(type,arena.getArena(),arena.getKit(),player,Team.SOLO,arena.getMin_team(),arena.getMax_team()) );
 										versus_warte_liste.get(type).remove(player);
 										UtilBG.sendToServer(player, arena.getServer(), manager.getInstance());
 										arena.setOnline(arena.getOnline()+1);
@@ -294,6 +360,7 @@ public class HubVersusListener extends kListener{
 				
 				for(int r = 0; r<rdm.size(); r++){
 					arena = rdm.get(UtilMath.r(rdm.size()));
+					
 					if(UtilDebug.debug)Log("[NEW] ARENA: "+arena.getArena()+" "+arena.getTeams());
 					a=0;
 					//Er geht die möhglichen Team arten für diese Arena durch und sucht Spieler!
@@ -405,7 +472,7 @@ public class HubVersusListener extends kListener{
 									for(Team team : list.keySet()){
 										for(Player player : list.get(team)){
 											arena.setOnline( arena.getOnline()+1 );
-											getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(type,arena.getArena(),arena.getKit(),player,team,arena.getMin_team(),arena.getMax_team()) );
+											getManager().getPacketManager().SendPacket(arena.getServer(), new ARENA_SETTINGS(type,arena.getArena(),arena.getKit(),player,team,arena.getMin_team(),arena.getMax_team()) );
 										}
 									}
 									
@@ -474,7 +541,7 @@ public class HubVersusListener extends kListener{
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §e"+kHub.hubType+" "+kHub.hubID, "§eShop.EpicPvP.de");
 		
 		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
-		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
+		ev.getPlayer().teleport(spawn);
 		load.add(ev.getPlayer());
 		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
 	}
@@ -496,9 +563,9 @@ public class HubVersusListener extends kListener{
 									ARENA_STATUS arena = sort.get(GameState.LobbyPhase).get( UtilMath.r(sort.get(GameState.LobbyPhase).size()) );
 										arena.setMin_team(1);
 										arena.setMax_team(1);
-										getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType._TEAMx2,arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getDamager()),VersusType._TEAMx2.getTeam()[0],1,1) );
+										getManager().getPacketManager().SendPacket(arena.getServer(), new ARENA_SETTINGS(VersusType._TEAMx2,arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getDamager()),VersusType._TEAMx2.getTeam()[0],1,1) );
 										UtilBG.sendToServer(((Player)ev.getDamager()), arena.getServer(), manager.getInstance());
-										getManager().getPacketManager().SendPacket(arena.getServer(), new VERSUS_SETTINGS(VersusType._TEAMx2,arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getEntity()),VersusType._TEAMx2.getTeam()[1],1,1) );
+										getManager().getPacketManager().SendPacket(arena.getServer(), new ARENA_SETTINGS(VersusType._TEAMx2,arena.getArena(),((Player)ev.getEntity()).getName(),((Player)ev.getEntity()),VersusType._TEAMx2.getTeam()[1],1,1) );
 										UtilBG.sendToServer(((Player)ev.getEntity()), arena.getServer(), manager.getInstance());							
 										arena.setState(GameState.InGame);
 										arena.setKit(((Player)ev.getEntity()).getName());
@@ -525,16 +592,15 @@ public class HubVersusListener extends kListener{
 	public void Interact(PlayerInteractEntityEvent ev){
 		if(ev.getRightClicked().getEntityId()==this.creature_option.getEntityId()){
 			ev.setCancelled(true);
-			ev.getPlayer().openInventory(this.optionen);
-		}else if(creatures.containsKey(ev.getRightClicked())){
+			((InventoryCopy)this.base.getMain()).open(ev.getPlayer(), base);
+		}else if(ev.getRightClicked().getEntityId()==this.wait_list.getEntityId()){
 			ev.setCancelled(true);
-			if(versus_warte_liste.get(creatures.get(ev.getRightClicked())).contains(ev.getPlayer())){
-				removeFromList(ev.getPlayer());
-				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_REMOVE"));
-			}else{
-				removeFromList(ev.getPlayer());
-				versus_warte_liste.get(creatures.get(ev.getRightClicked())).add(ev.getPlayer());
-				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
+			ev.getPlayer().openInventory(this.wait_list_inv);
+			
+			for(DisguiseBase b : manager.getDisguiseManager().getDisguise().values()){
+				if(b instanceof DisguisePlayer){
+					UtilPlayer.sendPacket(ev.getPlayer(), ((DisguisePlayer)b).removeFromTablist());
+				}
 			}
 		}
 	}

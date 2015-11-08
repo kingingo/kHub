@@ -15,6 +15,7 @@ import me.kingingo.kcore.Command.Commands.CommandPing;
 import me.kingingo.kcore.Command.Commands.CommandSonne;
 import me.kingingo.kcore.Command.Commands.CommandTag;
 import me.kingingo.kcore.Language.Language;
+import me.kingingo.kcore.Listener.BungeeCordFirewall.BungeeCordFirewallListener;
 import me.kingingo.kcore.Listener.Command.ListenerCMD;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
@@ -82,6 +83,7 @@ public class kHub extends JavaPlugin{
 				}
 			}
 			
+			new BungeeCordFirewallListener(mysql, hubType+hubID);
 			this.Manager=new HubManager(this,cmd,mysql,PacketManager);
 			this.Manager.DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){

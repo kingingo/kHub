@@ -60,6 +60,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.spigotmc.AsyncCatcher;
 
 public class HubListener extends kListener{
 

@@ -37,7 +37,7 @@ public class ChristmasListener extends kListener{
 	private ItemStack item;
 	
 	public ChristmasListener(HubManager manager){
-		super(manager.getInstance(),"[ChristmasListener]");
+		super(manager.getInstance(),"ChristmasListener");
 		this.manager=manager;
 	    this.day=Integer.valueOf(new SimpleDateFormat ("dd").format(new Date()));
 	    this.center=Bukkit.getWorld("world").getSpawnLocation().add(0, 3, 0);

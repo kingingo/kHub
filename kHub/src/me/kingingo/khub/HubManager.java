@@ -61,8 +61,6 @@ public class HubManager{
 	@Getter
 	private CommandHandler cmd;
 	@Getter
-	CalendarType holiday=null;
-	@Getter
 	ArrayList<Player> invisble = new ArrayList<>();
 	@Getter
 	private InventoryBase shop;
@@ -99,19 +97,16 @@ public class HubManager{
 			this.shop.getMain().addButton(6, new ButtonOpenInventory(disguiseShop, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7DisguiseShop")));
 			this.shop.addPage(disguiseShop);
 			this.shop.getMain().fill(Material.STAINED_GLASS_PANE,(byte)7);
-			this.holiday=Calendar.getHoliday();
-			
-			if(holiday!=null){
-				switch(holiday){
+			Calendar.getHoliday();
+			if(Calendar.holiday!=null){
+				switch(Calendar.holiday){
 				case HALLOWEEN:
 					new HalloweenListener(this);
 					new AddonNight(getInstance(), Bukkit.getWorld("world"));
 					break;
 				case GEBURSTAG:
-					if(Calendar.isFixHolidayDate(CalendarType.GEBURSTAG)){
-						new BirthdayListener(this);
-					}
-					new AddonNight(instance, Bukkit.getWorld("world"));
+					new BirthdayListener(this);
+					new AddonDay(instance, Bukkit.getWorld("world"));
 					break;
 				case WEIHNACHTEN:
 						new ChristmasListener(this);

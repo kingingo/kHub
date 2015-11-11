@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import lombok.Getter;
+import lombok.javac.CommentInfo.StartConnection;
 import me.kingingo.kcore.Command.Admin.CommandLocations;
 import me.kingingo.kcore.Command.Commands.CommandVersusDurability;
 import me.kingingo.kcore.Command.Commands.CommandVersusMore;
@@ -51,6 +52,9 @@ import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.kcore.Versus.PlayerKit;
 import me.kingingo.kcore.Versus.PlayerKitManager;
+import me.kingingo.kcore.Versus.Rule;
+import me.kingingo.kcore.Versus.RulePriority;
+import me.kingingo.kcore.Versus.VManager;
 import me.kingingo.kcore.Versus.VersusType;
 import me.kingingo.khub.HubManager;
 import me.kingingo.khub.kHub;
@@ -99,30 +103,57 @@ public class HubVersusListener extends kListener{
 	private PlayerKitManager kitManager;
 	private ArrayList<Player> creative = new ArrayList<>();
 	private Location spawn;
-//	private VManager vManager;
+	private VManager vManager;
 	
 	public HubVersusListener(final HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
 		new UpdaterAsync(manager.getInstance());
 		this.manager=manager;
 		Bukkit.getWorld("world").setAutoSave(false);
-//		this.vManager=new VManager(manager.getInstance(), UpdateAsyncType.SLOW);
+		this.vManager=new VManager(manager.getPacketManager(),statsManager, UpdateAsyncType.SLOW);
 		this.manager.getCmd().register(CommandVersusDurability.class, new CommandVersusDurability());
 		this.manager.getCmd().register(CommandVersusMore.class, new CommandVersusMore());
 		this.kitManager=new PlayerKitManager(manager.getMysql(), GameType.Versus);
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.spawn=CommandLocations.getLocation("spawn");
-//		this.vManager.addRule(new Rule(){
-//
-//			@Override
-//			public boolean onRule(Player p, ARENA_STATUS a, Object o) {
-//				if(a.get)
-//			}
-//			
-//		}, RulePriority.HIGHEST);
-		
 		this.base=new InventoryBase(manager.getInstance());
+		
+		this.vManager.addRule(new Rule(){
+
+			@Override
+			public boolean onRule(Player owner, Player player, ARENA_STATUS arena,Object obj) {
+				if(arena.getMin_team() <= statsManager.getInt(Stats.TEAM_MIN, player)){
+					if(arena.getMax_team() >= statsManager.getInt(Stats.TEAM_MAX, player)){
+								return true;
+					}
+				}
+				return false;
+			}
+			
+		}, RulePriority.HIGHEST);
+		
+		this.vManager.addRule(new Rule(){
+
+			@Override
+			public boolean onRule(Player owner, Player player, ARENA_STATUS arena,Object obj) {
+				if(statsManager.getString(Stats.KIT_RANDOM, player).equalsIgnoreCase("true")){
+					return false;
+				}
+				return true;
+			}
+			
+		}, RulePriority.HIGHEST);
+		
+		this.vManager.addRule(new Rule(){
+
+			@Override
+			public boolean onRule(Player owner, Player player, ARENA_STATUS arena,Object obj) {
+				
+				return false;
+			}
+			
+		}, RulePriority.HIGHEST);
 		
 		this.base.setMain(new InventoryCopy(InventorySize._27.getSize(), "§bVersus"));
 		((InventoryCopy)this.base.getMain()).setCreate_new_inv(true);

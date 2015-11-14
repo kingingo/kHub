@@ -10,8 +10,13 @@ import me.kingingo.kcore.Addons.AddonDoubleJump;
 import me.kingingo.kcore.Command.Admin.CommandLocations;
 import me.kingingo.kcore.DeliveryPet.DeliveryObject;
 import me.kingingo.kcore.DeliveryPet.DeliveryPet;
+import me.kingingo.kcore.Disguise.DisguiseType;
+import me.kingingo.kcore.Disguise.disguises.DisguiseBase;
+import me.kingingo.kcore.Disguise.disguises.livings.DisguisePlayer;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.ServerType;
+import me.kingingo.kcore.Hologram.nametags.NameTagMessage;
+import me.kingingo.kcore.Hologram.nametags.NameTagType;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
 import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonBase;
@@ -19,6 +24,7 @@ import me.kingingo.kcore.Inventory.Item.Buttons.ButtonTeleport;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Language.LanguageType;
 import me.kingingo.kcore.Listener.kListener;
+import me.kingingo.kcore.Listener.EntityClick.EntityClickListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
@@ -35,6 +41,7 @@ import me.kingingo.kcore.Util.InventorySize;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilBG;
+import me.kingingo.kcore.Util.UtilEnt;
 import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
@@ -49,8 +56,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
@@ -87,6 +96,23 @@ public class HubListener extends kListener{
 		this.manager=manager;
 		Bukkit.getWorld("world").setAutoSave(false);
 		if(initialize)initialize();
+		
+		Zombie z = (Zombie) CommandLocations.getLocation("versusc").getWorld().spawnCreature(CommandLocations.getLocation("versusc"), CreatureType.ZOMBIE);
+		new NameTagMessage(NameTagType.SERVER, z.getEyeLocation().add(0, 0.2, 0), "§c§lVERSUS §a§l[BETA]").send();
+		z.getEquipment().setItemInHand(new ItemStack(Material.BOW));
+		z.getEquipment().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
+		UtilEnt.setNoAI(z, true);
+		DisguiseBase dbase = DisguiseType.newDisguise(z, DisguiseType.PLAYER, new Object[]{" "});
+		((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("EpicPvPMC"));
+		manager.getDisguiseManager().disguise(dbase);
+		new EntityClickListener(manager.getInstance(), new Click(){
+
+			@Override
+			public void onClick(Player p, ActionType arg1, Object arg2) {
+				UtilBG.sendToServer(p, "versus", manager.getInstance());
+			}
+			
+		}, z);
 	}	
 	
 	public void initialize(){

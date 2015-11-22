@@ -1,16 +1,16 @@
 package me.kingingo.khub.Event.Events;
 
+import me.kingingo.kcore.Command.Admin.CommandGiveAll;
+import me.kingingo.kcore.Command.Admin.CommandLocations;
+import me.kingingo.kcore.Util.UtilServer;
+import me.kingingo.khub.Event.EventManager;
+import me.kingingo.khub.Event.SoloEvent;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import me.kingingo.kcore.Command.Admin.CommandGiveAll;
-import me.kingingo.kcore.Command.Admin.CommandLocations;
-import me.kingingo.kcore.Util.UtilServer;
-import me.kingingo.khub.Event.Event;
-import me.kingingo.khub.Event.EventManager;
-
-public class DropEvent extends Event{
+public class DropEvent extends SoloEvent{
 
 	private boolean auto_drop_item=false;
 	

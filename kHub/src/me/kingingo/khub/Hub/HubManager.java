@@ -8,6 +8,7 @@ import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandCoins;
 import me.kingingo.kcore.Command.Admin.CommandGiveGems;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
+import me.kingingo.kcore.Command.Admin.CommandURang;
 import me.kingingo.kcore.Disguise.DisguiseShop;
 import me.kingingo.kcore.Enum.ServerType;
 import me.kingingo.kcore.Inventory.InventoryBase;
@@ -18,8 +19,8 @@ import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Pet.Shop.PetShop;
 import me.kingingo.kcore.Pet.Shop.PlayerPetHandler;
 import me.kingingo.kcore.Util.UtilItem;
-import me.kingingo.khub.kManager;
 import me.kingingo.khub.kHub;
+import me.kingingo.khub.kManager;
 import me.kingingo.khub.Command.CommandBroadcast;
 import me.kingingo.khub.Hub.Listener.HubListener;
 import me.kingingo.khub.Hub.Listener.HubLoginListener;
@@ -83,7 +84,7 @@ public class HubManager extends kManager{
 				new AddonDay(instance, Bukkit.getWorld("world"));
 			}
 
-			new ChatListener(instance, null,getPermissionManager());
+			new ChatListener(instance, null,getPermissionManager(),null);
 		}
 		
 		switch(instance.getConfig().getString("Config.HubType")){
@@ -102,6 +103,7 @@ public class HubManager extends kManager{
 		}
 		
 		getCmdHandler().register(CommandGroup.class, new CommandGroup(getPermissionManager()));
+		getCmdHandler().register(CommandURang.class, new CommandURang(getPermissionManager(),getMysql()));
 		getCmdHandler().register(CommandBroadcast.class, new CommandBroadcast());
 	}
 }

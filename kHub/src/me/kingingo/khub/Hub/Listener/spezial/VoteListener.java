@@ -39,9 +39,9 @@ public class VoteListener extends kListener{
 		 
 		 if(UtilServer.getDeliveryPet()!=null){
 			 if(UtilPlayer.isOnline(vote.getUsername())){
-				 UtilServer.createDeliveryPet(null).deliveryUSE(Bukkit.getPlayer(vote.getUsername()), Material.PAPER,true);
+				 UtilServer.createDeliveryPet(null).deliveryUSE(Bukkit.getPlayer(vote.getUsername()), "§aVote for EpicPvP",true);
 			 }else{
-				 UtilServer.createDeliveryPet(null).deliveryUSE(vote.getUsername(), uuid, Material.PAPER);
+				 UtilServer.createDeliveryPet(null).deliveryUSE(vote.getUsername(), uuid, "§aVote for EpicPvP");
 			 }
 		 }
 		 

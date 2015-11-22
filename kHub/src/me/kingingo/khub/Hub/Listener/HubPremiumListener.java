@@ -29,11 +29,4 @@ public class HubPremiumListener extends HubListener{
 //		this.particleManager.addPlayer(ev.getPlayer(), "fly");
 //	}
 	
-	@EventHandler
-	public void groupload(GroupLoadedEvent ev){
-		if(ev.getGroup().equalsIgnoreCase("default")){
-			ev.getManager().getGroups().get(ev.getGroup()).setPrefix("§e");
-		}
-	}
-	
 }

@@ -5,8 +5,8 @@ import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Enum.ServerType;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
-import me.kingingo.khub.kManager;
 import me.kingingo.khub.kHub;
+import me.kingingo.khub.kManager;
 import me.kingingo.khub.Event.Commands.CommandEvent;
 
 public class EventManager extends kManager{

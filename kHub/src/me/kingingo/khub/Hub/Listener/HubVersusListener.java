@@ -65,6 +65,7 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -258,6 +259,13 @@ public class HubVersusListener extends kListener{
 	@EventHandler
 	public void save(PlayerQuitEvent ev){
 		statsManager.SaveAllPlayerData(ev.getPlayer());
+	}
+	
+	@EventHandler
+	public void Inventory(InventoryMoveItemEvent  ev){
+		if(ev.getSource().getHolder() instanceof Player){
+			ev.setCancelled(true);
+		}
 	}
 	
 	PlayerKit k;

@@ -66,6 +66,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
@@ -375,6 +376,13 @@ public class HubListener extends kListener{
 			}else if(s.getLine(0).equalsIgnoreCase("[Server]")){
 				UtilBG.sendToServer(ev.getPlayer(), s.getLine(2), manager.getInstance());
 			}
+		}
+	}
+	
+	@EventHandler
+	public void Inventory(InventoryMoveItemEvent  ev){
+		if(ev.getSource().getHolder() instanceof Player){
+			ev.setCancelled(true);
 		}
 	}
 

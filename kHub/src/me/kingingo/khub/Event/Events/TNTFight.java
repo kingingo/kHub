@@ -16,16 +16,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import me.kingingo.kcore.Command.Admin.CommandLocations;
+import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.khub.Event.EventManager;
 import me.kingingo.khub.Event.SoloEvent;
 
 public class TNTFight extends SoloEvent{
-	
-	String Prefix = "TNTFight"; /*Mit Mani die Farben besprechen */
-	
-	
-	List<Player> activePlayers = new ArrayList<>();
 
 	public TNTFight(EventManager eventManager, String eventName) {
 		super(eventManager, "TNTFight");
@@ -60,26 +56,23 @@ public class TNTFight extends SoloEvent{
 	
 	void setUpPlayer(Player p){
 		Integer i = 1;
-		for (Player pl : activePlayers){
-			Inventory inv = p.getInventory();
-			inv.clear();
-			
-			
-			
+		Inventory inv;
+		for (Player pl : getPlayers().keySet()){
+			 inv = p.getInventory();
+			 inv.clear();
 		}
 	}
 	
-
-	
-	
 	/** Teamverteilung und -erstellung / Setup */
-	
+	static ItemStack bow;
 	static ItemStack getBow(){
-		ItemStack bow = new ItemStack(Material.BOW);
-		ItemMeta bowmeta = bow.getItemMeta();
-		bowmeta.setDisplayName("§cDeine Waffe!");
-		bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
-		bow.setItemMeta(bowmeta);
+		if(bow==null){
+			bow = new ItemStack(Material.BOW);
+			ItemMeta bowmeta = bow.getItemMeta();
+			bowmeta.setDisplayName("§cDeine Waffe!");
+			bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
+			bow.setItemMeta(bowmeta);
+		}
 		return bow;
 	}
 	
@@ -106,7 +99,7 @@ public class TNTFight extends SoloEvent{
 	}
 	
 	void getTeamColor(){
-		Integer playerSize = activePlayers.size();
+		Integer playerSize = getPlayers().size();
 		//TODO Keine Zeit mehr, hier mache ich später weiter nach der Konferenz!
 	}
 	
@@ -119,7 +112,7 @@ public class TNTFight extends SoloEvent{
 	static ItemStack hose = new ItemStack(Material.LEATHER_LEGGINGS); static ItemStack schuhe = new ItemStack(Material.LEATHER_BOOTS);
 	
 	enum Teams{
-		
+		LA("LA",1,new ItemStack[]{UtilItem.LSetColor(UtilItem.RenameItem(new ItemStack(Material.LEATHER_HELMET), ""), Color.RED)}),
 		ROT("Rot", 1, new ItemStack[]{bogen, pfeil, helm, brustpanzer, hose, schuhe}),
 		BLAU("Blau", 2, new ItemStack[]{bogen, pfeil, helm, brustpanzer, hose, schuhe}),
 		GELB("Gelb", 3, new ItemStack[]{bogen, pfeil, helm, brustpanzer, hose, schuhe}),

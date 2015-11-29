@@ -9,6 +9,8 @@ import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonBase;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
+import me.kingingo.kcore.Packet.Packets.BROADCAST;
+import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.InventorySize;
@@ -58,6 +60,11 @@ public class ChristmasListener extends kListener{
 							getManager().getCoins().addCoins(player, true, c);
 							getManager().getGems().addGems(player, true, (c/2));
 							player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "XMAS_DOOR",new String[]{c+"",(c/2)+""}));
+							if(!player.hasPermission(kPermission.PET_SNOWMAN.getPermissionToString())&&UtilMath.r(150) == 74){
+								getManager().getPermissionManager().addPermission(player, kPermission.PET_SNOWMAN);
+								player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "XMAS_DOOR1"));
+								getManager().getPacketManager().SendPacket("BG", new BROADCAST(Language.getText("PREFIX")+Language.getText("XMAS_RARE",player.getName())));
+							}
 							c=0;
 						}
 					}else{

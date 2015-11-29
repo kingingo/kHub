@@ -255,7 +255,7 @@ public class HubListener extends kListener{
 		this.GameInv.addButton(13, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.EYE_OF_ENDER), "§aSkyWars"), CommandLocations.getLocation("SkyWars")));
 		this.GameInv.addButton(14, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BONE), "§aDeathGames"), CommandLocations.getLocation("DeathGames")));
 		this.GameInv.addButton(15, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BED), "§aBedWars"), CommandLocations.getLocation("BedWars")));
-		this.GameInv.addButton(16, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§aVersus §7(§2Alpha§7)"), CommandLocations.getLocation("vs")));
+		this.GameInv.addButton(16, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§aVersus §7(§bBeta§7)"), CommandLocations.getLocation("vs")));
 		this.GameInv.addButton(17, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.MONSTER_EGG,1,(byte)91), "§aSheepWars"), CommandLocations.getLocation("SheepWars")));
 
 		this.GameInv.fill(Material.STAINED_GLASS_PANE, 7);

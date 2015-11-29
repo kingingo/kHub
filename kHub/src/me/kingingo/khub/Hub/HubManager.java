@@ -87,7 +87,7 @@ public class HubManager extends kManager{
 			new ChatListener(instance, null,getPermissionManager(),null);
 		}
 		
-		switch(instance.getConfig().getString("Config.HubType")){
+		switch(kHub.hubType){
 			case "LoginHub":
 			new HubLoginListener(this);
 				break;

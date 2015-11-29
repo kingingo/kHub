@@ -20,6 +20,7 @@ import me.kingingo.kcore.Util.UtilMath;
 import me.kingingo.kcore.Util.UtilParticle;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
+import me.kingingo.khub.kHub;
 import me.kingingo.khub.Hub.HubManager;
 
 import org.bukkit.Material;
@@ -117,7 +118,7 @@ public class ChristmasListener extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
-		ev.getPlayer().getInventory().setItem(6, item.clone());
+		if(!kHub.hubType.equalsIgnoreCase("VersusHub"))ev.getPlayer().getInventory().setItem(6, item.clone());
 	}
 	
 }

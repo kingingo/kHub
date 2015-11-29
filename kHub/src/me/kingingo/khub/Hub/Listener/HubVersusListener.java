@@ -27,6 +27,7 @@ import me.kingingo.kcore.Inventory.Item.Buttons.ButtonCopy;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonUpDownVersus;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
+import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.ARENA_STATUS;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
 import me.kingingo.kcore.StatsManager.Stats;
@@ -77,7 +78,7 @@ public class HubVersusListener extends kListener{
 
 	@Getter
 	private HubManager manager;
-	private ArrayList<SERVER_STATUS> server = new ArrayList<>();
+	private HashMap<String,SERVER_STATUS> server = new HashMap<>();
 	private StatsManager statsManager;
 	private InventoryBase base;
 	private LivingEntity creature_option;
@@ -324,7 +325,7 @@ public class HubVersusListener extends kListener{
 	public void name(UpdateEvent ev){
 		if(ev.getType()==UpdateType.SEC_3){
 			i=0;
-			for(SERVER_STATUS a : this.server)i=i+a.getOnline();
+			for(SERVER_STATUS a : this.server.values())i=i+a.getOnline();
 			
 			i=UtilServer.getPlayers().size()+i;
 			if(this.wait_list_name!=null)this.wait_list_name.remove();
@@ -435,6 +436,22 @@ public class HubVersusListener extends kListener{
 			}
 		}
 	}
+
+	SERVER_STATUS server_status;
+	@EventHandler
+	  public void Receive(PacketReceiveEvent ev)
+	  {
+	    if ((ev.getPacket() instanceof SERVER_STATUS)) {
+	      this.server_status = ((SERVER_STATUS)ev.getPacket());
+	      if (this.server_status.getTyp() != GameType.Versus) {
+		        Log("SERVER_STATUS: " + this.server_status.getId() + " " + this.server_status.getOnline() + " " + this.server_status.getTyp());
+		      } else if(this.server.containsKey(this.server_status.getId())){
+		    	  this.server.get(this.server_status.getId()).Set(this.server_status.toString());
+		      }else{
+		    	  this.server.put(this.server_status.getId(),this.server_status);
+		      }
+	    }
+	  }
 	
 	@EventHandler
 	public void Interact(PlayerInteractEntityEvent ev){

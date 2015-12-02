@@ -108,7 +108,7 @@ public class HubVersusListener extends kListener{
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.spawn=CommandLocations.getLocation("spawn");
-		this.arenaManager=new ArenaManager(manager.getPacketManager(),statsManager, UpdateAsyncType.SLOW);
+		this.arenaManager=new ArenaManager(manager.getPacketManager(),statsManager, UpdateAsyncType.SEC_2);
 		this.base=new InventoryBase(manager.getInstance());
 		
 		this.arenaManager.addRule(new Rule(){
@@ -418,10 +418,11 @@ public class HubVersusListener extends kListener{
 						if(vs.containsKey( ((Player)ev.getEntity()) )){
 							if(vs.get(((Player)ev.getEntity())).getName().equalsIgnoreCase(((Player)ev.getDamager()).getName())){
 								//SEND
-								this.arenaManager.delRound(((Player)ev.getEntity()));
-								this.arenaManager.delRound(((Player)ev.getDamager()));
+								this.arenaManager.delRound(((Player)ev.getEntity()),true);
+								this.arenaManager.delRound(((Player)ev.getDamager()),true);
 								this.arenaManager.addRound(new GameRound(((Player)ev.getEntity()), new Player[]{((Player)ev.getEntity()),((Player)ev.getDamager())}, ArenaType._TEAMx2));
-								
+								((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()),"PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_REQUEST"));
+								((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()),"PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_REQUEST"));
 								vs.remove(((Player)ev.getEntity()));
 								vs.remove(((Player)ev.getDamager()));
 								return;

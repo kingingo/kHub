@@ -38,6 +38,7 @@ public class ChristmasListener extends kListener{
 	private int day;
 	private InventoryPageBase inventory;
 	private ItemStack item;
+	private Click click;
 	
 	public ChristmasListener(HubManager manager){
 		super(manager.getInstance(),"ChristmasListener");
@@ -46,8 +47,8 @@ public class ChristmasListener extends kListener{
 	    this.inventory=new InventoryPageBase(InventorySize._27, "§aAdventskalender:");
 	    this.item=UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL), "§aAdventskalender");
 
-		getManager().getMysql().Update("CREATE TABLE IF NOT EXISTS CHRISTMAS(uuid varchar(30), name varchar(30),day int)");
-	    Click click = new Click() {
+		getManager().getMysql().Update("CREATE TABLE IF NOT EXISTS CHRISTMAS(uuid varchar(100), name varchar(30),day int)");
+		click = new Click() {
 			
 			@Override
 			public void onClick(Player player, ActionType action, Object obj) {
@@ -61,7 +62,7 @@ public class ChristmasListener extends kListener{
 							getManager().getCoins().addCoins(player, true, c);
 							getManager().getGems().addGems(player, true, (c/2));
 							player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "XMAS_DOOR",new String[]{c+"",(c/2)+""}));
-							if(!player.hasPermission(kPermission.PET_SNOWMAN.getPermissionToString())&&UtilMath.r(150) == 74){
+							if(!player.hasPermission(kPermission.PET_SNOWMAN.getPermissionToString())&& UtilMath.r( (int) (250 * Math.pow(0.4, day)) ) == 74){
 								getManager().getPermissionManager().addPermission(player, kPermission.PET_SNOWMAN);
 								player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "XMAS_DOOR1"));
 								getManager().getPacketManager().SendPacket("BG", new BROADCAST(Language.getText("PREFIX")+Language.getText("XMAS_RARE",player.getName())));
@@ -103,6 +104,31 @@ public class ChristmasListener extends kListener{
 			ev.getPlayer().openInventory(inventory);
 			ev.setCancelled(true);
 		}
+	}
+	
+	int tday;
+	@EventHandler
+	public void timer(UpdateEvent ev){
+		if(ev.getType()!=UpdateType.MIN_16)return;
+	    this.tday=Integer.valueOf(new SimpleDateFormat ("dd").format(new Date()));
+	    if(day!=tday){
+	    	this.day=tday;
+	    	this.inventory.clear();
+	    	int place=0;
+		    for(int i = 1; i<=24;i++){
+		    	for(int a = 0; a < 200; a++){
+		    		place=UtilMath.RandomInt(24, 0);
+		    		if(inventory.getItem(place)==null||inventory.getItem(place).getType()==Material.AIR)break;
+		    	}
+		    	if(i==day){
+		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§aTürchen "+i)));
+		    	}else{
+		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§cTürchen "+i)));
+		    	}
+		    }
+		    
+		    this.inventory.fill(Material.STAINED_GLASS_PANE,15);
+	    }
 	}
 	
 	@EventHandler

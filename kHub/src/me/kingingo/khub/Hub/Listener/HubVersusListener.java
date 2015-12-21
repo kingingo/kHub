@@ -85,6 +85,7 @@ public class HubVersusListener extends kListener{
 	private InventoryBase base;
 	private LivingEntity creature_option;
 	private LivingEntity skywars_wait_list;
+	private LivingEntity bedwars_wait_list;
 	private LivingEntity versus_wait_list;
 	private NameTagMessage versus_wait_list_name;
 	private InventoryPageBase versus_wait_list_inv;
@@ -95,12 +96,14 @@ public class HubVersusListener extends kListener{
 	private ItemStack t6;
 	private HashMap<Player,Player> versus_vs = new HashMap<>();
 	private HashMap<Player,Player> skywars_vs = new HashMap<>();
+	private HashMap<Player,Player> bedwars_vs = new HashMap<>();
 	@Getter
 	private PlayerKitManager kitManager;
 	private ArrayList<Player> creative = new ArrayList<>();
 	private Location spawn;
 	private ArenaManager versus_arenaManager;
 	private ArenaManager skywars_arenaManager;
+	private ArenaManager bedwars_arenaManager;
 	
 	public HubVersusListener(final HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
@@ -113,6 +116,7 @@ public class HubVersusListener extends kListener{
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.spawn=CommandLocations.getLocation("spawn");
+		this.bedwars_arenaManager=new ArenaManager(manager.getPacketManager(),statsManager,GameType.BedWars1vs1, UpdateAsyncType.SEC_2);
 		this.skywars_arenaManager=new ArenaManager(manager.getPacketManager(),statsManager,GameType.SkyWars1vs1, UpdateAsyncType.SEC_2);
 		this.base=new InventoryBase(manager.getInstance());
 
@@ -418,6 +422,14 @@ public class HubVersusListener extends kListener{
 		}
 	}
 	
+
+	@EventHandler(priority=EventPriority.HIGHEST)
+	public void LOADPERM(PlayerLoadPermissionEvent ev){
+		if(ev.getPlayer().hasPermission(kPermission.ALL_PERMISSION.getPermissionToString())){
+			ev.getPlayer().getInventory().setItem(6,UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"));
+		}
+	}
+	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
@@ -487,7 +499,33 @@ public class HubVersusListener extends kListener{
 					((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
 					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
 				}
-		}
+			}else if(((Player)ev.getDamager()).getItemInHand().getType()==Material.GOLD_SWORD){
+				
+				s=UtilTime.getTimeManager().check("BEDWARS_AXE", ((Player)ev.getDamager()));
+				if(s!=null){
+					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
+				}else{
+					UtilTime.getTimeManager().add("BEDWARS_AXE", ((Player)ev.getDamager()), TimeSpan.SECOND*10);
+					if(bedwars_vs.containsKey( ((Player)ev.getEntity()) )){
+						if(bedwars_vs.get(((Player)ev.getEntity())).getName().equalsIgnoreCase(((Player)ev.getDamager()).getName())){
+							//SEND
+							this.bedwars_arenaManager.delRound(((Player)ev.getEntity()),true);
+							this.bedwars_arenaManager.delRound(((Player)ev.getDamager()),true);
+							this.bedwars_arenaManager.addRound(new GameRound(((Player)ev.getEntity()), new Player[]{((Player)ev.getEntity()),((Player)ev.getDamager())}, ArenaType._TEAMx2));
+							((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()),"PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_SKYWARS_1VS1_REQUEST"));
+							((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()),"PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_SKYWARS_1VS1_REQUEST"));
+							bedwars_vs.remove(((Player)ev.getEntity()));
+							bedwars_vs.remove(((Player)ev.getDamager()));
+							return;
+						}
+					}
+					
+					bedwars_vs.remove(((Player)ev.getDamager()));
+					bedwars_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
+					((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
+					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
+				}
+			}
 		}
 	}
 

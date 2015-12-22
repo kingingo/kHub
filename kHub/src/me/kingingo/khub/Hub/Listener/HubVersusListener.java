@@ -15,16 +15,20 @@ import me.kingingo.kcore.Command.Commands.CommandVersusMore;
 import me.kingingo.kcore.Disguise.DisguiseType;
 import me.kingingo.kcore.Disguise.disguises.DisguiseBase;
 import me.kingingo.kcore.Disguise.disguises.livings.DisguisePlayer;
+import me.kingingo.kcore.Enum.GameCase;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Hologram.nametags.NameTagMessage;
 import me.kingingo.kcore.Hologram.nametags.NameTagType;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
+import me.kingingo.kcore.Inventory.Inventory.InventoryBuy;
 import me.kingingo.kcore.Inventory.Inventory.InventoryCopy;
 import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonBase;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonCopy;
+import me.kingingo.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonUpDownVersus;
+import me.kingingo.kcore.Inventory.Item.Buttons.SalesPackageBase;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
@@ -40,6 +44,7 @@ import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
 import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
 import me.kingingo.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import me.kingingo.kcore.Util.InventorySize;
+import me.kingingo.kcore.Util.InventorySplit;
 import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilBG;
@@ -104,11 +109,47 @@ public class HubVersusListener extends kListener{
 	private ArenaManager versus_arenaManager;
 	private ArenaManager skywars_arenaManager;
 	private ArenaManager bedwars_arenaManager;
+	private InventoryPageBase case_shop;
 	
 	public HubVersusListener(final HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
 		new UpdaterAsync(manager.getInstance());
 		this.manager=manager;
+		
+		//CASE SHOP
+		this.case_shop = new InventoryPageBase(InventorySize._45, "§cCase-Shop:");
+		
+		int slot = 10;
+		for(GameCase gcase : GameCase.values()){
+			this.case_shop.addButton(slot, new SalesPackageBase(new Click(){
+				
+				@Override
+				public void onClick(Player player, ActionType action, Object obj) {
+					if(player.hasPermission(gcase.getPermission().getPermissionToString())||player.hasPermission(kPermission.ALL_PERMISSION.getPermissionToString())){
+						
+						player.closeInventory();
+					}else{
+						InventoryBuy buy = new InventoryBuy(new Click(){
+							@Override
+							public void onClick(Player player, ActionType type,Object object) {
+								manager.getPermissionManager().addPermission(player, gcase.getPermission());
+							}
+							
+						},"Kaufen",manager.getCoins(),gcase.getCoins());
+						player.openInventory(buy);
+						manager.getShop().addAnother(buy);
+					}
+				}
+				
+			}, gcase.getGround((byte)14)));
+			slot=InventorySplit.getSlotBorder(slot);
+		}
+		
+		this.case_shop.fill(Material.STAINED_GLASS_PANE, (byte)7);
+		this.manager.getShop().getMain().addButton(4, new ButtonOpenInventory(this.case_shop, new ItemStack(Material.STAINED_GLASS,1,(byte)11)));
+		this.manager.getShop().addPage(this.case_shop);
+		//CASE SHOP ^^
+		
 		Bukkit.getWorld("world").setAutoSave(false);
 		this.manager.getCmdHandler().register(CommandVersusDurability.class, new CommandVersusDurability());
 		this.manager.getCmdHandler().register(CommandVersusMore.class, new CommandVersusMore());

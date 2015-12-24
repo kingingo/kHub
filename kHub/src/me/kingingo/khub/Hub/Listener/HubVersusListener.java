@@ -15,7 +15,7 @@ import me.kingingo.kcore.Command.Commands.CommandVersusMore;
 import me.kingingo.kcore.Disguise.DisguiseType;
 import me.kingingo.kcore.Disguise.disguises.DisguiseBase;
 import me.kingingo.kcore.Disguise.disguises.livings.DisguisePlayer;
-import me.kingingo.kcore.Enum.GameCase;
+import me.kingingo.kcore.Enum.GameCage;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Hologram.nametags.NameTagMessage;
 import me.kingingo.kcore.Hologram.nametags.NameTagType;
@@ -34,6 +34,8 @@ import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.ARENA_STATUS;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
+import me.kingingo.kcore.PacketAPI.Packets.kPacketStatusOutServerInfo;
+import me.kingingo.kcore.PacketAPI.packetlistener.event.PacketListenerSendEvent;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Permission.Event.PlayerLoadPermissionEvent;
 import me.kingingo.kcore.StatsManager.Stats;
@@ -61,6 +63,8 @@ import me.kingingo.kcore.Versus.PlayerKit;
 import me.kingingo.kcore.Versus.PlayerKitManager;
 import me.kingingo.khub.kHub;
 import me.kingingo.khub.Hub.HubManager;
+import net.minecraft.server.v1_8_R3.PacketStatusOutServerInfo;
+import net.minecraft.server.v1_8_R3.ServerPing.ServerPingPlayerSample;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -74,12 +78,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
+
+import com.mojang.authlib.GameProfile;
 
 public class HubVersusListener extends kListener{
 
@@ -110,6 +118,7 @@ public class HubVersusListener extends kListener{
 	private ArenaManager skywars_arenaManager;
 	private ArenaManager bedwars_arenaManager;
 	private InventoryPageBase case_shop;
+	private int online = 0;
 	
 	public HubVersusListener(final HubManager manager) {
 		super(manager.getInstance(),"VersusListener");
@@ -117,36 +126,41 @@ public class HubVersusListener extends kListener{
 		this.manager=manager;
 		
 		//CASE SHOP
-		this.case_shop = new InventoryPageBase(InventorySize._45, "§cCase-Shop:");
+		this.case_shop = new InventoryPageBase(InventorySize._45, "§7Cage-Shop:");
 		
 		int slot = 10;
-		for(GameCase gcase : GameCase.values()){
+		for(GameCage gcase : GameCage.values()){
 			this.case_shop.addButton(slot, new SalesPackageBase(new Click(){
 				
 				@Override
 				public void onClick(Player player, ActionType action, Object obj) {
 					if(player.hasPermission(gcase.getPermission().getPermissionToString())||player.hasPermission(kPermission.ALL_PERMISSION.getPermissionToString())){
-						
+						GameCage.saveGameCase(player, gcase, manager.getMysql());
+						player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "GAMECAGE_CHANGE"));
 						player.closeInventory();
 					}else{
-						InventoryBuy buy = new InventoryBuy(new Click(){
-							@Override
-							public void onClick(Player player, ActionType type,Object object) {
-								manager.getPermissionManager().addPermission(player, gcase.getPermission());
-							}
-							
-						},"Kaufen",manager.getCoins(),gcase.getCoins());
-						player.openInventory(buy);
-						manager.getShop().addAnother(buy);
+//						InventoryBuy buy = new InventoryBuy(new Click(){
+//							@Override
+//							public void onClick(Player player, ActionType type,Object object) {
+//								manager.getPermissionManager().addPermission(player, gcase.getPermission());
+//								GameCage.saveGameCase(player, gcase, manager.getMysql());
+//								player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "GAMECAGE_CHANGE"));
+//							}
+//							
+//						},"Kaufen",manager.getCoins(),gcase.getCoins());
+//						player.openInventory(buy);
+//						manager.getShop().addAnother(buy);
+						player.sendMessage(Language.getText(player, "PREFIX")+"§cYou cannot buy this!");
+						player.closeInventory();
 					}
 				}
 				
-			}, gcase.getGround((byte)14)));
+			}, gcase.getGround()));
 			slot=InventorySplit.getSlotBorder(slot);
 		}
 		
 		this.case_shop.fill(Material.STAINED_GLASS_PANE, (byte)7);
-		this.manager.getShop().getMain().addButton(4, new ButtonOpenInventory(this.case_shop, new ItemStack(Material.STAINED_GLASS,1,(byte)11)));
+		this.manager.getShop().getMain().addButton(4, new ButtonOpenInventory(this.case_shop, UtilItem.Item(new ItemStack(Material.STAINED_GLASS,1,(byte)11), new String[]{"§bKlick mich um in den Shop zu gelangen."}, "§7CageShop")));
 		this.manager.getShop().addPage(this.case_shop);
 		//CASE SHOP ^^
 		
@@ -322,6 +336,20 @@ public class HubVersusListener extends kListener{
 			((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("julle139"));
 			manager.getDisguiseManager().disguise(dbase);
 		}
+		
+		if(bedwars_wait_list==null){
+			this.bedwars_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lBedWars §b§l[ALPHA]", true, EntityType.ZOMBIE, CommandLocations.getLocation("BedWars"));
+			
+			((Zombie)this.bedwars_wait_list).getEquipment().setItemInHand(new ItemStack(Material.GOLD_SWORD));
+			NameTagMessage m;
+			m=new NameTagMessage(NameTagType.SERVER, bedwars_wait_list.getLocation().add(0, 2, 0), bedwars_wait_list.getCustomName());
+			m.send();
+			this.bedwars_wait_list.setCustomName("");
+			UtilEnt.setNoAI(this.bedwars_wait_list, true);
+			DisguiseBase dbase = DisguiseType.newDisguise(bedwars_wait_list, DisguiseType.PLAYER, new Object[]{" "});
+			((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("kablion"));
+			manager.getDisguiseManager().disguise(dbase);
+		}
 	}
 	
 	@EventHandler
@@ -332,6 +360,13 @@ public class HubVersusListener extends kListener{
 	@EventHandler
 	public void Inventory(InventoryMoveItemEvent  ev){
 		if(ev.getSource().getHolder() instanceof Player){
+			ev.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void bucket(PlayerBucketEmptyEvent ev){
+		if(!ev.getPlayer().isOp()){
 			ev.setCancelled(true);
 		}
 	}
@@ -360,6 +395,7 @@ public class HubVersusListener extends kListener{
 				ev.getPlayer().getInventory().setArmorContents(null);
 				
 				ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
+				ev.getPlayer().getInventory().setItem(6,UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"));
 				ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
 				ev.getPlayer().getInventory().setItem(7,UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1"));
 				creative.remove(ev.getPlayer());
@@ -388,6 +424,16 @@ public class HubVersusListener extends kListener{
 		}
 	}
 	
+	@EventHandler
+	public void ping(PacketListenerSendEvent ev){
+		if(ev.getPacket() instanceof PacketStatusOutServerInfo){
+			kPacketStatusOutServerInfo info = new kPacketStatusOutServerInfo(ev.getPacket());
+			info.getServerPing().setPlayerSample(new ServerPingPlayerSample(this.online, this.online));
+			ev.setPacket(info.getPacket());
+			info=null;
+		}
+	}
+	
 	int i=0;
 	@EventHandler
 	public void name(UpdateEvent ev){
@@ -395,9 +441,9 @@ public class HubVersusListener extends kListener{
 			i=0;
 			for(SERVER_STATUS a : this.server.values())i=i+a.getOnline();
 			
-			i=UtilServer.getPlayers().size()+i;
+			this.online=UtilServer.getPlayers().size()+i;
 			if(this.versus_wait_list_name!=null)this.versus_wait_list_name.remove();
-			this.versus_wait_list_name = new NameTagMessage(NameTagType.PACKET, CommandLocations.getLocation("online"),new String[]{"§c§lEpicPvP Versus Server","§aOnline §e§l"+i});
+			this.versus_wait_list_name = new NameTagMessage(NameTagType.PACKET, CommandLocations.getLocation("online"),new String[]{"§c§lEpicPvP Versus Server","§aOnline §e§l"+this.online});
 			this.versus_wait_list_name.send();
 		}
 	}
@@ -463,14 +509,6 @@ public class HubVersusListener extends kListener{
 		}
 	}
 	
-
-	@EventHandler(priority=EventPriority.HIGHEST)
-	public void LOADPERM(PlayerLoadPermissionEvent ev){
-		if(ev.getPlayer().hasPermission(kPermission.ALL_PERMISSION.getPermissionToString())){
-			ev.getPlayer().getInventory().setItem(6,UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"));
-		}
-	}
-	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
@@ -479,6 +517,7 @@ public class HubVersusListener extends kListener{
 		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
 		ev.getPlayer().teleport(spawn);
 		load.add(ev.getPlayer());
+		ev.getPlayer().getInventory().setItem(6,UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"));
 		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§aVersus 1vs1"));
 		ev.getPlayer().getInventory().setItem(7,UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1"));
 	}
@@ -489,7 +528,7 @@ public class HubVersusListener extends kListener{
 		if(ev.getEntity() instanceof Player && ev.getDamager() instanceof Player 
 				&& ((Player)ev.getEntity()).getGameMode() == GameMode.ADVENTURE && ((Player)ev.getDamager()).getGameMode() == GameMode.ADVENTURE){
 			if(((Player)ev.getDamager()).getItemInHand().getType()==Material.DIAMOND_SWORD){
-				
+				((Player)ev.getDamager()).getItemInHand().setDurability((short) 0);
 					s=UtilTime.getTimeManager().check("VERSUS_SWORD", ((Player)ev.getDamager()));
 					if(s!=null){
 						((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
@@ -515,7 +554,7 @@ public class HubVersusListener extends kListener{
 						((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
 					}
 			}else if(((Player)ev.getDamager()).getItemInHand().getType()==Material.IRON_AXE){
-				
+				((Player)ev.getDamager()).getItemInHand().setDurability((short) 0);
 				s=UtilTime.getTimeManager().check("SKYWARS_AXE", ((Player)ev.getDamager()));
 				if(s!=null){
 					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
@@ -541,7 +580,7 @@ public class HubVersusListener extends kListener{
 					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
 				}
 			}else if(((Player)ev.getDamager()).getItemInHand().getType()==Material.GOLD_SWORD){
-				
+				((Player)ev.getDamager()).getItemInHand().setDurability((short) 0);
 				s=UtilTime.getTimeManager().check("BEDWARS_AXE", ((Player)ev.getDamager()));
 				if(s!=null){
 					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
@@ -553,8 +592,8 @@ public class HubVersusListener extends kListener{
 							this.bedwars_arenaManager.delRound(((Player)ev.getEntity()),true);
 							this.bedwars_arenaManager.delRound(((Player)ev.getDamager()),true);
 							this.bedwars_arenaManager.addRound(new GameRound(((Player)ev.getEntity()), new Player[]{((Player)ev.getEntity()),((Player)ev.getDamager())}, ArenaType._TEAMx2));
-							((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()),"PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_SKYWARS_1VS1_REQUEST"));
-							((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()),"PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_SKYWARS_1VS1_REQUEST"));
+							((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()),"PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_BEDWARS_1VS1_REQUEST"));
+							((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()),"PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_BEDWARS_1VS1_REQUEST"));
 							bedwars_vs.remove(((Player)ev.getEntity()));
 							bedwars_vs.remove(((Player)ev.getDamager()));
 							return;
@@ -577,7 +616,6 @@ public class HubVersusListener extends kListener{
 	    if ((ev.getPacket() instanceof SERVER_STATUS)) {
 	      this.server_status = ((SERVER_STATUS)ev.getPacket());
 	      if (this.server_status.getTyp() != GameType.Versus&&this.server_status.getTyp() != GameType.SkyWars1vs1&&this.server_status.getTyp() != GameType.BedWars1vs1) {
-//		        Log("SERVER_STATUS: " + this.server_status.getId() + " " + this.server_status.getOnline() + " " + this.server_status.getTyp());
 		      } else if(this.server.containsKey(this.server_status.getId())){
 		    	  this.server.get(this.server_status.getId()).Set(this.server_status.toString());
 		      }else{
@@ -597,6 +635,13 @@ public class HubVersusListener extends kListener{
 		}else if(ev.getRightClicked().getEntityId()==this.skywars_wait_list.getEntityId()){
 			ev.setCancelled(true);
 			if(skywars_arenaManager.addPlayer(ev.getPlayer(), ArenaType._TEAMx2)){
+				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
+			}else{
+				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_REMOVE"));
+			}
+		}else if(ev.getRightClicked().getEntityId()==this.bedwars_wait_list.getEntityId()){
+			ev.setCancelled(true);
+			if(bedwars_arenaManager.addPlayer(ev.getPlayer(), ArenaType._TEAMx2)){
 				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
 			}else{
 				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_REMOVE"));

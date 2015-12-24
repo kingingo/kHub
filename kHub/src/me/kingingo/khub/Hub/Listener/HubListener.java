@@ -100,7 +100,7 @@ public class HubListener extends kListener{
 		if(initialize)initialize();
 		
 		Zombie z = (Zombie) CommandLocations.getLocation("versusc").getWorld().spawnCreature(CommandLocations.getLocation("versusc"), CreatureType.ZOMBIE);
-		new NameTagMessage(NameTagType.SERVER, z.getEyeLocation().add(0, 0.2, 0), "§c§lVERSUS §7| §b§l SkyWars1vs1").send();
+		new NameTagMessage(NameTagType.SERVER, z.getEyeLocation().add(0, 0.2, 0), "§c§lVERSUS").send();
 		z.getEquipment().setItemInHand(new ItemStack(Material.BOW));
 		z.getEquipment().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
 		UtilEnt.setNoAI(z, true);

@@ -70,7 +70,7 @@ public class HubLoginListener extends kListener{
 		if(ev.getType()==UpdateType.SEC){
 			for(int i = 0; i < list.size(); i++){
 				player=(Player)list.keySet().toArray()[i];
-				if( (System.currentTimeMillis()-list.get(player)) > TimeSpan.SECOND*13){
+				if( (System.currentTimeMillis()-list.get(player)) > TimeSpan.SECOND*14){
 					if(UtilLocation.isSameLocation(player.getLocation(), spawn)){
 						Log("detected Bot "+player.getName());
 						addBot(player);
@@ -93,7 +93,7 @@ public class HubLoginListener extends kListener{
 			int i = bot.get(p.getAddress().getAddress().getHostAddress());
 			i++;
 			bot.remove(p.getAddress().getAddress().getHostAddress());
-			if(i>1){
+			if(i>3){
 				bot.remove(p.getAddress().getAddress().getHostAddress());
 				Date MyDate = new Date();
 				SimpleDateFormat df2 = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");

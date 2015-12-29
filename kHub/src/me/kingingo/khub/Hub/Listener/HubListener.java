@@ -92,7 +92,7 @@ public class HubListener extends kListener{
 	public HubListener(final HubManager manager) {
 		this(manager,true);
 	}
-
+	
 	public HubListener(final HubManager manager,boolean initialize) {
 		super(manager.getInstance(), kHub.hubType+"Listener");
 		this.manager=manager;

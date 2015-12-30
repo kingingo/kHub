@@ -57,7 +57,7 @@ public class kHub extends JavaPlugin{
 			
 			this.mysql=new MySQL(getConfig().getString("Config.MySQL.User"),getConfig().getString("Config.MySQL.Password"),getConfig().getString("Config.MySQL.Host"),getConfig().getString("Config.MySQL.DB"),this);
 			this.Updater=new Updater(this);
-			this.client = new Client(getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),this.hubType+this.hubID,this,this.Updater);
+			this.client = new Client(this,getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),this.hubType+this.hubID);
 			this.packetManager=new PacketManager(this,this.client);
 			Language.load(this.mysql);
 			

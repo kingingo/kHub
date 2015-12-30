@@ -245,19 +245,20 @@ public class HubListener extends kListener{
 	
 	//UNSICHTBAR / PET SHOP / Walk Effect / FLY
 	public void fillGameInv(){
-		this.GameInv = new InventoryPageBase(InventorySize._27, "§8Game Menu");
+		this.GameInv = new InventoryPageBase(InventorySize._36, "§8Game Menu");
 		
 		this.GameInv.addButton(4, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), "§6Spawn"), Bukkit.getWorld("world").getSpawnLocation()));
-		this.GameInv.addButton(9, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GRASS), "§aSkyBlock"), CommandLocations.getLocation("skyblock")));
-		this.GameInv.addButton(10, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_AXE), "§aPvP"), CommandLocations.getLocation("pvpt")));
 		this.GameInv.addButton(11, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD), "§aQuickSurvivalGames"), CommandLocations.getLocation("QuickSurvivalGames")));
 		this.GameInv.addButton(12, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.STICK), "§aTroubleInMinecraft"), CommandLocations.getLocation("TroubleInMinecraft")));
 		this.GameInv.addButton(13, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.EYE_OF_ENDER), "§aSkyWars"), CommandLocations.getLocation("SkyWars")));
 		this.GameInv.addButton(14, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BONE), "§aDeathGames"), CommandLocations.getLocation("DeathGames")));
 		this.GameInv.addButton(15, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BED), "§aBedWars"), CommandLocations.getLocation("BedWars")));
-		this.GameInv.addButton(16, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§aVersus §7(§bBeta§7)"), CommandLocations.getLocation("vs")));
-		this.GameInv.addButton(17, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.MONSTER_EGG,1,(byte)91), "§aSheepWars"), CommandLocations.getLocation("SheepWars")));
+		this.GameInv.addButton(16, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§aVersus"), CommandLocations.getLocation("vs")));
+		this.GameInv.addButton(10, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.MONSTER_EGG,1,(byte)91), "§aSheepWars"), CommandLocations.getLocation("SheepWars")));
 
+		this.GameInv.addButton(21, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GRASS), "§aSkyBlock"), CommandLocations.getLocation("skyblock")));
+		this.GameInv.addButton(22, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_AXE), "§aPvP"), CommandLocations.getLocation("pvpt")));
+		this.GameInv.addButton(23, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_SPADE), "§aMasterbuilders §7[§d§lNEW§7]"), CommandLocations.getLocation("masterbuilders")));
 		this.GameInv.fill(Material.STAINED_GLASS_PANE, 7);
 		
 		((HubManager)getManager()).getShop().addPage(this.GameInv);
@@ -270,10 +271,15 @@ public class HubListener extends kListener{
 	      ResultSet rs = manager.getMysql().Query("SELECT typ,x,y,z FROM "+kHub.hubType+"_signs");
 	      while (rs.next()){
 	    	  try{
-	    		  if(GameType.valueOf(rs.getString(1))!=null&&!signs.containsKey(GameType.valueOf(rs.getString(1))))signs.put(GameType.valueOf(rs.getString(1)), new ArrayList<Sign>());
+	    		  if(GameType.get(rs.getString(1))==null){
+		    		  System.out.println(rs.getString(1) +" == NULL");
+	    			  continue;
+	    		  }
+	    		  
+	    		  if(GameType.get(rs.getString(1))!=null&&!signs.containsKey(GameType.get(rs.getString(1))))signs.put(GameType.get(rs.getString(1)), new ArrayList<Sign>());
 	    		  try{
 	    			  s=((Sign) (new Location(Bukkit.getWorld("world"),rs.getInt(2),rs.getInt(3),rs.getInt(4))).getBlock().getState() );
-		    		  signs.get(GameType.valueOf(rs.getString(1))).add( s );
+		    		  signs.get(GameType.get(rs.getString(1))).add( s );
 	    		  }catch(ClassCastException e){
 	    			  System.err.println("[kHub] Sign nicht gefunden ...");
 	    		  }
@@ -393,6 +399,7 @@ public class HubListener extends kListener{
 	public void Packet(PacketReceiveEvent ev){
 		if(ev.getPacket() instanceof SERVER_STATUS){
 			ss = (SERVER_STATUS)ev.getPacket();
+			
 			try{
 				if(!getSigns().containsKey(ss.getTyp()))return;
 				sign=getSigns().get(ss.getTyp()).get(ss.getSign());

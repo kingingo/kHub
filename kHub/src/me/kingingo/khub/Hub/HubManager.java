@@ -58,8 +58,9 @@ public class HubManager extends kManager{
 			this.shop.getMain().addButton(6, new ButtonOpenInventory(getDisguiseManager().getDisguiseShop(), UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7DisguiseShop")));
 			this.shop.addPage(getDisguiseManager().getDisguiseShop());
 			this.shop.getMain().fill(Material.STAINED_GLASS_PANE,(byte)7);
+		
 			
-			if(Calendar.holiday!=null){
+			if(Calendar.getHoliday()!=null){
 				switch(Calendar.holiday){
 				case HALLOWEEN:
 					new HalloweenListener(this);

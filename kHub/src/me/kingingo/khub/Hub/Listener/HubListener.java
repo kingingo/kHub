@@ -84,9 +84,7 @@ public class HubListener extends kListener{
 	@Getter
 	private HashMap<Sign,SERVER_STATUS> sign_server = new HashMap<>();
 	@Getter
-	private HashMap<Integer,Lobby> LobbyList = new HashMap<Integer,Lobby>();
-	@Getter
-	private Inventory LobbyInv;
+	private InventoryPageBase LobbyInv;
 	private InventoryPageBase language_inv;
 	
 	public HubListener(final HubManager manager) {
@@ -305,53 +303,55 @@ public class HubListener extends kListener{
 	}
 	
 	public void loadLobbys(){
+		this.LobbyInv=new InventoryPageBase(InventorySize._18, "§8Hub Selector");
 		try {
 			ResultSet rs = manager.getMysql().Query("SELECT `name`,`bg`,`ip`,`place` FROM BG_Lobby");
-			while (rs.next())LobbyList.put(rs.getInt(4),new Lobby(rs.getString(1),rs.getString(2),rs.getString(3),rs.getInt(4)));
+			while (rs.next()){
+				final Lobby l =new Lobby(rs.getString(1),rs.getString(2),rs.getString(3),rs.getInt(4));
+				
+				if(l.getIp().equalsIgnoreCase(Bukkit.getServer().getIp()) && l.getPort() == Bukkit.getServer().getPort()){
+					if(l.getBg().startsWith("premiumhub")){
+						this.LobbyInv.addButton(l.getPlace(), new ButtonBase(new Click() {
+							@Override
+							public void onClick(Player player, ActionType a, Object obj) {
+								player.closeInventory();
+							}
+						}, UtilItem.Item(new ItemStack(Material.GLOWSTONE_DUST), new String[]{"§6Klicke um die Premium Lobby "+ l.getName().split(" ")[2] + " zu betreten "}, "§b"+l.getName())));
+					}else{
+						this.LobbyInv.addButton(l.getPlace(), new ButtonBase(new Click() {
+							@Override
+							public void onClick(Player player, ActionType a, Object obj) {
+								player.closeInventory();
+							}
+						}, UtilItem.Item(new ItemStack(Material.GLOWSTONE_DUST), new String[]{"§6Klicke um die Lobby "+ l.getName().split(" ")[1] + " zu betreten "}, "§a"+l.getName())));
+					}
+				}else{
+					if(l.getBg().startsWith("premiumhub")){
+						this.LobbyInv.addButton(l.getPlace(), new ButtonBase(new Click() {
+							@Override
+							public void onClick(Player player, ActionType a, Object obj) {
+								if(player.hasPermission(kPermission.PREMIUM_LOBBY.getPermissionToString())){
+									UtilBG.SendToBungeeCord("lobby/"+ l.getBg() + "/" + player.getName(), player,getManager().getInstance());
+								}
+							}
+						}, UtilItem.Item(new ItemStack(353), new String[]{"§6Klicke um die Premium Lobby "+ l.getName().split(" ")[2] + " zu betreten "}, "§b"+l.getName())));
+					}else{
+						this.LobbyInv.addButton(l.getPlace(), new ButtonBase(new Click() {
+							@Override
+							public void onClick(Player player, ActionType a, Object obj) {
+								UtilBG.SendToBungeeCord("lobby/"+ l.getBg() + "/" + player.getName(), player,getManager().getInstance());
+							}
+						}, UtilItem.Item(new ItemStack(289), new String[]{"§6Klicke um die Lobby "+ l.getName().split(" ")[1] + " zu betreten "}, "§a"+l.getName())));
+					}
+				}
+			}
 			rs.close();
 		} catch (Exception err) {
 			Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,manager.getMysql()));
 		}
-		
-		int a = LobbyList.size();
-		
-		if(a<=4){
-			a=9;
-		}else {
-			a=18;
-		}
-		
-		this.LobbyInv=Bukkit.createInventory(null, a, "§8Hub Selector");
-		ItemStack[] items = new ItemStack[LobbyInv.getSize()];
-		for(Lobby l : LobbyList.values()){
-				int place = l.getPlace();
-				if(l.getIp().equalsIgnoreCase(Bukkit.getServer().getIp())){
-					if(l.getBg().startsWith("premiumhub")){
-						items[place]=UtilItem.Item(new ItemStack(Material.GLOWSTONE_DUST), new String[]{"§6Klicke um die Premium Lobby "+ l.getName().split(" ")[2] + " zu betreten "}, "§b"+l.getName());
-					}else{
-						items[place]=UtilItem.Item(new ItemStack(Material.GLOWSTONE_DUST), new String[]{"§6Klicke um die Lobby "+ l.getName().split(" ")[1] + " zu betreten "}, "§a"+l.getName());
-					}
-				}else{
-					if(l.getBg().startsWith("premiumhub")){
-						items[place]=UtilItem.Item(new ItemStack(353), new String[]{"§6Klicke um die Premium Lobby "+ l.getName().split(" ")[2] + " zu betreten "}, "§b"+l.getName());
-					}else{
-						items[place]=UtilItem.Item(new ItemStack(289), new String[]{"§6Klicke um die Lobby "+ l.getName().split(" ")[1] + " zu betreten "}, "§a"+l.getName());
-					}
-				}
-		}
-		
-		for(int i = 0; i<LobbyInv.getSize();i++){
-			if(items[i]==null||items[i].getType()==Material.AIR){
-				ItemStack item = new ItemStack(160);
-				items[i]=item;
-				items[i].setDurability((short) 1);
-				ItemMeta im = items[i].getItemMeta();
-				im.setDisplayName(" ");
-				items[i].setItemMeta(im);
-			}
-		}
-		
-		LobbyInv.setContents(items);
+		this.LobbyInv.fill(Material.getMaterial(160), 1);
+		((HubManager)getManager()).getShop().addPage(this.LobbyInv);
+	
 	}
 
 	@EventHandler
@@ -493,33 +493,4 @@ public class HubListener extends kListener{
 			ev.getPlayer().setLevel(3);
 		}
 	}
-	
-	@EventHandler
-	public void onClick(InventoryClickEvent e) {
-		if (!(e.getWhoClicked() instanceof Player)
-				|| (e.getCursor() == null || e.getCurrentItem() == null)) {
-			return;
-		}
-		Player p = (Player) e.getWhoClicked();
-
-		if (e.getInventory().getName().equalsIgnoreCase("§8Hub Selector")) {
-			if (e.getCurrentItem().getType() == Material.GLOWSTONE_DUST) {
-				e.setCancelled(true);
-				p.sendMessage("§aDu bist bereits auf der Lobby.");
-				p.closeInventory();
-			} else if (e.getCurrentItem().getTypeId() == 289) {
-				e.setCancelled(true);
-				p.closeInventory();
-				UtilBG.SendToBungeeCord("lobby/"+ getLobbyList().get(e.getSlot()).getBg() + "/" + p.getName(), p,getManager().getInstance());
-			}else if (e.getCurrentItem().getTypeId() == 353&&p.hasPermission(kPermission.PREMIUM_LOBBY.getPermissionToString())) {
-				e.setCancelled(true);
-				p.closeInventory();
-				UtilBG.sendToServer(p, getLobbyList().get(e.getSlot()).getBg(), getManager().getInstance());
-			} else {
-				e.setCancelled(true);
-				p.closeInventory();
-			}
-		}
-	}
-
 }

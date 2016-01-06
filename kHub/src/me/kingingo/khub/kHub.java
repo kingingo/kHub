@@ -15,6 +15,7 @@ import me.kingingo.kcore.Command.Commands.CommandPing;
 import me.kingingo.kcore.Command.Commands.CommandSonne;
 import me.kingingo.kcore.Command.Commands.CommandTag;
 import me.kingingo.kcore.Language.Language;
+import me.kingingo.kcore.Listener.AntiCrashListener.AntiCrashListener;
 import me.kingingo.kcore.Listener.BungeeCordFirewall.BungeeCordFirewallListener;
 import me.kingingo.kcore.Listener.Command.ListenerCMD;
 import me.kingingo.kcore.MySQL.MySQL;
@@ -87,7 +88,8 @@ public class kHub extends JavaPlugin{
 			}else{
 				this.manager=new HubManager(this, this.cmdHandler, this.mysql, this.packetManager);
 			}
-			
+
+			new AntiCrashListener(this.manager.getPacketManager());
 			this.manager.DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
 			UtilException.catchException(e, "hub"+getConfig().getInt("Config.Lobby"), Bukkit.getIp(),this.mysql);

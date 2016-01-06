@@ -5,19 +5,22 @@ import lombok.Getter;
 public class Lobby {
 
 	@Getter
-	String name;
+	private String name;
 	@Getter
-	String bg;
+	private String bg;
 	@Getter
-	int place;
+	private int place;
 	@Getter
-	String ip;
+	private String ip;
+	@Getter
+	private int port;
 	
     public Lobby(String name,String bg,String ip,int place) {
     	this.name=name;
     	this.place=place;
     	this.bg=bg;
-    	this.ip=ip;
+    	this.ip=ip.split(":")[0];
+    	this.port=Integer.valueOf(ip.split(":")[1]);
 	}
     
 }

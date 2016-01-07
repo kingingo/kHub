@@ -89,7 +89,7 @@ public class kHub extends JavaPlugin{
 				this.manager=new HubManager(this, this.cmdHandler, this.mysql, this.packetManager);
 			}
 
-			new AntiCrashListener(this.manager.getPacketManager());
+			new AntiCrashListener(this.manager.getPacketManager(),this.mysql);
 			this.manager.DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
 			UtilException.catchException(e, "hub"+getConfig().getInt("Config.Lobby"), Bukkit.getIp(),this.mysql);

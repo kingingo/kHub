@@ -266,7 +266,7 @@ public class HubListener extends kListener{
 	public void loadSigns(){
 		try
 	    {
-	      ResultSet rs = manager.getMysql().Query("SELECT typ,x,y,z FROM "+kHub.hubType+"_signs");
+	      ResultSet rs = manager.getMysql().Query("SELECT typ,x,y,z FROM "+kHub.hubType.toLowerCase()+"_signs");
 	      while (rs.next()){
 	    	  try{
 	    		  if(GameType.get(rs.getString(1))==null){
@@ -375,7 +375,7 @@ public class HubListener extends kListener{
 	public void Interact(PlayerInteractEvent ev){
 		if(UtilEvent.isAction(ev, ActionType.BLOCK)&&ev.getClickedBlock().getState() instanceof Sign){
 			Sign s =(Sign) ev.getClickedBlock().getState();
-			if(getSign_server().containsKey( ((Sign)ev.getClickedBlock().getState()) )){
+			if(getSign_server().containsKey( s )){
 				if(s.getLine(1).equalsIgnoreCase("Lade Server.."))return;
 				if(s.getLine(2).equalsIgnoreCase("> "+Color.ORANGE+"Premium "+Color.BLACK+" <") && !manager.getPermissionManager().hasPermission(ev.getPlayer(), kPermission.JOIN_FULL_SERVER))return;
 				UtilBG.sendToServer(ev.getPlayer(), getSign_server().get(s).getId(), manager.getInstance());

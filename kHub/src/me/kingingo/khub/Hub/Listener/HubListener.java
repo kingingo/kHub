@@ -36,6 +36,8 @@ import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Permission.Event.PlayerLoadPermissionEvent;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
+import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
+import me.kingingo.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import me.kingingo.kcore.Util.Color;
 import me.kingingo.kcore.Util.InventorySize;
 import me.kingingo.kcore.Util.TabTitle;
@@ -225,8 +227,8 @@ public class HubListener extends kListener{
 	}
 	
 	@EventHandler
-	public void Portal(UpdateEvent ev){
-		if(ev.getType()==UpdateType.SEC){
+	public void Portal(UpdateAsyncEvent ev){
+		if(ev.getType()==UpdateAsyncType.SEC){
 			for(Player player : UtilServer.getPlayers()){
 				if(player.getEyeLocation().getBlock().getType()==Material.PORTAL){
 					if(CommandLocations.getLocation("pvp").distance(player.getLocation())<10){
@@ -365,8 +367,8 @@ public class HubListener extends kListener{
 	}
 	
 	@EventHandler
-	public void StatusUpdate(UpdateEvent ev){
-		if(ev.getType()==UpdateType.SLOW){
+	public void StatusUpdate(UpdateAsyncEvent ev){
+		if(ev.getType()==UpdateAsyncType.SLOW){
 			manager.getPacketManager().SendPacket("DATA", new HUB_ONLINE(kHub.hubType+kHub.hubID, UtilServer.getPlayers().size(),(int)UtilServer.getLagMeter().getTicksPerSecond()));
 		}
 	}

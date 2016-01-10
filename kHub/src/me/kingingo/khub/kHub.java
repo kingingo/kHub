@@ -9,6 +9,7 @@ import me.kingingo.kcore.Command.Admin.CommandHubFly;
 import me.kingingo.kcore.Command.Admin.CommandLocations;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
 import me.kingingo.kcore.Command.Admin.CommandTrackingRange;
+import me.kingingo.kcore.Command.Admin.CommandUnBan;
 import me.kingingo.kcore.Command.Admin.CommandgBroadcast;
 import me.kingingo.kcore.Command.Commands.CommandNacht;
 import me.kingingo.kcore.Command.Commands.CommandPing;
@@ -21,6 +22,7 @@ import me.kingingo.kcore.Listener.Command.ListenerCMD;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Update.Updater;
+import me.kingingo.kcore.UpdateAsync.UpdaterAsync;
 import me.kingingo.kcore.Util.UtilEnt;
 import me.kingingo.kcore.Util.UtilException;
 import me.kingingo.kcore.Util.UtilServer;
@@ -58,6 +60,7 @@ public class kHub extends JavaPlugin{
 			
 			this.mysql=new MySQL(getConfig().getString("Config.MySQL.User"),getConfig().getString("Config.MySQL.Password"),getConfig().getString("Config.MySQL.Host"),getConfig().getString("Config.MySQL.DB"),this);
 			this.Updater=new Updater(this);
+			new UpdaterAsync(this);
 			this.client = new Client(this,getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),this.hubType+this.hubID);
 			this.packetManager=new PacketManager(this,this.client);
 			Language.load(this.mysql);
@@ -75,13 +78,13 @@ public class kHub extends JavaPlugin{
 			this.cmdHandler.register(CommandTrackingRange.class, new CommandTrackingRange());
 			this.cmdHandler.register(CommandLocations.class, new CommandLocations(this));
 			this.cmdHandler.register(CommandDebug.class, new CommandDebug());
+			this.cmdHandler.register(CommandUnBan.class, new CommandUnBan(this.mysql));
 			
 			Location loc = CommandLocations.getLocation("spawn");
 			if(loc.getBlockX()!=0&&loc.getBlockZ()!=0)Bukkit.getWorld("world").setSpawnLocation(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 			
 			new ListenerCMD(this);
 			new BungeeCordFirewallListener(this.mysql, this.hubType+this.hubID);
-			new MemoryFix(this);
 
 			if(this.hubType.equalsIgnoreCase("event")){
 				this.manager=new EventManager(this, this.cmdHandler, this.mysql, this.packetManager);

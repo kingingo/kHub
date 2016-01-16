@@ -60,7 +60,7 @@ public class kHub extends JavaPlugin{
 			
 			this.mysql=new MySQL(getConfig().getString("Config.MySQL.User"),getConfig().getString("Config.MySQL.Password"),getConfig().getString("Config.MySQL.Host"),getConfig().getString("Config.MySQL.DB"),this);
 			this.Updater=new Updater(this);
-			new UpdaterAsync(this);
+			UtilServer.createUpdaterAsync(this);
 			this.client = new Client(this,getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),this.hubType+this.hubID);
 			this.packetManager=new PacketManager(this,this.client);
 			Language.load(this.mysql);
@@ -84,7 +84,7 @@ public class kHub extends JavaPlugin{
 			if(loc.getBlockX()!=0&&loc.getBlockZ()!=0)Bukkit.getWorld("world").setSpawnLocation(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 			
 			new ListenerCMD(this);
-			new BungeeCordFirewallListener(this.mysql, this.hubType+this.hubID);
+			new BungeeCordFirewallListener(this.mysql,cmdHandler, this.hubType+this.hubID);
 
 			if(this.hubType.equalsIgnoreCase("event")){
 				this.manager=new EventManager(this, this.cmdHandler, this.mysql, this.packetManager);

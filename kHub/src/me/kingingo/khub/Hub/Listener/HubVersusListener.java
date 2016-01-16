@@ -171,7 +171,9 @@ public class HubVersusListener extends kListener{
 		this.manager.getCmdHandler().register(CommandVersusDurability.class, new CommandVersusDurability());
 		this.manager.getCmdHandler().register(CommandVersusMore.class, new CommandVersusMore());
 		this.kitManager=new PlayerKitManager(manager.getMysql(), GameType.Versus);
+		this.kitManager.setAsync(true);
 		this.statsManager=new StatsManager(manager.getInstance(), manager.getMysql(), GameType.Versus);
+		this.statsManager.setAsync(true);
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.spawn=CommandLocations.getLocation("spawn");
 		this.bedwars_arenaManager=new ArenaManager(manager.getPacketManager(),statsManager,GameType.BedWars1vs1, UpdateAsyncType.SEC_2);
@@ -637,8 +639,8 @@ public class HubVersusListener extends kListener{
 					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
 				}else{
 					UtilTime.getTimeManager().add("SG_BOW", ((Player)ev.getDamager()), TimeSpan.SECOND*10);
-					if(bedwars_vs.containsKey( ((Player)ev.getEntity()) )){
-						if(bedwars_vs.get(((Player)ev.getEntity())).getName().equalsIgnoreCase(((Player)ev.getDamager()).getName())){
+					if(sg_vs.containsKey( ((Player)ev.getEntity()) )){
+						if(sg_vs.get(((Player)ev.getEntity())).getName().equalsIgnoreCase(((Player)ev.getDamager()).getName())){
 							//SEND
 							this.sg_arenaManager.delRound(((Player)ev.getEntity()),true);
 							this.sg_arenaManager.delRound(((Player)ev.getDamager()),true);

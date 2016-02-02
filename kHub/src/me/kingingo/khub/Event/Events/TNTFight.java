@@ -1,8 +1,12 @@
 package me.kingingo.khub.Event.Events;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
+
+import me.kingingo.kcore.Command.Admin.CommandLocations;
+import me.kingingo.kcore.Util.UtilItem;
+import me.kingingo.kcore.Util.UtilServer;
+import me.kingingo.khub.Event.EventManager;
+import me.kingingo.khub.Event.SoloEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -14,12 +18,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-
-import me.kingingo.kcore.Command.Admin.CommandLocations;
-import me.kingingo.kcore.Util.UtilItem;
-import me.kingingo.kcore.Util.UtilServer;
-import me.kingingo.khub.Event.EventManager;
-import me.kingingo.khub.Event.SoloEvent;
 
 public class TNTFight extends SoloEvent{
 

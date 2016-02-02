@@ -9,6 +9,7 @@ import me.kingingo.kcore.Arena.ArenaType;
 import me.kingingo.kcore.Arena.GameRound;
 import me.kingingo.kcore.Arena.Rule;
 import me.kingingo.kcore.Arena.RulePriority;
+import me.kingingo.kcore.Command.Admin.CommandArena;
 import me.kingingo.kcore.Command.Admin.CommandLocations;
 import me.kingingo.kcore.Command.Commands.CommandVersusDurability;
 import me.kingingo.kcore.Command.Commands.CommandVersusMore;
@@ -21,7 +22,6 @@ import me.kingingo.kcore.Hologram.nametags.NameTagMessage;
 import me.kingingo.kcore.Hologram.nametags.NameTagType;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.InventoryPageBase;
-import me.kingingo.kcore.Inventory.Inventory.InventoryBuy;
 import me.kingingo.kcore.Inventory.Inventory.InventoryCopy;
 import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.Inventory.Item.Buttons.ButtonBase;
@@ -40,6 +40,7 @@ import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Permission.Event.PlayerLoadPermissionEvent;
 import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.StatsManager.StatsManager;
+import me.kingingo.kcore.StatsManager.Event.PlayerStatsCreateEvent;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
@@ -53,6 +54,7 @@ import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilDebug;
 import me.kingingo.kcore.Util.UtilEnt;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilWorldGuard;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilLocation;
@@ -84,10 +86,9 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.mojang.authlib.GameProfile;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 public class HubVersusListener extends kListener{
 
@@ -176,12 +177,20 @@ public class HubVersusListener extends kListener{
 		this.statsManager.setAsync(true);
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.spawn=CommandLocations.getLocation("spawn");
+		
+		CommandArena arena = new CommandArena();
+		
 		this.bedwars_arenaManager=new ArenaManager(manager.getPacketManager(),statsManager,GameType.BedWars1vs1, UpdateAsyncType.SEC_2);
 		this.skywars_arenaManager=new ArenaManager(manager.getPacketManager(),statsManager,GameType.SkyWars1vs1, UpdateAsyncType.SEC_2);
 		this.sg_arenaManager=new ArenaManager(manager.getPacketManager(),statsManager,GameType.SurvivalGames1vs1, UpdateAsyncType.SEC_2);
 		this.base=new InventoryBase(manager.getInstance());
 
 		this.versus_arenaManager=new ArenaManager(manager.getPacketManager(),statsManager,GameType.Versus, UpdateAsyncType.SEC_2);
+		arena.getList().add(this.bedwars_arenaManager);
+		arena.getList().add(sg_arenaManager);
+		arena.getList().add(skywars_arenaManager);
+		arena.getList().add(versus_arenaManager);
+		getManager().getCmdHandler().register(CommandArena.class, arena);
 		this.versus_arenaManager.addRule(new Rule(){
 
 			@Override
@@ -195,7 +204,6 @@ public class HubVersusListener extends kListener{
 						}
 					}
 				}
-				if(UtilDebug.isDebug())UtilDebug.debug("UpdateAsyncEvent", new String[]{"Rule: Min Max","FALSE",arena.getMin_team() +"<="+ statsManager.getInt(Stats.TEAM_MIN, player),arena.getMax_team() +">="+ statsManager.getInt(Stats.TEAM_MAX, player)});
 				return false;
 			}
 			
@@ -208,7 +216,6 @@ public class HubVersusListener extends kListener{
 				if(statsManager.getString(Stats.KIT_RANDOM, player).equalsIgnoreCase("true")){
 					return true;
 				}
-				if(UtilDebug.isDebug())UtilDebug.debug("UpdateAsyncEvent", new String[]{"Rule: RANDOM","FALSE"});
 				return false;
 			}
 			
@@ -330,7 +337,7 @@ public class HubVersusListener extends kListener{
 		}
 		
 		if(skywars_wait_list==null){
-			this.skywars_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lSkyWars §a§l[BETA]", true, EntityType.ZOMBIE, CommandLocations.getLocation("SkyWars"));
+			this.skywars_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lSkyWars", true, EntityType.ZOMBIE, CommandLocations.getLocation("SkyWars"));
 			
 			((Zombie)this.skywars_wait_list).getEquipment().setItemInHand(new ItemStack(Material.IRON_AXE));
 			NameTagMessage m;
@@ -343,22 +350,22 @@ public class HubVersusListener extends kListener{
 			manager.getDisguiseManager().disguise(dbase);
 		}
 		
-//		if(sg_wait_list==null){
-//			this.sg_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lSurvivalGames §b§l[ALPHA]", true, EntityType.ZOMBIE, CommandLocations.getLocation("SurvivalGames"));
-//			
-//			((Zombie)this.bedwars_wait_list).getEquipment().setItemInHand(new ItemStack(Material.GOLD_SWORD));
-//			NameTagMessage m;
-//			m=new NameTagMessage(NameTagType.SERVER, sg_wait_list.getLocation().add(0, 2, 0), sg_wait_list.getCustomName());
-//			m.send();
-//			this.sg_wait_list.setCustomName("");
-//			UtilEnt.setNoAI(this.sg_wait_list, true);
-//			DisguiseBase dbase = DisguiseType.newDisguise(sg_wait_list, DisguiseType.PLAYER, new Object[]{" "});
-//			((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("kablion"));
-//			manager.getDisguiseManager().disguise(dbase);
-//		}
+		if(sg_wait_list==null){
+			this.sg_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lSurvivalGames §b§l[ALPHA]", true, EntityType.ZOMBIE, CommandLocations.getLocation("SurvivalGames"));
+			
+			((Zombie)this.sg_wait_list).getEquipment().setItemInHand(new ItemStack(Material.BOW));
+			NameTagMessage m;
+			m=new NameTagMessage(NameTagType.SERVER, sg_wait_list.getLocation().add(0, 2, 0), sg_wait_list.getCustomName());
+			m.send();
+			this.sg_wait_list.setCustomName("");
+			UtilEnt.setNoAI(this.sg_wait_list, true);
+			DisguiseBase dbase = DisguiseType.newDisguise(sg_wait_list, DisguiseType.PLAYER, new Object[]{" "});
+			((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("akmund47"));
+			manager.getDisguiseManager().disguise(dbase);
+		}
 		
 		if(bedwars_wait_list==null){
-			this.bedwars_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lBedWars §a§l[BETA]", true, EntityType.ZOMBIE, CommandLocations.getLocation("BedWars"));
+			this.bedwars_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lBedWars", true, EntityType.ZOMBIE, CommandLocations.getLocation("BedWars"));
 			
 			((Zombie)this.bedwars_wait_list).getEquipment().setItemInHand(new ItemStack(Material.GOLD_SWORD));
 			NameTagMessage m;
@@ -390,39 +397,69 @@ public class HubVersusListener extends kListener{
 			ev.setCancelled(true);
 		}
 	}
-	
+
 	PlayerKit k;
 	@EventHandler
-	public void gamemode(PlayerGameModeChangeEvent ev){
-		if(ev.getNewGameMode() == GameMode.CREATIVE && !creative.contains(ev.getPlayer())){
-			creative.add(ev.getPlayer());
-			ev.getPlayer().getInventory().clear();
-			k = getKitManager().getKit(UtilPlayer.getRealUUID(ev.getPlayer()),statsManager.getInt(Stats.KIT_ID, ev.getPlayer()));
-			
-			if(k!=null){
-				ev.getPlayer().getInventory().setArmorContents(k.armor_content);
-				ev.getPlayer().getInventory().setContents(k.content);
-				ev.getPlayer().updateInventory();
-			}else{
-				getKitManager().addKit(ev.getPlayer().getName(),ev.getPlayer().getUniqueId(), ev.getPlayer().getInventory(), statsManager.getInt(Stats.KIT_ID, ev.getPlayer()));
-			}
-			ev.getPlayer().setVelocity(ev.getPlayer().getLocation().getDirection().multiply(2D).setY(0.7));
-		}else if(ev.getNewGameMode() != GameMode.CREATIVE){
-			if(creative.contains(ev.getPlayer())){
-				getKitManager().updateKit(UtilPlayer.getRealUUID(ev.getPlayer()), statsManager.getInt(Stats.KIT_ID, ev.getPlayer()), ev.getPlayer().getInventory());
-				
-				ev.getPlayer().getInventory().clear();
-				ev.getPlayer().getInventory().setArmorContents(null);
-				
-				ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
-				ev.getPlayer().getInventory().setItem(6,UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"));
-				ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
-				ev.getPlayer().getInventory().setItem(7,UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1"));
-				creative.remove(ev.getPlayer());
-				ev.getPlayer().setVelocity(UtilLocation.calculateVector(ev.getPlayer().getLocation(), this.versus_wait_list.getLocation()).multiply(2D).setY(0.7));
+	public void gamemodeCHANGE(UpdateEvent ev){
+		if(ev.getType()==UpdateType.SEC){
+			for(Player player : UtilServer.getPlayers()){
+				if(player.getGameMode()!=GameMode.CREATIVE&&UtilWorldGuard.RegionFlag(player, DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE)){
+					player.getInventory().clear();
+					k = getKitManager().getKit(UtilPlayer.getRealUUID(player),statsManager.getInt(Stats.KIT_ID, player));
+					
+					if(k!=null){
+						player.getInventory().setArmorContents(k.armor_content);
+						player.getInventory().setContents(k.content);
+						player.updateInventory();
+					}else{
+						getKitManager().addKit(player.getName(),player.getUniqueId(), player.getInventory(), statsManager.getInt(Stats.KIT_ID, player));
+					}
+				}else if(player.getGameMode() == GameMode.CREATIVE){
+					getKitManager().updateKit(UtilPlayer.getRealUUID(player), statsManager.getInt(Stats.KIT_ID, player), player.getInventory());
+					player.getInventory().clear();
+					player.getInventory().setArmorContents(null);
+					player.getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(player, "HUB_ITEM_CHEST")));
+					player.getInventory().setItem(5,UtilItem.RenameItem(new ItemStack(Material.BOW), "§aSurvivalGames 1vs1"));
+					player.getInventory().setItem(6,UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"));
+					player.getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
+					player.getInventory().setItem(7,UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1"));
+				}
 			}
 		}
 	}
+	
+//	@EventHandler
+//	public void gamemode(PlayerGameModeChangeEvent ev){
+//		if(ev.getNewGameMode() == GameMode.CREATIVE && !creative.contains(ev.getPlayer())){
+//			creative.add(ev.getPlayer());
+//			ev.getPlayer().getInventory().clear();
+//			k = getKitManager().getKit(UtilPlayer.getRealUUID(ev.getPlayer()),statsManager.getInt(Stats.KIT_ID, ev.getPlayer()));
+//			
+//			if(k!=null){
+//				ev.getPlayer().getInventory().setArmorContents(k.armor_content);
+//				ev.getPlayer().getInventory().setContents(k.content);
+//				ev.getPlayer().updateInventory();
+//			}else{
+//				getKitManager().addKit(ev.getPlayer().getName(),ev.getPlayer().getUniqueId(), ev.getPlayer().getInventory(), statsManager.getInt(Stats.KIT_ID, ev.getPlayer()));
+//			}
+//			ev.getPlayer().setVelocity(ev.getPlayer().getLocation().getDirection().multiply(2D).setY(0.7));
+//		}else if(ev.getNewGameMode() != GameMode.CREATIVE){
+//			if(creative.contains(ev.getPlayer())){
+//				getKitManager().updateKit(UtilPlayer.getRealUUID(ev.getPlayer()), statsManager.getInt(Stats.KIT_ID, ev.getPlayer()), ev.getPlayer().getInventory());
+//				
+//				ev.getPlayer().getInventory().clear();
+//				ev.getPlayer().getInventory().setArmorContents(null);
+//				
+//				ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
+//				ev.getPlayer().getInventory().setItem(5,UtilItem.RenameItem(new ItemStack(Material.BOW), "§aSurvivalGames 1vs1"));
+//				ev.getPlayer().getInventory().setItem(6,UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"));
+//				ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§azum 1vs1 herrausfordern"));
+//				ev.getPlayer().getInventory().setItem(7,UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1"));
+//				creative.remove(ev.getPlayer());
+//				ev.getPlayer().setVelocity(UtilLocation.calculateVector(ev.getPlayer().getLocation(), this.versus_wait_list.getLocation()).multiply(2D).setY(0.7));
+//			}
+//		}
+//	}
 	
 	@EventHandler
 	public void Portal(UpdateEvent ev){
@@ -510,40 +547,28 @@ public class HubVersusListener extends kListener{
 		statsManager.SaveAllPlayerData(ev.getPlayer());
 		versus_vs.remove(ev.getPlayer());
 		skywars_vs.remove(ev.getPlayer());
-	}
-	
-	ArrayList<Player> load = new ArrayList<>();
-	@EventHandler
-	public void Updater(UpdateEvent ev){
-		if(ev.getType()==UpdateType.SEC_3){
-			for(Player player : load){
-				if(!statsManager.ExistPlayer(player)){
-					statsManager.setString(player, "true", Stats.KIT_RANDOM);
-					statsManager.setInt(player, 1, Stats.KIT_ID);
-					statsManager.setInt(player, 1, Stats.TEAM_MIN);
-					statsManager.setInt(player, 3, Stats.TEAM_MAX);
-					statsManager.setInt(player, 200, Stats.ELO);
-					statsManager.SaveAllPlayerData(player);
-				}
-			}
-		}
+		bedwars_vs.remove(ev.getPlayer());
+		sg_vs.remove(ev.getPlayer());
 	}
 	
 	@EventHandler
-	public void load(PlayerLoadPermissionEvent ev){
-		if(ev.getPlayer().hasPermission(kPermission.ALL_PERMISSION.getPermissionToString())){
-			ev.getPlayer().getInventory().setItem(5,UtilItem.RenameItem(new ItemStack(Material.BOW), "§aSurvivalGames 1vs1"));
-		}
+	public void create(PlayerStatsCreateEvent ev){
+		statsManager.setString(ev.getPlayer(), "true", Stats.KIT_RANDOM);
+		statsManager.setInt(ev.getPlayer(), 1, Stats.KIT_ID);
+		statsManager.setInt(ev.getPlayer(), 1, Stats.TEAM_MIN);
+		statsManager.setInt(ev.getPlayer(), 3, Stats.TEAM_MAX);
+		statsManager.setInt(ev.getPlayer(), 200, Stats.ELO);
+		statsManager.SaveAllPlayerData(ev.getPlayer());
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
 		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §e"+kHub.hubType+" "+kHub.hubID, "§eShop.EpicPvP.de");
-		
+		statsManager.loadPlayerStats(ev.getPlayer());
 		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
 		ev.getPlayer().teleport(spawn);
-		load.add(ev.getPlayer());
+		ev.getPlayer().getInventory().setItem(5,UtilItem.RenameItem(new ItemStack(Material.BOW), "§aSurvivalGames 1vs1"));
 		ev.getPlayer().getInventory().setItem(6,UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"));
 		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§aVersus 1vs1"));
 		ev.getPlayer().getInventory().setItem(7,UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1"));
@@ -668,7 +693,7 @@ public class HubVersusListener extends kListener{
 	  {
 	    if ((ev.getPacket() instanceof SERVER_STATUS)) {
 	      this.server_status = ((SERVER_STATUS)ev.getPacket());
-	      if (this.server_status.getTyp() != GameType.Versus&&this.server_status.getTyp() != GameType.SkyWars1vs1&&this.server_status.getTyp() != GameType.BedWars1vs1) {
+	      if (this.server_status.getTyp() != GameType.Versus&&this.server_status.getTyp() != GameType.SkyWars1vs1&&this.server_status.getTyp() != GameType.BedWars1vs1&&this.server_status.getTyp() != GameType.SurvivalGames1vs1) {
 		      } else if(this.server.containsKey(this.server_status.getId())){
 		    	  this.server.get(this.server_status.getId()).Set(this.server_status.toString());
 		      }else{
@@ -695,6 +720,13 @@ public class HubVersusListener extends kListener{
 		}else if(ev.getRightClicked().getEntityId()==this.bedwars_wait_list.getEntityId()){
 			ev.setCancelled(true);
 			if(bedwars_arenaManager.addPlayer(ev.getPlayer(), ArenaType._TEAMx2)){
+				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
+			}else{
+				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_REMOVE"));
+			}
+		}else if(ev.getRightClicked().getEntityId()==this.sg_wait_list.getEntityId()){
+			ev.setCancelled(true);
+			if(sg_arenaManager.addPlayer(ev.getPlayer(), ArenaType._TEAMx2)){
 				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
 			}else{
 				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_REMOVE"));

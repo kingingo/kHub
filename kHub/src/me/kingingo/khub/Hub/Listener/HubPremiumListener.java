@@ -2,10 +2,7 @@ package me.kingingo.khub.Hub.Listener;
 
 import java.io.File;
 
-import me.kingingo.kcore.Permission.Event.GroupLoadedEvent;
 import me.kingingo.khub.Hub.HubManager;
-
-import org.bukkit.event.EventHandler;
 
 public class HubPremiumListener extends HubListener{
 

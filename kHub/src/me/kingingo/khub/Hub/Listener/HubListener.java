@@ -34,8 +34,6 @@ import me.kingingo.kcore.Packet.Packets.TWIITTER_IS_PLAYER_FOLLOWER;
 import me.kingingo.kcore.Packet.Packets.TWITTER_PLAYER_FOLLOW;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Permission.Event.PlayerLoadPermissionEvent;
-import me.kingingo.kcore.Update.UpdateType;
-import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.UpdateAsync.UpdateAsyncType;
 import me.kingingo.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import me.kingingo.kcore.Util.Color;
@@ -67,13 +65,10 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class HubListener extends kListener{
 
@@ -134,7 +129,7 @@ public class HubListener extends kListener{
 		initializeLanguageInv();
 		initializeDeliveryPet();
 	}
-	
+
 	public void initializeDeliveryPet(){
 		UtilServer.createDeliveryPet(new DeliveryPet(((HubManager)getManager()).getShop(),null,new DeliveryObject[]{
 			new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},kPermission.DELIVERY_PET_VOTE,false,28,"§aVote for EpicPvP",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){

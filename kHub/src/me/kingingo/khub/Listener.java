@@ -273,24 +273,4 @@ public class Listener extends kListener{
 		ev.setDroppedExp(0);
 		ev.getDrops().clear();
 	}
-	
-	@EventHandler
-	public void Message(ClientReceiveMessageEvent ev){
-		if(ev.getMessage().contains("whitelist=?off")){
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist off");
-		}else if(ev.getMessage().contains("whitelist=?on")){
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist on");
-		}else if(ev.getMessage().contains("reload=?now")){
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "reload");
-		}else if(ev.getMessage().contains("stop=?now")){
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop");
-		}else if(ev.getMessage().contains("restart=?now")){
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop");
-			try {
-				Runtime.getRuntime().exec("./start.sh");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 }

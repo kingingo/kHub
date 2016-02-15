@@ -91,12 +91,15 @@ public class HubManager extends kManager{
 
 			new ChatListener(instance, null,getPermissionManager(),null);
 		}
-		
+
 		switch(kHub.hubType){
 			case "LoginHub":
 			new HubLoginListener(this);
 				break;
 			case "VersusHub":
+				new HubVersusListener(this);
+				break;
+			case "TestVersusHub":
 				new HubVersusListener(this);
 				break;
 			case "PremiumHub":

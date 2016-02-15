@@ -1,5 +1,6 @@
 package me.kingingo.khub.Hub.Listener;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import me.kingingo.kcore.DeliveryPet.DeliveryPet;
 import me.kingingo.kcore.Disguise.DisguiseType;
 import me.kingingo.kcore.Disguise.disguises.DisguiseBase;
 import me.kingingo.kcore.Disguise.disguises.livings.DisguisePlayer;
+import me.kingingo.kcore.Enum.GameState;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.ServerType;
 import me.kingingo.kcore.Hologram.nametags.NameTagMessage;
@@ -30,6 +32,8 @@ import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.HUB_ONLINE;
 import me.kingingo.kcore.Packet.Packets.SERVER_STATUS;
+import me.kingingo.kcore.Packet.Packets.SIGNS_GET;
+import me.kingingo.kcore.Packet.Packets.SIGN_SEND;
 import me.kingingo.kcore.Packet.Packets.TWIITTER_IS_PLAYER_FOLLOWER;
 import me.kingingo.kcore.Packet.Packets.TWITTER_PLAYER_FOLLOW;
 import me.kingingo.kcore.Permission.kPermission;
@@ -43,10 +47,13 @@ import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilBG;
 import me.kingingo.kcore.Util.UtilEnt;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilLocation;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
+import me.kingingo.kcore.Util.UtilFile;
 import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
+import me.kingingo.kcore.kConfig.kConfig;
 import me.kingingo.khub.kHub;
 import me.kingingo.khub.kManager;
 import me.kingingo.khub.Hub.HubManager;
@@ -64,6 +71,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -77,12 +85,15 @@ public class HubListener extends kListener{
 	@Getter
 	private InventoryPageBase GameInv;
 	@Getter
+	private HashMap<String,Sign> gungame_signs = new HashMap<>();
+	@Getter
 	private HashMap<GameType,ArrayList<Sign>> signs = new HashMap<>();
 	@Getter
 	private HashMap<Sign,SERVER_STATUS> sign_server = new HashMap<>();
 	@Getter
 	private InventoryPageBase LobbyInv;
 	private InventoryPageBase language_inv;
+	private kConfig signconfig;
 	
 	public HubListener(final HubManager manager) {
 		this(manager,true);
@@ -91,6 +102,7 @@ public class HubListener extends kListener{
 	public HubListener(final HubManager manager,boolean initialize) {
 		super(manager.getInstance(), kHub.hubType+"Listener");
 		this.manager=manager;
+		this.signconfig=new kConfig(UtilFile.getYMLFile(manager.getInstance(), "signs"));
 		Bukkit.getWorld("world").setAutoSave(false);
 		if(initialize)initialize();
 		
@@ -99,6 +111,7 @@ public class HubListener extends kListener{
 		z.getEquipment().setItemInHand(new ItemStack(Material.BOW));
 		z.getEquipment().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
 		UtilEnt.setNoAI(z, true);
+		UtilEnt.setSilent(z, true);
 		
 		DisguiseBase dbase = DisguiseType.newDisguise(z, DisguiseType.PLAYER, new Object[]{" "});
 		((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("EpicPvPMC"));
@@ -250,10 +263,11 @@ public class HubListener extends kListener{
 		this.GameInv.addButton(15, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BED), "§aBedWars"), CommandLocations.getLocation("BedWars")));
 		this.GameInv.addButton(16, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§aVersus"), CommandLocations.getLocation("vs")));
 		this.GameInv.addButton(10, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.MONSTER_EGG,1,(byte)91), "§aSheepWars"), CommandLocations.getLocation("SheepWars")));
+		this.GameInv.addButton(31, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_AXE), "§aGunGame §7[§d§lNEW§7]"), CommandLocations.getLocation("GunGame")));
 
 		this.GameInv.addButton(21, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GRASS), "§aSkyBlock"), CommandLocations.getLocation("skyblock")));
 		this.GameInv.addButton(22, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_AXE), "§aPvP"), CommandLocations.getLocation("pvpt")));
-		this.GameInv.addButton(23, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_SPADE), "§aMasterbuilders §7[§d§lNEW§7]"), CommandLocations.getLocation("masterbuilders")));
+		this.GameInv.addButton(23, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_SPADE), "§aMasterbuilders"), CommandLocations.getLocation("masterbuilders")));
 		this.GameInv.fill(Material.STAINED_GLASS_PANE, 7);
 		
 		((HubManager)getManager()).getShop().addPage(this.GameInv);
@@ -261,6 +275,7 @@ public class HubListener extends kListener{
 	
 	Sign s;
 	public void loadSigns(){
+		
 		try
 	    {
 	      ResultSet rs = manager.getMysql().Query("SELECT typ,x,y,z FROM "+kHub.hubType.toLowerCase()+"_signs");
@@ -297,6 +312,19 @@ public class HubListener extends kListener{
 			}
 		}
 		fillGameInv();
+		
+		for(String server : signconfig.getPathList("Signs").keySet()){
+			gungame_signs.put(server, ((Sign)signconfig.getLocation("Signs."+server).getBlock().getState()));
+		}
+		
+		for(Sign s : this.getGungame_signs().values()){
+			s.setLine(0, "");
+			s.setLine(1, "Lade Server");
+			s.setLine(2, "");
+			s.setLine(3, "");
+			s.update();
+		}
+		
 	}
 	
 	public void loadLobbys(){
@@ -376,6 +404,11 @@ public class HubListener extends kListener{
 				if(s.getLine(1).equalsIgnoreCase("Lade Server.."))return;
 				if(s.getLine(2).equalsIgnoreCase("> "+Color.ORANGE+"Premium "+Color.BLACK+" <") && !manager.getPermissionManager().hasPermission(ev.getPlayer(), kPermission.JOIN_FULL_SERVER))return;
 				UtilBG.sendToServer(ev.getPlayer(), getSign_server().get(s).getId(), manager.getInstance());
+			}else if(getGungame_signs().containsValue( s )){
+				if(s.getLine(1).equalsIgnoreCase("Lade Server.."))return;
+				if(s.getLine(2).equalsIgnoreCase("> §4§lOFFLINE"+Color.BLACK+" <"))return;
+				if(s.getLine(2).equalsIgnoreCase("> "+Color.RED+"Full "+Color.BLACK+" <"))return;
+				UtilBG.sendToServer(ev.getPlayer(), s.getLine(0).substring(2,s.getLine(0).length()).replaceAll(" ", ""), manager.getInstance());
 			}else if(s.getLine(0).equalsIgnoreCase("[Server]")){
 				UtilBG.sendToServer(ev.getPlayer(), s.getLine(2), manager.getInstance());
 			}
@@ -398,18 +431,38 @@ public class HubListener extends kListener{
 			ss = (SERVER_STATUS)ev.getPacket();
 			
 			try{
-				if(!getSigns().containsKey(ss.getTyp()))return;
-				sign=getSigns().get(ss.getTyp()).get(ss.getSign());
-				sign.setLine(0, "- "+ Color.WHITE + ss.getTyp().getKürzel()+" "+ ss.getId().split("a")[1] + Color.BLACK + " -");
-				sign.setLine(1, ss.getMap());
-				if(ss.getOnline()>=ss.getMax_online()){
-					sign.setLine(2, "> "+Color.ORANGE+"Premium "+Color.BLACK+" <");
-				}else{
-					sign.setLine(2, "> "+Color.GREEN+"Join "+Color.BLACK+" <");
+				if(getSigns().containsKey(ss.getTyp())){
+					sign=getSigns().get(ss.getTyp()).get(ss.getSign());
+					sign.setLine(0, "- "+ Color.WHITE + ss.getTyp().getKürzel()+" "+ ss.getId().split("a")[1] + Color.BLACK + " -");
+					sign.setLine(1, ss.getMap());
+					
+					if(ss.getOnline()>=ss.getMax_online()){
+						sign.setLine(2, "> "+Color.ORANGE+"Premium "+Color.BLACK+" <");
+					}else{
+						sign.setLine(2, "> "+Color.GREEN+"Join "+Color.BLACK+" <");
+					}
+				
+					sign.setLine(3, ss.getOnline()+Color.GRAY.toString()+"/"+Color.BLACK+ss.getMax_online());
+					sign.update();
+					getSign_server().put(sign, ss);
+				}else if(gungame_signs.containsKey(ss.getTyp().getKürzel()+ss.getId())){
+					
+					sign=gungame_signs.get(ss.getTyp().getKürzel()+ss.getId());
+					sign.setLine(0, "§f" + ss.getTyp().getKürzel()+" "+ ss.getId());
+					sign.setLine(1, ss.getMap());
+					if(ss.getState()==GameState.Restart){
+						sign.setLine(2, "> §4§lOFFLINE"+Color.BLACK+" <");
+					}else{
+						if(ss.getOnline()>=ss.getMax_online()){
+							sign.setLine(2, "> "+Color.RED+"Full "+Color.BLACK+" <");
+						}else{
+							sign.setLine(2, "> "+Color.GREEN+"Join "+Color.BLACK+" <");
+						}	
+					}
+					sign.setLine(3, ss.getOnline()+Color.GRAY.toString()+"/"+Color.BLACK+ss.getMax_online());
+					sign.update();
 				}
-				sign.setLine(3, ss.getOnline()+Color.GRAY.toString()+"/"+Color.BLACK+ss.getMax_online());
-				sign.update();
-				getSign_server().put(sign, ss);
+				
 			}catch(Exception e){
 				e.printStackTrace();
 				if(getSigns().containsKey(ss.getTyp())){
@@ -438,6 +491,24 @@ public class HubListener extends kListener{
 	}
 	
 	@EventHandler
+	public void breakB(BlockBreakEvent ev){
+		if(ev.getBlock().getState() instanceof Sign){
+			Sign s = (Sign)ev.getBlock().getState();
+
+			if(gungame_signs.containsValue(s)){
+				for(String ss : gungame_signs.keySet()){
+					if(UtilLocation.isSameLocation(gungame_signs.get(ss).getLocation(), s.getLocation())){
+						signconfig.set("Signs."+ss, null);
+						signconfig.save();
+						reloadSignConfig();
+					}
+				}
+				
+			}
+		}
+	}
+	
+	@EventHandler
 	public void onSign(SignChangeEvent ev) {
 		Player p = ev.getPlayer();
 
@@ -451,7 +522,33 @@ public class HubListener extends kListener{
 			if (sign.equalsIgnoreCase("[S]") && p.isOp()) {
 				String typ = ev.getLine(1);
 				getManager().getMysql().Update("INSERT INTO "+kHub.hubType+"_signs (typ,world, x, z, y) VALUES ('"+ typ+ "','"+ p.getLocation().getWorld().getName()+ "','"+ ev.getBlock().getX()+ "','"+ ev.getBlock().getZ()+ "','" + ev.getBlock().getY() + "')");
+			}else if(sign.equalsIgnoreCase("[Server]")&&p.isOp()){
+				GameType typ = GameType.get(ev.getLine(1));
+				
+				if(typ==null){
+					p.sendMessage("§cGameType == NULL");
+					return;
+				}
+				
+				signconfig.setLocation("Signs."+(typ.getKürzel()+ev.getLine(2)), ev.getBlock().getLocation());
+				signconfig.save();
+				reloadSignConfig();
 			}
+		}
+	}
+	
+	public void reloadSignConfig(){
+		gungame_signs.clear();
+		for(String server : signconfig.getPathList("Signs").keySet()){
+			gungame_signs.put(server, ((Sign)signconfig.getLocation("Signs."+server).getBlock().getState()));
+		}
+		
+		for(Sign s : this.getGungame_signs().values()){
+			s.setLine(0, "");
+			s.setLine(1, "Lade Server");
+			s.setLine(2, "");
+			s.setLine(3, "");
+			s.update();
 		}
 	}
 	

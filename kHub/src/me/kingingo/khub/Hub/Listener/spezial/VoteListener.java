@@ -44,10 +44,10 @@ public class VoteListener extends kListener{
 			 }
 		 }
 		 
-		 getManager().getGems().giveGems(getManager().getPacketManager(), vote.getUsername(), 20);
+		 getManager().getGems().giveGems(getManager().getPacketManager(), vote.getUsername(), 5);
 		 getManager().getCoins().giveCoins(getManager().getPacketManager(), vote.getUsername(), 100);
 		 
-		 getManager().getPacketManager().SendPacket("BG", new BROADCAST(Language.getText( "PREFIX")+"§b"+vote.getUsername()+" hat gevotet und §a20 Gems + 100 Coins §berhalten§l! §7>>§5§l /Vote"));
+		 getManager().getPacketManager().SendPacket("BG", new BROADCAST(Language.getText( "PREFIX")+"§b"+vote.getUsername()+" hat gevotet und §a5 Gems + 100 Coins §berhalten§l! §7>>§5§l /Vote"));
 		 vpacket = new PLAYER_VOTE(vote.getUsername(), uuid);
 		 getManager().getPacketManager().SendPacket("PVP", vpacket);
 		 getManager().getPacketManager().SendPacket("SKYBLOCK", vpacket);

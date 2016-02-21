@@ -433,6 +433,18 @@ public class HubListener extends kListener{
 			try{
 				if(getSigns().containsKey(ss.getTyp())){
 					sign=getSigns().get(ss.getTyp()).get(ss.getSign());
+					if(ss.getState()!=GameState.LobbyPhase){
+						System.err.println("Fehler Server nicht in der LobbyPhase "+ss.getId()+" "+ss.getState().name()+" "+ss.getTyp().name());
+						if(!sign.getLine(1).equalsIgnoreCase("Lade Server...")){
+							sign.setLine(0, "");
+							sign.setLine(1, "Lade Server...");
+							sign.setLine(2, "");
+							sign.setLine(3, "");
+							sign.update();
+						}
+						return;
+					}
+					
 					sign.setLine(0, "- "+ Color.WHITE + ss.getTyp().getKürzel()+" "+ ss.getId().split("a")[1] + Color.BLACK + " -");
 					sign.setLine(1, ss.getMap());
 					

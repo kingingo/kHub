@@ -11,8 +11,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import eu.epicpvp.khub.Hub.Listener.HubListener;
-import lombok.Setter;
 import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Permission.PermissionType;
@@ -23,6 +21,8 @@ import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
 import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilServer;
+import eu.epicpvp.khub.Hub.Listener.HubListener;
+import lombok.Setter;
 
 public class InvisibleManager extends kListener{
 

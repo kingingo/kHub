@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.wolveringer.client.connection.ClientType;
-import eu.epicpvp.khub.Hub.HubManager;
 import eu.epicpvp.kcore.Command.Admin.CommandChatMute;
 import eu.epicpvp.kcore.Command.Admin.CommandDebug;
 import eu.epicpvp.kcore.Command.Admin.CommandFlyspeed;
@@ -31,6 +30,7 @@ import eu.epicpvp.kcore.Listener.Command.ListenerCMD;
 import eu.epicpvp.kcore.Util.UtilEnt;
 import eu.epicpvp.kcore.Util.UtilException;
 import eu.epicpvp.kcore.Util.UtilServer;
+import eu.epicpvp.khub.Hub.HubManager;
 
 public class kHub extends JavaPlugin{
 

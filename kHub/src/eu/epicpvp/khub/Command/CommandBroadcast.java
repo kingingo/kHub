@@ -15,7 +15,7 @@ public class CommandBroadcast implements CommandExecutor{
 			for(int i = 0; i < args.length; i++) {
                 m =m + args[i] + " ";
             }
-			Bukkit.broadcastMessage(m.replaceAll("&", "ง"));
+			Bukkit.broadcastMessage(m.replaceAll("&", "ยง"));
 		return false;
 	}
 

@@ -35,9 +35,9 @@ public class VoteListener extends kListener{
 		 
 		 if(UtilServer.getDeliveryPet()!=null){
 			 if(UtilPlayer.isOnline(vote.getUsername())){
-				 UtilServer.createDeliveryPet(null).deliveryUSE(Bukkit.getPlayer(vote.getUsername()), "§aVote for EpicPvP",true);
+				 UtilServer.createDeliveryPet(null).deliveryUSE(Bukkit.getPlayer(vote.getUsername()), "Â§aVote for EpicPvP",true);
 			 }else{
-				 UtilServer.createDeliveryPet(null).deliveryUSE(vote.getUsername(), uuid, "§aVote for EpicPvP");
+				 UtilServer.createDeliveryPet(null).deliveryUSE(vote.getUsername(), uuid, "Â§aVote for EpicPvP");
 			 }
 		 }
 		 
@@ -46,7 +46,7 @@ public class VoteListener extends kListener{
 //		 getManager().getGems().giveGems(getManager().getPacketManager(), vote.getUsername(), 5);
 //		 getManager().getCoins().giveCoins(getManager().getPacketManager(), vote.getUsername(), 100);
 //		 
-//		 getManager().getPacketManager().SendPacket("BG", new BROADCAST(Language.getText( "PREFIX")+"§b"+vote.getUsername()+" hat gevotet und §a5 Gems + 100 Coins §berhalten§l! §7>>§5§l /Vote"));
+//		 getManager().getPacketManager().SendPacket("BG", new BROADCAST(Language.getText( "PREFIX")+"Â§b"+vote.getUsername()+" hat gevotet und Â§a5 Gems + 100 Coins Â§berhaltenÂ§l! Â§7>>Â§5Â§l /Vote"));
 //		 vpacket = new PLAYER_VOTE(vote.getUsername(), uuid);
 //		 getManager().getPacketManager().SendPacket("PVP", vpacket);
 //		 getManager().getPacketManager().SendPacket("SKYBLOCK", vpacket);

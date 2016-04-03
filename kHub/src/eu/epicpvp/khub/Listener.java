@@ -1,5 +1,6 @@
 package eu.epicpvp.khub;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -26,9 +27,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import eu.epicpvp.khub.Hub.HubManager;
-import lombok.Getter;
-import lombok.Setter;
+import eu.epicpvp.kcore.Events.ServerStatusUpdateEvent;
 import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Permission.PermissionType;
@@ -36,6 +35,9 @@ import eu.epicpvp.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilString;
+import eu.epicpvp.khub.Hub.HubManager;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Listener extends kListener{
 
@@ -84,6 +86,11 @@ public class Listener extends kListener{
 	}
 	
 	@EventHandler
+	public void status(ServerStatusUpdateEvent ev){
+		ev.getPacket().setPlayers(Bukkit.getOnlinePlayers().size());
+	}
+	
+	@EventHandler
 	public void soilChangeEntity(EntityInteractEvent event){
 	    if ((event.getEntityType() != EntityType.PLAYER) && (event.getBlock().getType() == Material.SOIL)){
 	    	event.setCancelled(isEntityInteract());
@@ -93,10 +100,10 @@ public class Listener extends kListener{
 	@EventHandler
 	public void Sign(SignChangeEvent ev){
 		if(ev.getPlayer().hasPermission(PermissionType.CHAT_FARBIG.getPermissionToString())){
-			ev.setLine(0, ev.getLine(0).replaceAll("&", "§"));
-			ev.setLine(1, ev.getLine(1).replaceAll("&", "§"));
-			ev.setLine(2, ev.getLine(2).replaceAll("&", "§"));
-			ev.setLine(3, ev.getLine(3).replaceAll("&", "§"));
+			ev.setLine(0, ev.getLine(0).replaceAll("&", "Â§"));
+			ev.setLine(1, ev.getLine(1).replaceAll("&", "Â§"));
+			ev.setLine(2, ev.getLine(2).replaceAll("&", "Â§"));
+			ev.setLine(3, ev.getLine(3).replaceAll("&", "Â§"));
 		}
 	}
 	
@@ -113,8 +120,7 @@ public class Listener extends kListener{
 	
 	@EventHandler
 	public void AddBoard(PlayerSetScoreboardEvent ev){
-		if(!kHub.hubType.equalsIgnoreCase("LoginHub")
-				&& this.manager instanceof HubManager){
+		if(!kHub.hubType.equalsIgnoreCase("LoginHub") && this.manager instanceof HubManager){
 			UtilPlayer.setScoreboardGemsAndCoins(ev.getPlayer(), ((HubManager)this.manager).getMoney());
 		}
 	}
@@ -219,7 +225,7 @@ public class Listener extends kListener{
 		 if(ev.getMessage().contains("/bukkit:")){
 			Player p=ev.getPlayer();
 			ev.setCancelled(true);
-			p.sendMessage("§cDein Ernst?");
+			p.sendMessage("Â§cDein Ernst?");
 		 }
 	}
 	

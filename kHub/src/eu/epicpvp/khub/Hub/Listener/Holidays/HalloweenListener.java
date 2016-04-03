@@ -3,17 +3,17 @@ package eu.epicpvp.khub.Hub.Listener.Holidays;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 
-import eu.epicpvp.khub.Hub.HubManager;
-import lombok.Getter;
 import eu.epicpvp.kcore.Disguise.DisguiseType;
 import eu.epicpvp.kcore.Disguise.Events.DisguiseCreateEvent;
 import eu.epicpvp.kcore.Disguise.Events.DisguisePlayerLoadEvent;
 import eu.epicpvp.kcore.Disguise.disguises.livings.DisguiseWolf;
 import eu.epicpvp.kcore.Listener.kListener;
-import eu.epicpvp.kcore.Permission.kPermission;
+import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.Util.UtilMath;
+import eu.epicpvp.khub.Hub.HubManager;
+import lombok.Getter;
 
 public class HalloweenListener extends kListener{
 
@@ -36,8 +36,8 @@ public class HalloweenListener extends kListener{
 	
 	@EventHandler
 	public void load(DisguisePlayerLoadEvent ev){
-		if(ev.getPlayer().hasPermission(kPermission.TEAM_MESSAGE.getPermissionToString())){
-			if(ev.getPlayer().hasPermission(kPermission.ALL_PERMISSION.getPermissionToString())){
+		if(ev.getPlayer().hasPermission(PermissionType.TEAM_MESSAGE.getPermissionToString())){
+			if(ev.getPlayer().hasPermission(PermissionType.ALL_PERMISSION.getPermissionToString())){
 				ev.setType( DisguiseType.WITHER );
 			}else{
 				ev.setType( DisguiseType.WITHER_SKELETON );

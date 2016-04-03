@@ -14,11 +14,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import eu.epicpvp.khub.kHub;
-import eu.epicpvp.khub.Hub.HubManager;
 import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.LoginManager.LoginManager;
 import eu.epicpvp.kcore.Util.TabTitle;
 import eu.epicpvp.kcore.Util.UtilServer;
+import eu.epicpvp.khub.kHub;
+import eu.epicpvp.khub.Hub.HubManager;
 
 public class HubLoginListener extends kListener{
 
@@ -32,6 +33,7 @@ public class HubLoginListener extends kListener{
 		this.list=new HashMap<>();
 		this.manager=manager;
 //		this.bot=new HashMap<>();
+		new LoginManager(manager.getInstance(), manager.getCmdHandler(), UtilServer.getClient());
 		this.spawn=Bukkit.getWorld("world").getSpawnLocation().add(0, 0.5, 0);
 	}
 
@@ -57,7 +59,7 @@ public class HubLoginListener extends kListener{
 	
 	@EventHandler
 	public void join(PlayerJoinEvent ev){
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §a"+kHub.hubType+" "+kHub.hubID, "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "Â§eEpicPvPÂ§8.Â§eeu Â§8| Â§a"+kHub.hubType+" "+kHub.hubID, "Â§aTeamSpeak: Â§7ts.EpicPvP.eu Â§8| Â§eWebsite: Â§7EpicPvP.eu");
 		list.put(ev.getPlayer(), System.currentTimeMillis());
 		for(Player player : UtilServer.getPlayers()){
 			if(!player.isOp())player.hidePlayer(ev.getPlayer());
@@ -76,7 +78,7 @@ public class HubLoginListener extends kListener{
 //					if(UtilLocation.isSameLocation(player.getLocation(), spawn)){
 //						Log("detected Bot "+player.getName());
 //						addBot(player);
-//						player.kickPlayer("§dEs joinen grad zu viele Spieler bitte versuch es später erneut!");
+//						player.kickPlayer("Â§dEs joinen grad zu viele Spieler bitte versuch es spÂ§ter erneut!");
 //						list.remove(player);
 //					}else{
 //						list.remove(player);
@@ -104,7 +106,7 @@ public class HubLoginListener extends kListener{
 //				Calendar gc2 = new GregorianCalendar();
 //				Date now = gc2.getTime();
 //				manager.getMysql().Update("INSERT INTO BG_ZEITBAN (name,name_uuid, nameip,banner,banner_uuid,bannerip,date,time,reason,aktiv) VALUES ('" + p.getName() + "','"+UtilPlayer.getRealUUID(p)+"', '"+p.getAddress().getAddress().getHostAddress()+"', 'CONSOLE','CONSOLE', 'null', '" + df2.format(now) + "','"+((long)System.currentTimeMillis()+TimeSpan.DAY*1)+"', 'Bot Detection', 'true')");
-//				System.err.println("[Bot-Detection] "+p.getName()+" wurde zeit gebannt für 1 Tage");
+//				System.err.println("[Bot-Detection] "+p.getName()+" wurde zeit gebannt fÂ§r 1 Tage");
 //			}else{
 //				bot.put(p.getAddress().getAddress().getHostAddress(), i);
 //			}

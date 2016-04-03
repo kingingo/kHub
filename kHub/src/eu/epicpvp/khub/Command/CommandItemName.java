@@ -17,13 +17,13 @@ public class CommandItemName implements CommandExecutor{
 		Player p = (Player)cs;
 		
 			if(args.length==0){
-				p.sendMessage(Language.getText(p, "PREFIX")+"§c/itemname [Name]");
+				p.sendMessage(Language.getText(p, "PREFIX")+"Â§c/itemname [Name]");
 			}else{
 				if(p.getItemInHand()!=null&&p.getItemInHand().getType()!=Material.AIR){
-					UtilItem.RenameItem(p.getItemInHand(), args[0].replaceAll("&", "§"));
-					p.sendMessage(Language.getText(p, "PREFIX")+"§aDas Item wurde umbenannt zu §e"+args[0].replaceAll("&", "§"));
+					UtilItem.RenameItem(p.getItemInHand(), args[0].replaceAll("&", "Â§"));
+					p.sendMessage(Language.getText(p, "PREFIX")+"Â§aDas Item wurde umbenannt zu Â§e"+args[0].replaceAll("&", "Â§"));
 				}else{
-					p.sendMessage(Language.getText(p, "PREFIX")+"§cDu musst ein Item in der Hand halten.");
+					p.sendMessage(Language.getText(p, "PREFIX")+"Â§cDu musst ein Item in der Hand halten.");
 				}
 			}
 		

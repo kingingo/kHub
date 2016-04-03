@@ -11,16 +11,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-import eu.epicpvp.khub.kHub;
-import eu.epicpvp.khub.Hub.HubManager;
-import lombok.Getter;
+import dev.wolveringer.dataserver.gamestats.StatsKey;
 import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
 import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
-import eu.epicpvp.kcore.Packet.Packets.BROADCAST;
-import eu.epicpvp.kcore.Permission.kPermission;
+import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.Util.InventorySize;
@@ -30,6 +27,9 @@ import eu.epicpvp.kcore.Util.UtilMath;
 import eu.epicpvp.kcore.Util.UtilParticle;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilServer;
+import eu.epicpvp.khub.kHub;
+import eu.epicpvp.khub.Hub.HubManager;
+import lombok.Getter;
 
 public class ChristmasListener extends kListener{
 
@@ -44,8 +44,8 @@ public class ChristmasListener extends kListener{
 		super(manager.getInstance(),"ChristmasListener");
 		this.manager=manager;
 	    this.day=Integer.valueOf(new SimpleDateFormat ("dd").format(new Date()));
-	    this.inventory=new InventoryPageBase(InventorySize._27, "§aAdventskalender:");
-	    this.item=UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL), "§aAdventskalender");
+	    this.inventory=new InventoryPageBase(InventorySize._27, "Â§aAdventskalender:");
+	    this.item=UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL), "Â§aAdventskalender");
 
 		getManager().getMysql().Update("CREATE TABLE IF NOT EXISTS CHRISTMAS(uuid varchar(100), name varchar(30),day int)");
 		click = new Click() {
@@ -55,18 +55,18 @@ public class ChristmasListener extends kListener{
 				if( ((ItemStack)obj).getType() == Material.SNOW_BALL ){
 					if(day==((ItemStack)obj).getAmount()){
 						if(!getManager().getMysql().getString("SELECT `uuid` FROM `CHRISTMAS` WHERE day='"+day+"' AND uuid='"+UtilPlayer.getRealUUID(player)+"'").equalsIgnoreCase("null")){
-							player.sendMessage(Language.getText(player, "PREFIX")+"§cDu hast bereits dein Türchen geöffnet!");						
+							player.sendMessage(Language.getText(player, "PREFIX")+"Â§cDu hast bereits dein TÂ§rchen geÂ§ffnet!");						
 						}else{
 							getManager().getMysql().Update("INSERT INTO CHRISTMAS (uuid,name,day) VALUES ('"+UtilPlayer.getRealUUID(player)+"','"+player.getName().toLowerCase()+"','"+day+"');");
 							int c = ((ItemStack)obj).getAmount()*UtilMath.RandomInt(4, 1)*7;
-							getManager().getCoins().addCoins(player, true, c);
-							getManager().getGems().addGems(player, true, (c/2));
+							getManager().getMoney().add(player, StatsKey.COINS, c);
+							getManager().getMoney().add(player, StatsKey.GEMS, c/2);
 							player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "XMAS_DOOR",new String[]{c+"",(c/2)+""}));
 
-							if(!player.hasPermission(kPermission.PET_SNOWMAN.getPermissionToString()) && UtilMath.r( (int) (250 * Math.pow(0.962540842, day)) ) == 74){
-								getManager().getPermissionManager().addPermission(player, kPermission.PET_SNOWMAN);
+							if(!player.hasPermission(PermissionType.PET_SNOWMAN.getPermissionToString()) && UtilMath.r( (int) (250 * Math.pow(0.962540842, day)) ) == 74){
+								getManager().getPermissionManager().addPermission(player, PermissionType.PET_SNOWMAN);
 								player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "XMAS_DOOR1"));
-								getManager().getPacketManager().SendPacket("BG", new BROADCAST(Language.getText("PREFIX")+Language.getText("XMAS_RARE",player.getName())));
+								UtilServer.getClient().brotcastMessage(null, Language.getText("PREFIX")+Language.getText("XMAS_RARE",player.getName()));
 							}
 							c=0;
 						}
@@ -84,9 +84,9 @@ public class ChristmasListener extends kListener{
 	    		if(inventory.getItem(place)==null||inventory.getItem(place).getType()==Material.AIR)break;
 	    	}
 	    	if(i==day){
-	    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§aTürchen "+i)));
+	    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "Â§aTÂ§rchen "+i)));
 	    	}else{
-	    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§cTürchen "+i)));
+	    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "Â§cTÂ§rchen "+i)));
 	    	}
 	    }
 	    
@@ -122,9 +122,9 @@ public class ChristmasListener extends kListener{
 		    		if(inventory.getItem(place)==null||inventory.getItem(place).getType()==Material.AIR)break;
 		    	}
 		    	if(i==day){
-		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§aTürchen "+i)));
+		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "Â§aTÂ§rchen "+i)));
 		    	}else{
-		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§cTürchen "+i)));
+		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "Â§cTÂ§rchen "+i)));
 		    	}
 		    }
 		    

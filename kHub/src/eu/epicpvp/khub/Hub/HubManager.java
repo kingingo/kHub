@@ -4,19 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import dev.wolveringer.dataclient.gamestats.ServerType;
-import eu.epicpvp.khub.kHub;
-import eu.epicpvp.khub.kManager;
-import eu.epicpvp.khub.Command.CommandBroadcast;
-import eu.epicpvp.khub.Hub.Listener.HubListener;
-import eu.epicpvp.khub.Hub.Listener.HubLoginListener;
-import eu.epicpvp.khub.Hub.Listener.HubPremiumListener;
-import eu.epicpvp.khub.Hub.Listener.HubVersusListener;
-import eu.epicpvp.khub.Hub.Listener.Holidays.BirthdayListener;
-import eu.epicpvp.khub.Hub.Listener.Holidays.ChristmasListener;
-import eu.epicpvp.khub.Hub.Listener.Holidays.HalloweenListener;
-import eu.epicpvp.khub.Hub.Listener.Holidays.SilvesterListener;
-import lombok.Getter;
+import dev.wolveringer.dataserver.gamestats.ServerType;
 import eu.epicpvp.kcore.Addons.AddonDay;
 import eu.epicpvp.kcore.Addons.AddonNight;
 import eu.epicpvp.kcore.Calendar.Calendar;
@@ -32,6 +20,18 @@ import eu.epicpvp.kcore.MySQL.MySQL;
 import eu.epicpvp.kcore.Pet.Shop.PetShop;
 import eu.epicpvp.kcore.Pet.Shop.PlayerPetHandler;
 import eu.epicpvp.kcore.Util.UtilItem;
+import eu.epicpvp.khub.kHub;
+import eu.epicpvp.khub.kManager;
+import eu.epicpvp.khub.Command.CommandBroadcast;
+import eu.epicpvp.khub.Hub.Listener.HubListener;
+import eu.epicpvp.khub.Hub.Listener.HubLoginListener;
+import eu.epicpvp.khub.Hub.Listener.HubPremiumListener;
+import eu.epicpvp.khub.Hub.Listener.HubVersusListener;
+import eu.epicpvp.khub.Hub.Listener.Holidays.BirthdayListener;
+import eu.epicpvp.khub.Hub.Listener.Holidays.ChristmasListener;
+import eu.epicpvp.khub.Hub.Listener.Holidays.HalloweenListener;
+import eu.epicpvp.khub.Hub.Listener.Holidays.SilvesterListener;
+import lombok.Getter;
 
 public class HubManager extends kManager{
 	@Getter
@@ -51,9 +51,9 @@ public class HubManager extends kManager{
 			getPetManager().setHandler(new PlayerPetHandler(ServerType.GAME, mysql, getPetManager(), this.shop, getPermissionManager()));
 			getPetManager().setPetShop(new PetShop(getPetManager().getHandler(), getMoney()));
 			getDisguiseManager().setDisguiseShop(new DisguiseShop(mysql, this.shop,getPermissionManager(),getMoney(),getDisguiseManager()));
-			this.shop.getMain().addButton(2, new ButtonOpenInventory(getPetManager().getPetShop(), UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop")));
+			this.shop.getMain().addButton(2, new ButtonOpenInventory(getPetManager().getPetShop(), UtilItem.Item(new ItemStack(Material.BONE), new String[]{"Â§bKlick mich um in den Pet Shop zukommen."}, "Â§7PetShop")));
 			this.shop.addPage(getPetManager().getPetShop());
-			this.shop.getMain().addButton(6, new ButtonOpenInventory(getDisguiseManager().getDisguiseShop(), UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7DisguiseShop")));
+			this.shop.getMain().addButton(6, new ButtonOpenInventory(getDisguiseManager().getDisguiseShop(), UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"Â§bKlick mich um in den Disguise Shop zukommen."}, "Â§7DisguiseShop")));
 			this.shop.addPage(getDisguiseManager().getDisguiseShop());
 			this.shop.getMain().fill(Material.STAINED_GLASS_PANE,(byte)7);
 			

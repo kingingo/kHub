@@ -65,7 +65,6 @@ import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
 import eu.epicpvp.kcore.Util.UtilFile;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilLocation;
-import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.kcore.kConfig.kConfig;
 import eu.epicpvp.khub.kHub;
@@ -113,7 +112,8 @@ public class HubListener extends kListener{
 		UtilEnt.setSilent(z, true);
 		
 		DisguiseBase dbase = DisguiseType.newDisguise(z, DisguiseType.PLAYER, new Object[]{" "});
-		((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("EpicPvPMC"));
+		((DisguisePlayer)dbase).loadSkin("EpicPvPMC");
+		
 		manager.getDisguiseManager().disguise(dbase);
 		new EntityClickListener(manager.getInstance(), new Click(){
 

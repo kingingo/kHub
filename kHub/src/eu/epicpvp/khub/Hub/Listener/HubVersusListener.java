@@ -232,7 +232,7 @@ public class HubVersusListener extends kListener{
 			UtilEnt.setNoAI(this.versus_wait_list, true);
 			UtilEnt.setSilent(this.versus_wait_list, true);
 			DisguiseBase dbase = DisguiseType.newDisguise(versus_wait_list, DisguiseType.PLAYER, new Object[]{" "});
-			((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("EpicPvPMC"));
+			((DisguisePlayer)dbase).loadSkin("EpicPvPMC");
 			manager.getDisguiseManager().disguise(dbase);
 			this.versus_wait_list_inv=new InventoryPageBase(InventorySize._18, "§6§lVersus");
 			this.t2= UtilItem.Item(new ItemStack(Material.DIAMOND_SWORD,0,(short)0), new String[]{}, "§61vs1");
@@ -302,7 +302,7 @@ public class HubVersusListener extends kListener{
 			UtilEnt.setSilent(this.skywars_wait_list, true);
 			UtilEnt.setNoAI(this.skywars_wait_list, true);
 			DisguiseBase dbase = DisguiseType.newDisguise(skywars_wait_list, DisguiseType.PLAYER, new Object[]{" "});
-			((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("julle139"));
+			((DisguisePlayer)dbase).loadSkin("julle139");
 			manager.getDisguiseManager().disguise(dbase);
 		}
 		
@@ -318,7 +318,7 @@ public class HubVersusListener extends kListener{
 			UtilEnt.setSilent(this.sg_wait_list, true);
 			UtilEnt.setNoAI(this.sg_wait_list, true);
 			DisguiseBase dbase = DisguiseType.newDisguise(sg_wait_list, DisguiseType.PLAYER, new Object[]{" "});
-			((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("akmund47"));
+			((DisguisePlayer)dbase).loadSkin("akmund47");
 			manager.getDisguiseManager().disguise(dbase);
 		}
 		
@@ -334,7 +334,7 @@ public class HubVersusListener extends kListener{
 			UtilEnt.setSilent(this.bedwars_wait_list, true);
 			UtilEnt.setNoAI(this.bedwars_wait_list, true);
 			DisguiseBase dbase = DisguiseType.newDisguise(bedwars_wait_list, DisguiseType.PLAYER, new Object[]{" "});
-			((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("kablion"));
+			((DisguisePlayer)dbase).loadSkin("kablion");
 			manager.getDisguiseManager().disguise(dbase);
 		}
 		
@@ -366,7 +366,7 @@ public class HubVersusListener extends kListener{
 		UtilEnt.setNoAI(this.creature_option, true);
 		
 		DisguiseBase dbase = DisguiseType.newDisguise(creature_option, DisguiseType.PLAYER, new Object[]{"  "});
-		((DisguisePlayer)dbase).loadSkin(manager.getInstance(),UtilPlayer.getOnlineUUID("_rorschach"));
+		((DisguisePlayer)dbase).loadSkin("_rorschach");
 		manager.getDisguiseManager().disguise(dbase);
 		
 		InventoryPageBase choose_game = new InventoryPageBase(InventorySize._9, "Versus Games:");

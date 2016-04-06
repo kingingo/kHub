@@ -52,8 +52,6 @@ import eu.epicpvp.kcore.MySQL.MySQLErr;
 import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Permission.Events.PlayerLoadPermissionEvent;
-import eu.epicpvp.kcore.Update.UpdateType;
-import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.UpdateAsync.UpdateAsyncType;
 import eu.epicpvp.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import eu.epicpvp.kcore.Util.Color;
@@ -75,7 +73,6 @@ import eu.epicpvp.khub.kManager;
 import eu.epicpvp.khub.Hub.HubManager;
 import eu.epicpvp.khub.Hub.Lobby;
 import eu.epicpvp.khub.Hub.InvisbleManager.InvisibleManager;
-import eu.epicpvp.khub.Hub.Listener.spezial.VoteListener;
 import lombok.Getter;
 
 public class HubListener extends kListener{
@@ -134,10 +131,6 @@ public class HubListener extends kListener{
 	
 		loadSigns();
 		loadLobbys();
-
-		if(Bukkit.getPluginManager().getPlugin("Votifier")!=null){
-			new VoteListener(getManager());
-		}
 		
 		new AddonDoubleJump(manager.getInstance());
 		new InvisibleManager(manager.getInstance(),this);

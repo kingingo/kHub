@@ -1,29 +1,27 @@
 package eu.epicpvp.khub.Hub.Listener;
 
-import java.io.File;
-
+import dev.wolveringer.client.Callback;
+import dev.wolveringer.client.LoadedPlayer;
+import dev.wolveringer.dataserver.protocoll.packets.PacketInStatsEdit.Action;
+import eu.epicpvp.kcore.Language.Language;
+import eu.epicpvp.kcore.Listener.VoteListener.VoteListener;
+import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.khub.Hub.HubManager;
 
 public class HubPremiumListener extends HubListener{
-
-//	private ParticleManager particleManager;
 	
 	public HubPremiumListener(final HubManager manager) {
 		super(manager,true);
-//		this.particleManager=new ParticleManager(manager.getInstance());
-		
-//		this.particleManager.addParticle(new ParticlePicture("fly", UtilParticle.FLAME, getParticlePictures()[0]));
+		new VoteListener(manager.getInstance(), false,new Callback<String>() {
+			
+			@Override
+			public void call(String playerName) {
+				LoadedPlayer loadedplayer = UtilServer.getClient().getPlayerAndLoad(playerName);
+				
+				loadedplayer.changeGems(Action.ADD, 5);
+				loadedplayer.changeCoins(Action.ADD, 100);
+				UtilServer.getClient().brotcastMessage(null, Language.getText("PREFIX")+ "§b" + playerName + " hat gevotet und §a5 Gems + 100 Coins §berhalten§l! §7>>§5§l /Vote");
+			}
+		});
 	}	
-	
-	public static File[] getParticlePictures(){
-		File folder = new File("particles");
-		if(!folder.exists())folder.mkdirs();
-		return folder.listFiles();
-	}
-//	
-//	@EventHandler
-//	public void join(PlayerLoadPermissionEvent ev){
-//		this.particleManager.addPlayer(ev.getPlayer(), "fly");
-//	}
-	
 }

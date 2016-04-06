@@ -510,19 +510,7 @@ public class HubVersusListener extends kListener{
 				}else{
 					if(player.getGameMode() != GameMode.ADVENTURE){
 						getKitManager().updateKit(UtilPlayer.getRealUUID(player), statsManager.getInt(StatsKey.KIT_ID, player), player.getInventory());
-						player.setGameMode(GameMode.ADVENTURE);
-
-						player.setExp(0);
-						player.getInventory().clear();
-						for(PotionEffect t : player.getActivePotionEffects())player.removePotionEffect(t.getType());;
-						player.getInventory().setArmorContents(null);
-						player.getInventory().setItem(1,UtilItem.RenameItem(new ItemStack(Material.FISHING_ROD), "§aBestOf"));
-						player.getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(player, "HUB_ITEM_CHEST")));
-						player.getInventory().setItem(5,UtilItem.RenameItem(new ItemStack(Material.BOW), "§aSurvivalGames 1vs1"));
-						player.getInventory().setItem(6,UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"));
-						player.getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§aVersus 1vs1"));
-						player.getInventory().setItem(7,UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1"));
-						player.updateInventory();
+						setInv(player);
 					}
 				}
 			}
@@ -548,26 +536,6 @@ public class HubVersusListener extends kListener{
 			}
 		}
 	}
-	
-//	@EventHandler
-//	public void PacketListenerSend(PacketListenerSendEvent ev){
-//		System.err.println("S: "+ev.getPacket().toString());
-//	}
-//
-//	@EventHandler
-//	public void PacketListenerReceive(PacketListenerReceiveEvent ev){
-//		System.err.println("R: "+ev.getPacket().toString());
-//	}
-//	
-//	@EventHandler
-//	public void ping(PacketListenerSendEvent ev){
-//		if(ev.getPacket() instanceof PacketStatusOutServerInfo){
-//			kPacketStatusOutServerInfo info = new kPacketStatusOutServerInfo(ev.getPacket());
-//			info.getServerPing().setPlayerSample(new ServerPingPlayerSample(this.online, this.online));
-//			ev.setPacket(info.getPacket());
-//			info=null;
-//		}
-//	}
 	
 	int i=0;
 	@EventHandler
@@ -667,14 +635,22 @@ public class HubVersusListener extends kListener{
 		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §e"+kHub.hubType+" "+kHub.hubID, "§eShop.EpicPvP.de");
 		statsManager.loadPlayer(ev.getPlayer());
-		ev.getPlayer().setGameMode(GameMode.ADVENTURE);
-		ev.getPlayer().setExp(0);
-		ev.getPlayer().teleport(spawn);
-		ev.getPlayer().getInventory().setItem(1,UtilItem.RenameItem(new ItemStack(Material.FISHING_ROD), "§aBestOf"));
-		ev.getPlayer().getInventory().setItem(5,UtilItem.RenameItem(new ItemStack(Material.BOW), "§aSurvivalGames 1vs1"));
-		ev.getPlayer().getInventory().setItem(6,UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"));
-		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§aVersus 1vs1"));
-		ev.getPlayer().getInventory().setItem(7,UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1"));
+		setInv(ev.getPlayer());
+	}
+	
+	public void setInv(Player player){
+		player.setGameMode(GameMode.ADVENTURE);
+		player.setExp(0);
+		player.teleport(spawn);
+		for(PotionEffect t : player.getActivePotionEffects())player.removePotionEffect(t.getType());;
+		player.getInventory().setArmorContents(null);
+		player.getInventory().clear();
+		player.getInventory().setItem(1,UtilItem.setUnbreakable(UtilItem.RenameItem(new ItemStack(Material.FISHING_ROD), "§aBestOf"), true));
+		player.getInventory().setItem(5,UtilItem.setUnbreakable(UtilItem.RenameItem(new ItemStack(Material.BOW), "§aSurvivalGames 1vs1"), true));
+		player.getInventory().setItem(6,UtilItem.setUnbreakable(UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"), true));
+		player.getInventory().setItem(8,UtilItem.setUnbreakable(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§aVersus 1vs1"), true));
+		player.getInventory().setItem(7,UtilItem.setUnbreakable(UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1"), true));
+		player.updateInventory();
 	}
 	
 	private String s;

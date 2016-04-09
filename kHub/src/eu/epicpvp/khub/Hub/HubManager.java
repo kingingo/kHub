@@ -1,5 +1,6 @@
 package eu.epicpvp.khub.Hub;
 
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -88,17 +89,14 @@ public class HubManager extends kManager{
 			new ChatListener(instance, null,getPermissionManager(),null);
 		}
 
-		switch(kHub.hubType){
-			case "LoginHub":
+		switch(kHub.hubType.toLowerCase()){
+			case "loginhub":
 			new HubLoginListener(this);
 				break;
-			case "VersusHub":
+			case "versushub":
 				new HubVersusListener(this);
 				break;
-			case "TestVersusHub":
-				new HubVersusListener(this);
-				break;
-			case "PremiumHub":
+			case "premiumhub":
 				new HubPremiumListener(this);
 				break;
 			default:

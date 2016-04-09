@@ -14,8 +14,8 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.util.Vector;
 
 import eu.epicpvp.kcore.Command.CommandHandler.Sender;
-import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.Translation.TranslationManager;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.Util.UtilLocation;
@@ -34,7 +34,7 @@ public class CommandJump extends kListener implements CommandExecutor {
 		for(int i = 0; i<50; i++){
 			if(hub.getConfig().contains("Config.Jump."+i+".fromX")){
 				list.put(new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+i+".fromX"),hub.getConfig().getInt("Config.Jump."+i+".fromY"),hub.getConfig().getInt("Config.Jump."+i+".fromZ")),  calculate( new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+i+".fromX"),hub.getConfig().getInt("Config.Jump."+i+".fromY"),hub.getConfig().getInt("Config.Jump."+i+".fromZ")), new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+i+".toX"),hub.getConfig().getInt("Config.Jump."+i+".toY"),hub.getConfig().getInt("Config.Jump."+i+".toZ")) ));
-				Log("Load Jump-"+i);
+				logMessage("Load Jump-"+i);
 			}else{
 				break;
 			}
@@ -46,7 +46,7 @@ public class CommandJump extends kListener implements CommandExecutor {
 		Player p = (Player)cs;
 		if(p.isOp()){
 			if(p.getLocation().add(0,-1,0).getBlock().getType()==Material.GOLD_PLATE){
-				p.sendMessage(Language.getText(p, "PREFIX")+"?cDu musst auf einer Gold Platte stehen!");
+				p.sendMessage(TranslationManager.getText(p, "PREFIX")+"?cDu musst auf einer Gold Platte stehen!");
 				return false;
 			}
 			hub.getConfig().set("Config.Jump."+list.size()+".fromX", p.getLocation().getBlockX());
@@ -54,7 +54,7 @@ public class CommandJump extends kListener implements CommandExecutor {
 			hub.getConfig().set("Config.Jump."+list.size()+".fromY", p.getLocation().getBlockY()-1);
 			hub.saveConfig();
 			player=p;
-			p.sendMessage(Language.getText(p, "PREFIX")+"?aDie Jump Platte "+list.size()+" wurde gesetzt!");
+			p.sendMessage(TranslationManager.getText(p, "PREFIX")+"?aDie Jump Platte "+list.size()+" wurde gesetzt!");
 		}
 		return false;
 	}
@@ -82,7 +82,7 @@ public class CommandJump extends kListener implements CommandExecutor {
 			hub.getConfig().set("Config.Jump."+list.size()+".toZ", ev.getPlayer().getLocation().getBlockZ());
 			hub.getConfig().set("Config.Jump."+list.size()+".toY", ev.getPlayer().getLocation().getBlockY()-1);
 			hub.saveConfig();
-			ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+"?cDie Jump Platte "+list.size()+" wurde gesetzt!");
+			ev.getPlayer().sendMessage(TranslationManager.getText(player, "PREFIX")+"?cDie Jump Platte "+list.size()+" wurde gesetzt!");
 			list.put(new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromX"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromY"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromZ")),  calculate( new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromX"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromY"),hub.getConfig().getInt("Config.Jump."+list.size()+".fromZ")), new Location(Bukkit.getWorld("world"),hub.getConfig().getInt("Config.Jump."+list.size()+".toX"),hub.getConfig().getInt("Config.Jump."+list.size()+".toY"),hub.getConfig().getInt("Config.Jump."+list.size()+".toZ")) ));
 			player=null;
 		}

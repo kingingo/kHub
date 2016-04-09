@@ -38,8 +38,8 @@ public class BirthdayListener extends kListener{
 			this.t3ker=this.kingingo;
 		}
 		
-		if(Calendar.isFixHolidayDate(CalendarType.GEBURSTAG))Log("Happy Birthday Felix und Moritz!");
-		else if(Calendar.isFixHolidayDate(CalendarType.GEBURSTAG_MANUEL))Log("Happy Birthday Manuel!");
+		if(Calendar.isFixHolidayDate(CalendarType.GEBURSTAG))logMessage("Happy Birthday Felix und Moritz!");
+		else if(Calendar.isFixHolidayDate(CalendarType.GEBURSTAG_MANUEL))logMessage("Happy Birthday Manuel!");
 	}
 	
 	@EventHandler

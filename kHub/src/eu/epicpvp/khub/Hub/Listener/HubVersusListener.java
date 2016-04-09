@@ -38,6 +38,7 @@ import eu.epicpvp.kcore.Arena.ArenaType;
 import eu.epicpvp.kcore.Arena.GameRound;
 import eu.epicpvp.kcore.Arena.Rule;
 import eu.epicpvp.kcore.Arena.RulePriority;
+import eu.epicpvp.kcore.Arena.TabManager;
 import eu.epicpvp.kcore.Arena.BestOf.BestOf;
 import eu.epicpvp.kcore.Command.Admin.CommandArena;
 import eu.epicpvp.kcore.Command.Admin.CommandLocations;
@@ -60,12 +61,12 @@ import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonCopy;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonUpDownVersus;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.SalesPackageBase;
-import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Packets.PacketArenaStatus;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.StatsManager.StatsManager;
 import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsCreateEvent;
+import eu.epicpvp.kcore.Translation.TranslationManager;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.UpdateAsync.UpdateAsyncType;
@@ -136,6 +137,7 @@ public class HubVersusListener extends kListener{
 		super(manager.getInstance(),"VersusListener"); 
 		new UpdaterAsync(manager.getInstance());
 		this.manager=manager;
+		new TabManager(manager.getInstance(), new GameType[]{GameType.Versus,GameType.BedWars1vs1,GameType.SurvivalGames1vs1,GameType.SkyWars1vs1});
 		this.userData=new UserDataConfig(manager.getInstance());
 		this.bestOf=new BestOf(manager.getInstance());
 		this.board=Bukkit.getScoreboardManager().getNewScoreboard();
@@ -150,7 +152,7 @@ public class HubVersusListener extends kListener{
 				public void onClick(Player player, ActionType action, Object obj) {
 					if(player.hasPermission(gcase.getPermission().getPermissionToString())||player.hasPermission(PermissionType.ALL_PERMISSION.getPermissionToString())){
 						GameCage.saveGameCase(player, gcase, manager.getMysql());
-						player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "GAMECAGE_CHANGE"));
+						player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "GAMECAGE_CHANGE"));
 						player.closeInventory();
 					}
 				}
@@ -175,15 +177,15 @@ public class HubVersusListener extends kListener{
 		
 		CommandArena arena = new CommandArena();
 		
-		this.bedwars_arenaManager=new ArenaManager(UtilServer.getClient(),statsManager,GameType.BedWars1vs1, UpdateAsyncType.SEC_2);
-		this.skywars_arenaManager=new ArenaManager(UtilServer.getClient(),statsManager,GameType.SkyWars1vs1, UpdateAsyncType.SEC_2);
-		this.sg_arenaManager=new ArenaManager(UtilServer.getClient(),statsManager,GameType.SurvivalGames1vs1, UpdateAsyncType.SEC_2);
+		this.bedwars_arenaManager=new ArenaManager(statsManager,GameType.BedWars1vs1, UpdateAsyncType.SEC_2);
+		this.skywars_arenaManager=new ArenaManager(statsManager,GameType.SkyWars1vs1, UpdateAsyncType.SEC_2);
+		this.sg_arenaManager=new ArenaManager(statsManager,GameType.SurvivalGames1vs1, UpdateAsyncType.SEC_2);
 		this.bestOf.addGame(bedwars_arenaManager);
 		this.bestOf.addGame(skywars_arenaManager);
 		this.bestOf.addGame(sg_arenaManager);
 		this.base=new InventoryBase(manager.getInstance());
 
-		this.versus_arenaManager=new ArenaManager(UtilServer.getClient(),statsManager,GameType.Versus, UpdateAsyncType.SEC_2);
+		this.versus_arenaManager=new ArenaManager(statsManager,GameType.Versus, UpdateAsyncType.SEC_2);
 		this.bestOf.addGame(versus_arenaManager);
 		arena.getList().add(this.bedwars_arenaManager);
 		arena.getList().add(sg_arenaManager);
@@ -241,7 +243,7 @@ public class HubVersusListener extends kListener{
 				@Override
 				public void onClick(Player p, ActionType a, Object o) {
 					if(versus_arenaManager.addPlayer(p, ArenaType._TEAMx2))
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "VERSUS_ADDED"));
+						p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "VERSUS_ADDED"));
 				}
 				
 			}, t2));
@@ -251,7 +253,7 @@ public class HubVersusListener extends kListener{
 				@Override
 				public void onClick(Player p, ActionType a, Object o) {
 					if(versus_arenaManager.addPlayer(p, ArenaType._TEAMx3))
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "VERSUS_ADDED"));
+						p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "VERSUS_ADDED"));
 				}
 				
 			},t3));
@@ -261,7 +263,7 @@ public class HubVersusListener extends kListener{
 				@Override
 				public void onClick(Player p, ActionType a, Object o) {
 					if(versus_arenaManager.addPlayer(p, ArenaType._TEAMx4))
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "VERSUS_ADDED"));
+						p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "VERSUS_ADDED"));
 				}
 				
 			}, t4));
@@ -271,7 +273,7 @@ public class HubVersusListener extends kListener{
 				@Override
 				public void onClick(Player p, ActionType a, Object o) {
 					if(versus_arenaManager.addPlayer(p, ArenaType._TEAMx5))
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "VERSUS_ADDED"));
+						p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "VERSUS_ADDED"));
 				}
 				
 			}, t5));
@@ -281,7 +283,7 @@ public class HubVersusListener extends kListener{
 				@Override
 				public void onClick(Player p, ActionType a, Object o) {
 					if(versus_arenaManager.addPlayer(p, ArenaType._TEAMx6))
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "VERSUS_ADDED"));
+						p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "VERSUS_ADDED"));
 				}
 				
 			}, t6));
@@ -334,7 +336,7 @@ public class HubVersusListener extends kListener{
 			UtilEnt.setSilent(this.bedwars_wait_list, true);
 			UtilEnt.setNoAI(this.bedwars_wait_list, true);
 			DisguiseBase dbase = DisguiseType.newDisguise(bedwars_wait_list, DisguiseType.PLAYER, new Object[]{" "});
-			((DisguisePlayer)dbase).loadSkin("kablion");
+			((DisguisePlayer)dbase).loadSkin("Kablion");
 			manager.getDisguiseManager().disguise(dbase);
 		}
 		
@@ -366,7 +368,7 @@ public class HubVersusListener extends kListener{
 		UtilEnt.setNoAI(this.creature_option, true);
 		
 		DisguiseBase dbase = DisguiseType.newDisguise(creature_option, DisguiseType.PLAYER, new Object[]{"  "});
-		((DisguisePlayer)dbase).loadSkin("_rorschach");
+		((DisguisePlayer)dbase).loadSkin("_Rorschach");
 		manager.getDisguiseManager().disguise(dbase);
 		
 		InventoryPageBase choose_game = new InventoryPageBase(InventorySize._9, "Versus Games:");
@@ -510,6 +512,7 @@ public class HubVersusListener extends kListener{
 				}else{
 					if(player.getGameMode() != GameMode.ADVENTURE){
 						getKitManager().updateKit(UtilPlayer.getRealUUID(player), statsManager.getInt(StatsKey.KIT_ID, player), player.getInventory());
+						player.getInventory().clear();
 						setInv(player);
 					}
 				}
@@ -632,7 +635,8 @@ public class HubVersusListener extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGH)
 	public void load(PlayerJoinEvent ev){
-		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
+		getManager().getMoney().loadPlayer(ev.getPlayer());
+		ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §e"+kHub.hubType+" "+kHub.hubID, "§eShop.EpicPvP.de");
 		statsManager.loadPlayer(ev.getPlayer());
 		setInv(ev.getPlayer());
@@ -644,7 +648,6 @@ public class HubVersusListener extends kListener{
 		player.teleport(spawn);
 		for(PotionEffect t : player.getActivePotionEffects())player.removePotionEffect(t.getType());;
 		player.getInventory().setArmorContents(null);
-		player.getInventory().clear();
 		player.getInventory().setItem(1,UtilItem.setUnbreakable(UtilItem.RenameItem(new ItemStack(Material.FISHING_ROD), "§aBestOf"), true));
 		player.getInventory().setItem(5,UtilItem.setUnbreakable(UtilItem.RenameItem(new ItemStack(Material.BOW), "§aSurvivalGames 1vs1"), true));
 		player.getInventory().setItem(6,UtilItem.setUnbreakable(UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1"), true));
@@ -661,7 +664,7 @@ public class HubVersusListener extends kListener{
 				((Player)ev.getDamager()).getItemInHand().setDurability((short) 0);
 					s=UtilTime.getTimeManager().check("VERSUS_SWORD", ((Player)ev.getDamager()));
 					if(s!=null){
-						((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
+						((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()), "PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
 					}else{
 						UtilTime.getTimeManager().add("VERSUS_SWORD", ((Player)ev.getDamager()), TimeSpan.SECOND*10);
 						if(versus_vs.containsKey( ((Player)ev.getEntity()) )){
@@ -670,8 +673,8 @@ public class HubVersusListener extends kListener{
 								this.versus_arenaManager.delRound(((Player)ev.getEntity()),true);
 								this.versus_arenaManager.delRound(((Player)ev.getDamager()),true);
 								this.versus_arenaManager.addRound(new GameRound(((Player)ev.getEntity()).getUniqueId(), new UUID[]{((Player)ev.getEntity()).getUniqueId(),((Player)ev.getDamager()).getUniqueId()}, ArenaType._TEAMx2));
-								((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()),"PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_REQUEST"));
-								((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()),"PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_REQUEST"));
+								((Player)ev.getEntity()).sendMessage(TranslationManager.getText(((Player)ev.getEntity()),"PREFIX")+TranslationManager.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_REQUEST"));
+								((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()),"PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_REQUEST"));
 								versus_vs.remove(((Player)ev.getEntity()));
 								versus_vs.remove(((Player)ev.getDamager()));
 								return;
@@ -680,14 +683,14 @@ public class HubVersusListener extends kListener{
 						
 						versus_vs.remove(((Player)ev.getDamager()));
 						versus_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
-						((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
-						((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
+						((Player)ev.getEntity()).sendMessage(TranslationManager.getText(((Player)ev.getEntity()), "PREFIX")+TranslationManager.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
+						((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()), "PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
 					}
 			}else if(((Player)ev.getDamager()).getItemInHand().getType()==Material.IRON_AXE){
 				((Player)ev.getDamager()).getItemInHand().setDurability((short) 0);
 				s=UtilTime.getTimeManager().check("SKYWARS_AXE", ((Player)ev.getDamager()));
 				if(s!=null){
-					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
+					((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()), "PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
 				}else{
 					UtilTime.getTimeManager().add("SKYWARS_AXE", ((Player)ev.getDamager()), TimeSpan.SECOND*10);
 					if(skywars_vs.containsKey( ((Player)ev.getEntity()) )){
@@ -696,8 +699,8 @@ public class HubVersusListener extends kListener{
 							this.skywars_arenaManager.delRound(((Player)ev.getEntity()),true);
 							this.skywars_arenaManager.delRound(((Player)ev.getDamager()),true);
 							this.skywars_arenaManager.addRound(new GameRound(((Player)ev.getEntity()).getUniqueId(), new UUID[]{((Player)ev.getEntity()).getUniqueId(),((Player)ev.getDamager()).getUniqueId()}, ArenaType._TEAMx2));
-							((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()),"PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_SKYWARS_1VS1_REQUEST"));
-							((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()),"PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_SKYWARS_1VS1_REQUEST"));
+							((Player)ev.getEntity()).sendMessage(TranslationManager.getText(((Player)ev.getEntity()),"PREFIX")+TranslationManager.getText(((Player)ev.getEntity()), "HUB_SKYWARS_1VS1_REQUEST"));
+							((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()),"PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "HUB_SKYWARS_1VS1_REQUEST"));
 							skywars_vs.remove(((Player)ev.getEntity()));
 							skywars_vs.remove(((Player)ev.getDamager()));
 							return;
@@ -706,14 +709,14 @@ public class HubVersusListener extends kListener{
 					
 					skywars_vs.remove(((Player)ev.getDamager()));
 					skywars_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
-					((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
-					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
+					((Player)ev.getEntity()).sendMessage(TranslationManager.getText(((Player)ev.getEntity()), "PREFIX")+TranslationManager.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
+					((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()), "PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
 				}
 			}else if(((Player)ev.getDamager()).getItemInHand().getType()==Material.GOLD_SWORD){
 				((Player)ev.getDamager()).getItemInHand().setDurability((short) 0);
 				s=UtilTime.getTimeManager().check("BEDWARS_AXE", ((Player)ev.getDamager()));
 				if(s!=null){
-					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
+					((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()), "PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
 				}else{
 					UtilTime.getTimeManager().add("BEDWARS_AXE", ((Player)ev.getDamager()), TimeSpan.SECOND*10);
 					if(bedwars_vs.containsKey( ((Player)ev.getEntity()) )){
@@ -722,8 +725,8 @@ public class HubVersusListener extends kListener{
 							this.bedwars_arenaManager.delRound(((Player)ev.getEntity()),true);
 							this.bedwars_arenaManager.delRound(((Player)ev.getDamager()),true);
 							this.bedwars_arenaManager.addRound(new GameRound(((Player)ev.getEntity()).getUniqueId(), new UUID[]{((Player)ev.getEntity()).getUniqueId(),((Player)ev.getDamager()).getUniqueId()}, ArenaType._TEAMx2));
-							((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()),"PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_BEDWARS_1VS1_REQUEST"));
-							((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()),"PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_BEDWARS_1VS1_REQUEST"));
+							((Player)ev.getEntity()).sendMessage(TranslationManager.getText(((Player)ev.getEntity()),"PREFIX")+TranslationManager.getText(((Player)ev.getEntity()), "HUB_BEDWARS_1VS1_REQUEST"));
+							((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()),"PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "HUB_BEDWARS_1VS1_REQUEST"));
 							bedwars_vs.remove(((Player)ev.getEntity()));
 							bedwars_vs.remove(((Player)ev.getDamager()));
 							return;
@@ -732,14 +735,14 @@ public class HubVersusListener extends kListener{
 					
 					bedwars_vs.remove(((Player)ev.getDamager()));
 					bedwars_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
-					((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
-					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
+					((Player)ev.getEntity()).sendMessage(TranslationManager.getText(((Player)ev.getEntity()), "PREFIX")+TranslationManager.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
+					((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()), "PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
 				}
 			}else if(((Player)ev.getDamager()).getItemInHand().getType()==Material.BOW){
 				((Player)ev.getDamager()).getItemInHand().setDurability((short) 0);
 				s=UtilTime.getTimeManager().check("SG_BOW", ((Player)ev.getDamager()));
 				if(s!=null){
-					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
+					((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()), "PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
 				}else{
 					UtilTime.getTimeManager().add("SG_BOW", ((Player)ev.getDamager()), TimeSpan.SECOND*10);
 					if(sg_vs.containsKey( ((Player)ev.getEntity()) )){
@@ -748,8 +751,8 @@ public class HubVersusListener extends kListener{
 							this.sg_arenaManager.delRound(((Player)ev.getEntity()),true);
 							this.sg_arenaManager.delRound(((Player)ev.getDamager()),true);
 							this.sg_arenaManager.addRound(new GameRound(((Player)ev.getEntity()).getUniqueId(), new UUID[]{((Player)ev.getEntity()).getUniqueId(),((Player)ev.getDamager()).getUniqueId()}, ArenaType._TEAMx2));
-							((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()),"PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_SG_1VS1_REQUEST"));
-							((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()),"PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_SG_1VS1_REQUEST"));
+							((Player)ev.getEntity()).sendMessage(TranslationManager.getText(((Player)ev.getEntity()),"PREFIX")+TranslationManager.getText(((Player)ev.getEntity()), "HUB_SG_1VS1_REQUEST"));
+							((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()),"PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "HUB_SG_1VS1_REQUEST"));
 							sg_vs.remove(((Player)ev.getEntity()));
 							sg_vs.remove(((Player)ev.getDamager()));
 							return;
@@ -758,14 +761,14 @@ public class HubVersusListener extends kListener{
 					
 					sg_vs.remove(((Player)ev.getDamager()));
 					sg_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
-					((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
-					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
+					((Player)ev.getEntity()).sendMessage(TranslationManager.getText(((Player)ev.getEntity()), "PREFIX")+TranslationManager.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
+					((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()), "PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
 				}
 			}else if(((Player)ev.getDamager()).getItemInHand().getType()==Material.FISHING_ROD){
 				((Player)ev.getDamager()).getItemInHand().setDurability((short) 0);
 				s=UtilTime.getTimeManager().check("bestof_FISH", ((Player)ev.getDamager()));
 				if(s!=null){
-					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
+					((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()), "PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "USE_BEFEHL_TIME",s));
 				}else{
 					UtilTime.getTimeManager().add("bestof_FISH", ((Player)ev.getDamager()), TimeSpan.SECOND*10);
 					if(bestof_vs.containsKey( ((Player)ev.getEntity()) )){
@@ -779,8 +782,8 @@ public class HubVersusListener extends kListener{
 					
 					bestof_vs.remove(((Player)ev.getDamager()));
 					bestof_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
-					((Player)ev.getEntity()).sendMessage(Language.getText(((Player)ev.getEntity()), "PREFIX")+Language.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
-					((Player)ev.getDamager()).sendMessage(Language.getText(((Player)ev.getDamager()), "PREFIX")+Language.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
+					((Player)ev.getEntity()).sendMessage(TranslationManager.getText(((Player)ev.getEntity()), "PREFIX")+TranslationManager.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
+					((Player)ev.getDamager()).sendMessage(TranslationManager.getText(((Player)ev.getDamager()), "PREFIX")+TranslationManager.getText(((Player)ev.getDamager()), "HUB_VERSUS_1VS1_QUESTION",((Player)ev.getEntity()).getName()));
 				}
 			}
 		}
@@ -798,7 +801,7 @@ public class HubVersusListener extends kListener{
 		            	fishplayer.getItemInHand().setDurability((short) 0);
 						s=UtilTime.getTimeManager().check("bestof_FISH", fishplayer);
 						if(s!=null){
-							fishplayer.sendMessage(Language.getText(fishplayer, "PREFIX")+Language.getText(fishplayer, "USE_BEFEHL_TIME",s));
+							fishplayer.sendMessage(TranslationManager.getText(fishplayer, "PREFIX")+TranslationManager.getText(fishplayer, "USE_BEFEHL_TIME",s));
 						}else{
 							UtilTime.getTimeManager().add("bestof_FISH", fishplayer, TimeSpan.SECOND*10);
 							if(bestof_vs.containsKey( caught )){
@@ -812,8 +815,8 @@ public class HubVersusListener extends kListener{
 							
 							bestof_vs.remove(fishplayer);
 							bestof_vs.put(fishplayer, caught);
-							caught.sendMessage(Language.getText(caught, "PREFIX")+Language.getText(caught, "HUB_VERSUS_1VS1_FROM_QUESTION", fishplayer.getName()));
-							fishplayer.sendMessage(Language.getText(fishplayer, "PREFIX")+Language.getText(fishplayer, "HUB_VERSUS_1VS1_QUESTION",caught.getName()));
+							caught.sendMessage(TranslationManager.getText(caught, "PREFIX")+TranslationManager.getText(caught, "HUB_VERSUS_1VS1_FROM_QUESTION", fishplayer.getName()));
+							fishplayer.sendMessage(TranslationManager.getText(fishplayer, "PREFIX")+TranslationManager.getText(fishplayer, "HUB_VERSUS_1VS1_QUESTION",caught.getName()));
 						}
 		            }
 		        }
@@ -831,23 +834,23 @@ public class HubVersusListener extends kListener{
 		}else if(ev.getRightClicked().getEntityId()==this.skywars_wait_list.getEntityId()){
 			ev.setCancelled(true);
 			if(skywars_arenaManager.addPlayer(ev.getPlayer(), ArenaType._TEAMx2)){
-				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
+				ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "VERSUS_ADDED"));
 			}else{
-				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_REMOVE"));
+				ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "VERSUS_REMOVE"));
 			}
 		}else if(ev.getRightClicked().getEntityId()==this.bedwars_wait_list.getEntityId()){
 			ev.setCancelled(true);
 			if(bedwars_arenaManager.addPlayer(ev.getPlayer(), ArenaType._TEAMx2)){
-				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
+				ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "VERSUS_ADDED"));
 			}else{
-				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_REMOVE"));
+				ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "VERSUS_REMOVE"));
 			}
 		}else if(ev.getRightClicked().getEntityId()==this.sg_wait_list.getEntityId()){
 			ev.setCancelled(true);
 			if(sg_arenaManager.addPlayer(ev.getPlayer(), ArenaType._TEAMx2)){
-				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_ADDED"));
+				ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "VERSUS_ADDED"));
 			}else{
-				ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "VERSUS_REMOVE"));
+				ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "VERSUS_REMOVE"));
 			}
 		}
 	}

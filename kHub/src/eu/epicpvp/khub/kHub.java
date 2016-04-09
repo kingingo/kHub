@@ -23,10 +23,10 @@ import eu.epicpvp.kcore.Command.Commands.CommandNacht;
 import eu.epicpvp.kcore.Command.Commands.CommandPing;
 import eu.epicpvp.kcore.Command.Commands.CommandSonne;
 import eu.epicpvp.kcore.Command.Commands.CommandTag;
-import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.AntiCrashListener.AntiCrashListener;
 import eu.epicpvp.kcore.Listener.BungeeCordFirewall.BungeeCordFirewallListener;
 import eu.epicpvp.kcore.Listener.Command.ListenerCMD;
+import eu.epicpvp.kcore.Translation.TranslationManager;
 import eu.epicpvp.kcore.Util.UtilEnt;
 import eu.epicpvp.kcore.Util.UtilException;
 import eu.epicpvp.kcore.Util.UtilServer;
@@ -41,6 +41,7 @@ public class kHub extends JavaPlugin{
 	public void onEnable(){
 		try{
 			long time = System.currentTimeMillis();
+			TranslationManager.init(this);
 			loadConfig();
 			removeEntity(Bukkit.getWorld("world"));
 			this.hubType=getConfig().getString("Config.HubType");
@@ -50,8 +51,6 @@ public class kHub extends JavaPlugin{
 			UtilServer.createUpdater(this);
 			UtilServer.createUpdaterAsync(this);
 			UtilServer.createClient(this,ClientType.LOBBY,getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),this.hubType+this.hubID);
-			
-			Language.load(UtilServer.getMysql());
 			
 			UtilServer.createCommandHandler(this);
 			UtilServer.getCommandHandler().register(CommandHubFly.class, new CommandHubFly(this));

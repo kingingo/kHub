@@ -39,7 +39,7 @@ public class HubLoginListener extends kListener{
 
 	@EventHandler
 	public void joina(AsyncPlayerPreLoginEvent ev){
-		Log("JOIN: "+ev.getName()+" "+ev.getUniqueId());
+		logMessage("JOIN: "+ev.getName()+" "+ev.getUniqueId());
 	}
 	
 	@EventHandler

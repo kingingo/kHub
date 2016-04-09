@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -28,10 +29,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import eu.epicpvp.kcore.Events.ServerStatusUpdateEvent;
-import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
+import eu.epicpvp.kcore.Translation.TranslationManager;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilString;
@@ -108,6 +109,11 @@ public class Listener extends kListener{
 	}
 	
 	@EventHandler
+	public void combust(EntityCombustEvent ev){
+		ev.setCancelled(true);
+	}
+	
+	@EventHandler
 	public void BlockRedstoneEventon(BlockRedstoneEvent ev){
 		ev.setNewCurrent(ev.getOldCurrent());
 	}
@@ -137,7 +143,7 @@ public class Listener extends kListener{
 		ev.getPlayer().getInventory().setLeggings(null);
 		ev.getPlayer().getInventory().setBoots(null);
 		ev.getPlayer().getInventory().clear();
-		if(!kHub.hubType.equalsIgnoreCase("LoginHub"))ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), Language.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
+		if(!kHub.hubType.equalsIgnoreCase("LoginHub"))ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
 	}
 	
 	@EventHandler

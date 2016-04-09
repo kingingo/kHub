@@ -10,14 +10,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-
 import dev.wolveringer.dataserver.gamestats.StatsKey;
 import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
-import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Permission.PermissionType;
+import eu.epicpvp.kcore.Translation.TranslationManager;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.Util.InventorySize;
@@ -55,23 +54,23 @@ public class ChristmasListener extends kListener{
 				if( ((ItemStack)obj).getType() == Material.SNOW_BALL ){
 					if(day==((ItemStack)obj).getAmount()){
 						if(!getManager().getMysql().getString("SELECT `uuid` FROM `CHRISTMAS` WHERE day='"+day+"' AND uuid='"+UtilPlayer.getRealUUID(player)+"'").equalsIgnoreCase("null")){
-							player.sendMessage(Language.getText(player, "PREFIX")+"§cDu hast bereits dein T§rchen ge§ffnet!");						
+							player.sendMessage(TranslationManager.getText(player, "PREFIX")+"§cDu hast bereits dein T§rchen ge§ffnet!");						
 						}else{
 							getManager().getMysql().Update("INSERT INTO CHRISTMAS (uuid,name,day) VALUES ('"+UtilPlayer.getRealUUID(player)+"','"+player.getName().toLowerCase()+"','"+day+"');");
 							int c = ((ItemStack)obj).getAmount()*UtilMath.RandomInt(4, 1)*7;
 							getManager().getMoney().add(player, StatsKey.COINS, c);
 							getManager().getMoney().add(player, StatsKey.GEMS, c/2);
-							player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "XMAS_DOOR",new String[]{c+"",(c/2)+""}));
+							player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "XMAS_DOOR",new String[]{c+"",(c/2)+""}));
 
 							if(!player.hasPermission(PermissionType.PET_SNOWMAN.getPermissionToString()) && UtilMath.r( (int) (250 * Math.pow(0.962540842, day)) ) == 74){
 								getManager().getPermissionManager().addPermission(player, PermissionType.PET_SNOWMAN);
-								player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "XMAS_DOOR1"));
-								UtilServer.getClient().brotcastMessage(null, Language.getText("PREFIX")+Language.getText("XMAS_RARE",player.getName()));
+								player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "XMAS_DOOR1"));
+								UtilServer.getClient().brotcastMessage(null, TranslationManager.getText("PREFIX")+TranslationManager.getText("XMAS_RARE",player.getName()));
 							}
 							c=0;
 						}
 					}else{
-						player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "XMAS_DAY",((ItemStack)obj).getAmount()));
+						player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "XMAS_DAY",((ItemStack)obj).getAmount()));
 					}
 				}
 			}
@@ -93,9 +92,9 @@ public class ChristmasListener extends kListener{
 	    this.inventory.fill(Material.STAINED_GLASS_PANE,15);
 	    getManager().getShop().addPage(this.inventory);
 		if(day==24){
-			Log("Heute ist Weihnachten!");
+			logMessage("Heute ist Weihnachten!");
 		}else{
-			Log("Heute ist der "+day+"te dauert noch bis Weihnachten!");
+			logMessage("Heute ist der "+day+"te dauert noch bis Weihnachten!");
 		}
 	}
 	

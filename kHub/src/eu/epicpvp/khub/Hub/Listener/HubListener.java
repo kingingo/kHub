@@ -26,6 +26,7 @@ import dev.wolveringer.client.Callback;
 import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.gamestats.ServerType;
 import dev.wolveringer.dataserver.gamestats.StatsKey;
+import dev.wolveringer.dataserver.player.LanguageType;
 import dev.wolveringer.dataserver.protocoll.packets.PacketInLobbyServerRequest;
 import dev.wolveringer.dataserver.protocoll.packets.PacketInLobbyServerRequest.GameRequest;
 import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer;
@@ -44,14 +45,14 @@ import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonTeleport;
-import eu.epicpvp.kcore.Language.Language;
-import eu.epicpvp.kcore.Language.LanguageType;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Listener.EntityClick.EntityClickListener;
 import eu.epicpvp.kcore.MySQL.MySQLErr;
 import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Permission.Events.PlayerLoadPermissionEvent;
+import eu.epicpvp.kcore.Translation.Translation;
+import eu.epicpvp.kcore.Translation.TranslationManager;
 import eu.epicpvp.kcore.UpdateAsync.UpdateAsyncType;
 import eu.epicpvp.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import eu.epicpvp.kcore.Util.Color;
@@ -73,6 +74,7 @@ import eu.epicpvp.khub.Hub.HubManager;
 import eu.epicpvp.khub.Hub.Lobby;
 import eu.epicpvp.khub.Hub.InvisbleManager.InvisibleManager;
 import lombok.Getter;
+import twitter4j.api.HelpResources.Language;
 
 public class HubListener extends kListener{
 	private int points = 0;
@@ -89,7 +91,7 @@ public class HubListener extends kListener{
 	private HashMap<Sign,String> sign_server = new HashMap<>();
 	@Getter
 	private InventoryPageBase LobbyInv;
-	private InventoryPageBase language_inv;
+	private InventoryPageBase TranslationManager_inv;
 	private kConfig signconfig;
 	private GameRequest[] requests;
 	
@@ -134,7 +136,7 @@ public class HubListener extends kListener{
 		
 		new AddonDoubleJump(manager.getInstance());
 		new InvisibleManager(manager.getInstance(),this);
-		initializeLanguageInv();
+		initializeTranslationManagerInv();
 		initializeDeliveryPet();
 	}
 
@@ -145,11 +147,11 @@ public class HubListener extends kListener{
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
 						p.closeInventory();
-						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
-						p.sendMessage(Language.getText(p,"PREFIX")+" ");
-						p.sendMessage(Language.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
-						p.sendMessage(Language.getText(p,"PREFIX")+" ");
-						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
+						p.sendMessage(TranslationManager.getText(p,"PREFIX")+"§7-----------------------------------------");
+						p.sendMessage(TranslationManager.getText(p,"PREFIX")+" ");
+						p.sendMessage(TranslationManager.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
+						p.sendMessage(TranslationManager.getText(p,"PREFIX")+" ");
+						p.sendMessage(TranslationManager.getText(p,"PREFIX")+"§7-----------------------------------------");
 					}
 					
 				},-1),
@@ -199,10 +201,10 @@ public class HubListener extends kListener{
 					public void onClick(Player p, ActionType a,Object obj) {
 //						String s1 = getManager().getMysql().getString("SELECT twitter FROM BG_TWITTER WHERE uuid='"+UtilPlayer.getRealUUID(p)+"'");
 //						if(s1.equalsIgnoreCase("null")){
-//							p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_ACC_NOT"));
+//							p.sendMessage(TranslationManager.getText(p,"PREFIX")+TranslationManager.getText(p, "TWITTER_ACC_NOT"));
 //						}else{
 //							getManager().getPacketManager().SendPacket("DATA", new TWIITTER_IS_PLAYER_FOLLOWER(s1, p.getName()));
-//							p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_CHECK"));
+//							p.sendMessage(TranslationManager.getText(p,"PREFIX")+TranslationManager.getText(p, "TWITTER_CHECK"));
 //						}
 					}
 					
@@ -210,23 +212,39 @@ public class HubListener extends kListener{
 		},"§bThe Delivery Jockey!",EntityType.CHICKEN,CommandLocations.getLocation("DeliveryPet"),ServerType.GAME,getManager().getHologram(),getManager().getMysql()));
 	}
 	
-	public void initializeLanguageInv(){
-		this.language_inv=new InventoryPageBase(9, "");
+	public void initializeTranslationManagerInv(){
+		this.TranslationManager_inv=new InventoryPageBase(9, "");
 		
-		for(LanguageType type : LanguageType.values()){
-			this.language_inv.addButton(new ButtonBase(new Click(){
+		for(Translation tr : TranslationManager.getInstance().getTranslations().values()){
+			this.TranslationManager_inv.addButton(new ButtonBase(new Click(){
 
 				@Override
 				public void onClick(Player player, ActionType action, Object obj) {
-					Language.updateLanguage(player, LanguageType.get( ((ItemStack)obj).getItemMeta().getDisplayName().substring(2, ((ItemStack)obj).getItemMeta().getDisplayName().length()) ));
+					TranslationManager.changeLanguage(player, LanguageType.valueOf( ((ItemStack)obj).getItemMeta().getDisplayName().substring(2, ((ItemStack)obj).getItemMeta().getDisplayName().length()) ));
 					player.closeInventory();
-					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "LANGUAGE_CHANGE"));
+					player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "LANGUAGE_CHANGE"));
 				}
 				
-			}, UtilItem.RenameItem(new ItemStack(Material.PAPER), "§a"+type.getDef().toUpperCase())));
+			}, UtilItem.Item(new ItemStack(Material.PAPER), new String[]{"§7Translation Progress: "+color(tr.getPercent())},"§a"+tr.getLanguage().name().toUpperCase())));
 		}
-		this.language_inv.fill(Material.STAINED_GLASS_PANE,(byte)15);
-		((HubManager)getManager()).getShop().addPage(this.language_inv);
+		this.TranslationManager_inv.fill(Material.STAINED_GLASS_PANE,(byte)15);
+		((HubManager)getManager()).getShop().addPage(this.TranslationManager_inv);
+	}
+	
+	public String color(double percent){
+		if(percent<10){
+			return "§4"+percent+"%";
+		}else if(percent<20){
+			return "§c"+percent+"%";
+		}else if(percent<50){
+			return "§6"+percent+"%";
+		}else if(percent<70){
+			return "§e"+percent+"%";
+		}else if(percent<90){
+			return "§2"+percent+"%";
+		}
+		
+		return "§a"+percent+"%";
 	}
 	
 	@EventHandler
@@ -241,14 +259,11 @@ public class HubListener extends kListener{
 					ArrayList<Sign> used  = new ArrayList<>();
 					if(packet != null)
 						for(GameServers game : packet.getResponse()){
-							System.out.println("GameType: "+game.getGame().name()+" "+game.getServers().length);
 							if(getSigns().containsKey(game.getGame())){
 								for(int i = 0; i<game.getServers().length ; i++){
 									ServerKey key= (ServerKey) game.getServers()[i];
-									System.out.println("	Key: "+key.getServerSubId() + " "+key.getServerId());
 									if(getSigns().get(game.getGame()).containsKey(key.getServerSubId())){
 										if(getSigns().get(game.getGame()).get(key.getServerSubId()).size()-1 <= i){
-											System.out.println("Key: "+key.getServerSubId());
 											Sign sign = getSigns().get(game.getGame()).get(key.getServerSubId()).get(i);
 											
 											sign_server.remove(sign);
@@ -468,12 +483,12 @@ public class HubListener extends kListener{
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		getManager().getMoney().loadPlayer(ev.getPlayer());
-		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT",kHub.hubID+" "+kHub.hubType));
+		ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "WHEREIS_TEXT",kHub.hubID+" "+kHub.hubType));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §a"+kHub.hubType+" "+kHub.hubID, "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.COMPASS), Language.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
-		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),Language.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
-		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), Language.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
+		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.COMPASS), TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
+		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
+		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 	}
 	
 	@EventHandler
@@ -501,95 +516,6 @@ public class HubListener extends kListener{
 			ev.setCancelled(true);
 		}
 	}
-	
-//	SERVER_STATUS ss;
-//	Sign sign;
-//	HUB_ONLINE hub;
-//	@EventHandler
-//	public void Packet(PacketReceiveEvent ev){
-//		if(ev.getPacket() instanceof SERVER_STATUS){
-//			ss = (SERVER_STATUS)ev.getPacket();
-//			
-//			try{
-//				if(getSigns().containsKey(ss.getTyp())){
-//					if(getSigns().get(ss.getTyp()).containsKey(ss.getCtyp())){
-////						if(getSigns().get(ss.getTyp()).get(ss.getCtyp()).size() <= ss.getSign()){
-//							sign=getSigns().get(ss.getTyp()).get(ss.getCtyp()).get(ss.getSign());
-//							if(ss.getState()!=GameState.LobbyPhase){
-//								System.err.println("Fehler Server nicht in der LobbyPhase "+ss.getId()+" "+ss.getState().name()+" "+ss.getTyp().name()+" "+ss.getCtyp());
-//								if(!sign.getLine(1).equalsIgnoreCase("Lade Server...")){
-//									sign.setLine(0, "");
-//									sign.setLine(1, "§lLade Server...");
-//									sign.setLine(2, "");
-//									sign.setLine(3, "");
-//									sign.update();
-//								}
-//								return;
-//							}
-//							
-//							sign.setLine(0, Color.BOLD + ss.getTyp().getKürzel() + ss.getId().split("a")[1] + (ss.getCtyp().equalsIgnoreCase("none")?"":" "+ ss.getCtyp().replaceFirst("_", "")));
-//							
-//							if(ss.getOnline()>=ss.getMax_online()){
-//								sign.setLine(1, Color.ORANGE+Color.BOLD+"Premium");
-//							}else{
-//								sign.setLine(1, Color.GREEN+Color.BOLD+"Join");
-//							}
-//
-//							sign.setLine(2, ss.getMap());
-//							
-//							sign.setLine(3, ss.getOnline()+"/"+ss.getMax_online());
-//							sign.update();
-//							getSign_server().put(sign, ss);
-////						}else{
-////							System.err.println("Sign not found "+ss.getId()+" "+ss.getState().name()+" "+ss.getTyp().name()+" "+ss.getCtyp()+" "+ss.getSign());
-////						}
-//					}else{
-//						System.err.println("CTyp nicht gefunden "+ss.getId()+" "+ss.getState().name()+" "+ss.getTyp().name()+" "+ss.getCtyp());
-//					}
-//				}else if(gungame_signs.containsKey(ss.getTyp().getKürzel()+ss.getId())){
-//					
-//					sign=gungame_signs.get(ss.getTyp().getKürzel()+ss.getId());
-//					sign.setLine(0, "§l" + ss.getTyp().getKürzel()+" "+ ss.getId());
-//					sign.setLine(1, ss.getMap());
-//					if(ss.getState()==GameState.Restart){
-//						sign.setLine(2, "§4§lOFFLINE");
-//					}else{
-//						if(ss.getOnline()>=ss.getMax_online()){
-//							sign.setLine(2, Color.RED+"Full");
-//						}else{
-//							sign.setLine(2, Color.GREEN+"Join");
-//						}	
-//					}
-//					sign.setLine(3, ss.getOnline()+"/"+ss.getMax_online());
-//					sign.update();
-//				}
-//				
-//			}catch(Exception e){
-//				e.printStackTrace();
-//				if(getSigns().containsKey(ss.getTyp())){
-//					System.err.println("Find in Array: "+ss.getTyp());
-//					System.err.println("Array Amount "+getSigns().get(ss.getTyp()).size());
-////					sign=getSigns().get(ss.getTyp()).get(ss.getCtyp()).get(ss.getSign());
-////					System.err.println("SIGN: "+sign.getLocation().toString());
-//				}
-//				System.err.println("Sign: "+ss.getSign());
-//			}
-//		}else if(ev.getPacket() instanceof TWITTER_PLAYER_FOLLOW){
-//			TWITTER_PLAYER_FOLLOW tw = (TWITTER_PLAYER_FOLLOW)ev.getPacket();
-//			
-//			if(UtilPlayer.isOnline(tw.getPlayer())){
-//				Player p = Bukkit.getPlayer(tw.getPlayer());
-//				if(!tw.isFollow()){
-//					getManager().getMysql().Update("DELETE FROM BG_TWITTER WHERE uuid='" + UtilPlayer.getRealUUID(p) + "'");
-//					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_FOLLOW_N"));
-//					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_REMOVE"));
-//				}else{
-//					UtilServer.getDeliveryPet().deliveryBlock(p, "§cTwitter Reward");
-//					getManager().getCoins().addCoins(p, true, 300);
-//				}
-//			}
-//		}
-//	}
 	
 	@EventHandler
 	public void breakB(BlockBreakEvent ev){
@@ -673,7 +599,7 @@ public class HubListener extends kListener{
 				UtilBG.sendToServer(ev.getPlayer(), "v", getManager().getInstance());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.BOOK_AND_QUILL){
 				ev.setCancelled(true);
-				ev.getPlayer().openInventory(language_inv);
+				ev.getPlayer().openInventory(TranslationManager_inv);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.FIREWORK){
 				UtilBG.sendToServer(ev.getPlayer(), "event", getManager().getInstance());
 				ev.setCancelled(true);

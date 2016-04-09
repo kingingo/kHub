@@ -11,10 +11,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Permission.Events.PlayerLoadPermissionEvent;
+import eu.epicpvp.kcore.Translation.TranslationManager;
 import eu.epicpvp.kcore.Util.TimeSpan;
 import eu.epicpvp.kcore.Util.UtilEvent;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
@@ -66,13 +66,13 @@ public class InvisibleManager extends kListener{
 			if(ev.getPlayer().getItemInHand().getTypeId()==351){
 				if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 10){
 					ev.getPlayer().getItemInHand().setDurability((byte)8);
-					ev.getPlayer().setItemInHand(UtilItem.RenameItem(ev.getPlayer().getItemInHand(), Language.getText(ev.getPlayer(), "HUB_ITEM_GRAY.DYE_PLAYERS_OFF")));
+					ev.getPlayer().setItemInHand(UtilItem.RenameItem(ev.getPlayer().getItemInHand(), TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_GRAY.DYE_PLAYERS_OFF")));
 					ev.getPlayer().updateInventory();
 					invisible(ev.getPlayer());
 				}else if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 8){
 					if(visible(ev.getPlayer())){
 						ev.getPlayer().getItemInHand().setDurability((byte)10);
-						ev.getPlayer().setItemInHand(UtilItem.RenameItem(ev.getPlayer().getItemInHand(), Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
+						ev.getPlayer().setItemInHand(UtilItem.RenameItem(ev.getPlayer().getItemInHand(), TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
 						ev.getPlayer().updateInventory();
 					}
 				}
@@ -92,6 +92,6 @@ public class InvisibleManager extends kListener{
 	
 	@EventHandler(priority=EventPriority.LOW)
 	public void Join(PlayerJoinEvent ev){
-		ev.getPlayer().getInventory().setItem(7, UtilItem.RenameItem(new ItemStack(351,1,(byte)10),Language.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
+		ev.getPlayer().getInventory().setItem(7, UtilItem.RenameItem(new ItemStack(351,1,(byte)10),TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
 	}
 }

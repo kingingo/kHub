@@ -16,7 +16,7 @@ import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Permission.PermissionType;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.Util.InventorySize;
@@ -46,31 +46,31 @@ public class ChristmasListener extends kListener{
 	    this.inventory=new InventoryPageBase(InventorySize._27, "§aAdventskalender:");
 	    this.item=UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL), "§aAdventskalender");
 
-		getManager().getMysql().Update("CREATE TABLE IF NOT EXISTS CHRISTMAS(uuid varchar(100), name varchar(30),day int)");
+		getManager().getMysql().Update("CREATE TABLE IF NOT EXISTS CHRISTMAS(playerId int,day int)");
 		click = new Click() {
 			
 			@Override
 			public void onClick(Player player, ActionType action, Object obj) {
 				if( ((ItemStack)obj).getType() == Material.SNOW_BALL ){
 					if(day==((ItemStack)obj).getAmount()){
-						if(!getManager().getMysql().getString("SELECT `uuid` FROM `CHRISTMAS` WHERE day='"+day+"' AND uuid='"+UtilPlayer.getRealUUID(player)+"'").equalsIgnoreCase("null")){
-							player.sendMessage(TranslationManager.getText(player, "PREFIX")+"§cDu hast bereits dein T§rchen ge§ffnet!");						
+						if(!getManager().getMysql().getString("SELECT `playerId` FROM `CHRISTMAS` WHERE day='"+day+"' AND playerId='"+UtilPlayer.getPlayerId(player)+"'").equalsIgnoreCase("null")){
+							player.sendMessage(TranslationHandler.getText(player, "PREFIX")+"§cDu hast bereits dein Türchen geöffnet!");						
 						}else{
-							getManager().getMysql().Update("INSERT INTO CHRISTMAS (uuid,name,day) VALUES ('"+UtilPlayer.getRealUUID(player)+"','"+player.getName().toLowerCase()+"','"+day+"');");
+							getManager().getMysql().Update("INSERT INTO CHRISTMAS (playerId,day) VALUES ('"+UtilPlayer.getPlayerId(player)+"','"+day+"');");
 							int c = ((ItemStack)obj).getAmount()*UtilMath.RandomInt(4, 1)*7;
 							getManager().getMoney().add(player, StatsKey.COINS, c);
 							getManager().getMoney().add(player, StatsKey.GEMS, c/2);
-							player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "XMAS_DOOR",new String[]{c+"",(c/2)+""}));
+							player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "XMAS_DOOR",new String[]{c+"",(c/2)+""}));
 
 							if(!player.hasPermission(PermissionType.PET_SNOWMAN.getPermissionToString()) && UtilMath.r( (int) (250 * Math.pow(0.962540842, day)) ) == 74){
 								getManager().getPermissionManager().addPermission(player, PermissionType.PET_SNOWMAN);
-								player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "XMAS_DOOR1"));
-								UtilServer.getClient().brotcastMessage(null, TranslationManager.getText("PREFIX")+TranslationManager.getText("XMAS_RARE",player.getName()));
+								player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "XMAS_DOOR1"));
+								UtilServer.getClient().brotcastMessage(null, TranslationHandler.getText("PREFIX")+TranslationHandler.getText("XMAS_RARE",player.getName()));
 							}
 							c=0;
 						}
 					}else{
-						player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "XMAS_DAY",((ItemStack)obj).getAmount()));
+						player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "XMAS_DAY",((ItemStack)obj).getAmount()));
 					}
 				}
 			}
@@ -83,9 +83,9 @@ public class ChristmasListener extends kListener{
 	    		if(inventory.getItem(place)==null||inventory.getItem(place).getType()==Material.AIR)break;
 	    	}
 	    	if(i==day){
-	    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§aT§rchen "+i)));
+	    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§aTürchen "+i)));
 	    	}else{
-	    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§cT§rchen "+i)));
+	    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§cTürchen "+i)));
 	    	}
 	    }
 	    
@@ -121,9 +121,9 @@ public class ChristmasListener extends kListener{
 		    		if(inventory.getItem(place)==null||inventory.getItem(place).getType()==Material.AIR)break;
 		    	}
 		    	if(i==day){
-		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§aT§rchen "+i)));
+		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§aTürchen "+i)));
 		    	}else{
-		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§cT§rchen "+i)));
+		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§cTürchen "+i)));
 		    	}
 		    }
 		    

@@ -32,7 +32,7 @@ import eu.epicpvp.kcore.Events.ServerStatusUpdateEvent;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilString;
@@ -143,7 +143,7 @@ public class Listener extends kListener{
 		ev.getPlayer().getInventory().setLeggings(null);
 		ev.getPlayer().getInventory().setBoots(null);
 		ev.getPlayer().getInventory().clear();
-		if(!kHub.hubType.equalsIgnoreCase("LoginHub"))ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
+		if(!kHub.hubType.equalsIgnoreCase("LoginHub"))ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
 	}
 	
 	@EventHandler

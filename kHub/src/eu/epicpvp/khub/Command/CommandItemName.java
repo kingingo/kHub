@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import eu.epicpvp.kcore.Command.CommandHandler.Sender;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Util.UtilItem;
 
 public class CommandItemName implements CommandExecutor{
@@ -17,13 +17,13 @@ public class CommandItemName implements CommandExecutor{
 		Player p = (Player)cs;
 		
 			if(args.length==0){
-				p.sendMessage(TranslationManager.getText(p, "PREFIX")+"§c/itemname [Name]");
+				p.sendMessage(TranslationHandler.getText(p, "PREFIX")+"§c/itemname [Name]");
 			}else{
 				if(p.getItemInHand()!=null&&p.getItemInHand().getType()!=Material.AIR){
 					UtilItem.RenameItem(p.getItemInHand(), args[0].replaceAll("&", "§"));
-					p.sendMessage(TranslationManager.getText(p, "PREFIX")+"§aDas Item wurde umbenannt zu §e"+args[0].replaceAll("&", "§"));
+					p.sendMessage(TranslationHandler.getText(p, "PREFIX")+"§aDas Item wurde umbenannt zu §e"+args[0].replaceAll("&", "§"));
 				}else{
-					p.sendMessage(TranslationManager.getText(p, "PREFIX")+"§cDu musst ein Item in der Hand halten.");
+					p.sendMessage(TranslationHandler.getText(p, "PREFIX")+"§cDu musst ein Item in der Hand halten.");
 				}
 			}
 		

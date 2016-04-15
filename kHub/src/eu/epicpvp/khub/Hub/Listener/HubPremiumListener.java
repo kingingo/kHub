@@ -4,7 +4,7 @@ import dev.wolveringer.client.Callback;
 import dev.wolveringer.client.LoadedPlayer;
 import dev.wolveringer.dataserver.protocoll.packets.PacketInStatsEdit.Action;
 import eu.epicpvp.kcore.Listener.VoteListener.VoteListener;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.khub.Hub.HubManager;
 
@@ -20,7 +20,7 @@ public class HubPremiumListener extends HubListener{
 				
 				loadedplayer.changeGems(Action.ADD, 5);
 				loadedplayer.changeCoins(Action.ADD, 100);
-				UtilServer.getClient().brotcastMessage(null, TranslationManager.getText("PREFIX")+ "§b" + playerName + " hat gevotet und §a5 Gems + 100 Coins §berhalten§l! §7>>§5§l /Vote");
+				UtilServer.getClient().brotcastMessage(null, TranslationHandler.getText("PREFIX")+ "§b" + playerName + " hat gevotet und §a5 Gems + 100 Coins §berhalten§l! §7>>§5§l /Vote");
 			}
 		});
 	}	

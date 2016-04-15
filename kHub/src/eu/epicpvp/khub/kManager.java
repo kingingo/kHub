@@ -21,7 +21,6 @@ public class kManager {
 	private MySQL mysql;
 	@Getter
 	private CommandHandler cmdHandler;
-	@Getter
 	private StatsManager money;
 	@Getter
 	private GroupTyp type;

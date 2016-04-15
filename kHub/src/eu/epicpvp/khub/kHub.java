@@ -17,7 +17,6 @@ import eu.epicpvp.kcore.Command.Admin.CommandHubFly;
 import eu.epicpvp.kcore.Command.Admin.CommandLocations;
 import eu.epicpvp.kcore.Command.Admin.CommandToggle;
 import eu.epicpvp.kcore.Command.Admin.CommandTrackingRange;
-import eu.epicpvp.kcore.Command.Admin.CommandUnBan;
 import eu.epicpvp.kcore.Command.Admin.CommandgBroadcast;
 import eu.epicpvp.kcore.Command.Commands.CommandNacht;
 import eu.epicpvp.kcore.Command.Commands.CommandPing;
@@ -26,7 +25,7 @@ import eu.epicpvp.kcore.Command.Commands.CommandTag;
 import eu.epicpvp.kcore.Listener.AntiCrashListener.AntiCrashListener;
 import eu.epicpvp.kcore.Listener.BungeeCordFirewall.BungeeCordFirewallListener;
 import eu.epicpvp.kcore.Listener.Command.ListenerCMD;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Util.UtilEnt;
 import eu.epicpvp.kcore.Util.UtilException;
 import eu.epicpvp.kcore.Util.UtilServer;
@@ -41,8 +40,8 @@ public class kHub extends JavaPlugin{
 	public void onEnable(){
 		try{
 			long time = System.currentTimeMillis();
-			TranslationManager.init(this);
 			loadConfig();
+			
 			removeEntity(Bukkit.getWorld("world"));
 			this.hubType=getConfig().getString("Config.HubType");
 			this.hubID=getConfig().getInt("Config.Lobby");
@@ -51,7 +50,6 @@ public class kHub extends JavaPlugin{
 			UtilServer.createUpdater(this);
 			UtilServer.createUpdaterAsync(this);
 			UtilServer.createClient(this,ClientType.LOBBY,getConfig().getString("Config.Client.Host"),getConfig().getInt("Config.Client.Port"),this.hubType+this.hubID);
-			
 			UtilServer.createCommandHandler(this);
 			UtilServer.getCommandHandler().register(CommandHubFly.class, new CommandHubFly(this));
 			UtilServer.getCommandHandler().register(CommandFlyspeed.class, new CommandFlyspeed());
@@ -65,13 +63,12 @@ public class kHub extends JavaPlugin{
 			UtilServer.getCommandHandler().register(CommandTrackingRange.class, new CommandTrackingRange());
 			UtilServer.getCommandHandler().register(CommandLocations.class, new CommandLocations(this));
 			UtilServer.getCommandHandler().register(CommandDebug.class, new CommandDebug());
-			UtilServer.getCommandHandler().register(CommandUnBan.class, new CommandUnBan(UtilServer.getMysql()));
 			
 			Location loc = CommandLocations.getLocation("spawn");
 			if(loc.getBlockX()!=0&&loc.getBlockZ()!=0)Bukkit.getWorld("world").setSpawnLocation(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 			
 			new ListenerCMD(this);
-			new BungeeCordFirewallListener(UtilServer.getMysql(),UtilServer.getCommandHandler(), this.hubType+this.hubID);
+			new BungeeCordFirewallListener(this,UtilServer.getCommandHandler());
 			this.manager=new HubManager(this, UtilServer.getCommandHandler(), UtilServer.getMysql());
 			
 

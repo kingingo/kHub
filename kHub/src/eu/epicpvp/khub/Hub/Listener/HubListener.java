@@ -42,17 +42,17 @@ import eu.epicpvp.kcore.Disguise.disguises.livings.DisguisePlayer;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagMessage;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagType;
 import eu.epicpvp.kcore.Inventory.InventoryPageBase;
+import eu.epicpvp.kcore.Inventory.Inventory.InventoryCopy;
 import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
+import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonCopy;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonTeleport;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Listener.EntityClick.EntityClickListener;
 import eu.epicpvp.kcore.MySQL.MySQLErr;
 import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
 import eu.epicpvp.kcore.Permission.PermissionType;
-import eu.epicpvp.kcore.Permission.Events.PlayerLoadPermissionEvent;
-import eu.epicpvp.kcore.Translation.Translation;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.UpdateAsync.UpdateAsyncType;
 import eu.epicpvp.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import eu.epicpvp.kcore.Util.Color;
@@ -66,6 +66,7 @@ import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
 import eu.epicpvp.kcore.Util.UtilFile;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilLocation;
+import eu.epicpvp.kcore.Util.UtilMath;
 import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.kcore.kConfig.kConfig;
 import eu.epicpvp.khub.kHub;
@@ -74,7 +75,6 @@ import eu.epicpvp.khub.Hub.HubManager;
 import eu.epicpvp.khub.Hub.Lobby;
 import eu.epicpvp.khub.Hub.InvisbleManager.InvisibleManager;
 import lombok.Getter;
-import twitter4j.api.HelpResources.Language;
 
 public class HubListener extends kListener{
 	private int points = 0;
@@ -91,7 +91,7 @@ public class HubListener extends kListener{
 	private HashMap<Sign,String> sign_server = new HashMap<>();
 	@Getter
 	private InventoryPageBase LobbyInv;
-	private InventoryPageBase TranslationManager_inv;
+	private InventoryCopy TranslationManager_inv;
 	private kConfig signconfig;
 	private GameRequest[] requests;
 	
@@ -147,11 +147,11 @@ public class HubListener extends kListener{
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
 						p.closeInventory();
-						p.sendMessage(TranslationManager.getText(p,"PREFIX")+"§7-----------------------------------------");
-						p.sendMessage(TranslationManager.getText(p,"PREFIX")+" ");
-						p.sendMessage(TranslationManager.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
-						p.sendMessage(TranslationManager.getText(p,"PREFIX")+" ");
-						p.sendMessage(TranslationManager.getText(p,"PREFIX")+"§7-----------------------------------------");
+						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+"§7-----------------------------------------");
+						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+" ");
+						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
+						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+" ");
+						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+"§7-----------------------------------------");
 					}
 					
 				},-1),
@@ -213,21 +213,38 @@ public class HubListener extends kListener{
 	}
 	
 	public void initializeTranslationManagerInv(){
-		this.TranslationManager_inv=new InventoryPageBase(9, "");
+		this.TranslationManager_inv=new InventoryCopy(9, "");
+		this.TranslationManager_inv.setCreate_new_inv(true);
+		int i = 0; 
 		
-		for(Translation tr : TranslationManager.getInstance().getTranslations().values()){
-			this.TranslationManager_inv.addButton(new ButtonBase(new Click(){
+		for(LanguageType type : LanguageType.values()){
+			double percent = (type ==LanguageType.ENGLISH ? 100D : TranslationHandler.getInstance().getTranslationFile(type).computeRelativeTranslatedTexts(LanguageType.ENGLISH));
+			if(percent > 10 ){
+				int s = i;
+				this.TranslationManager_inv.addButton(i, new ButtonCopy(new Click(){
 
-				@Override
-				public void onClick(Player player, ActionType action, Object obj) {
-					TranslationManager.changeLanguage(player, LanguageType.valueOf( ((ItemStack)obj).getItemMeta().getDisplayName().substring(2, ((ItemStack)obj).getItemMeta().getDisplayName().length()) ));
-					player.closeInventory();
-					player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "LANGUAGE_CHANGE"));
-				}
-				
-			}, UtilItem.Item(new ItemStack(Material.PAPER), new String[]{"§7Translation Progress: "+color(tr.getPercent())},"§a"+tr.getLanguage().name().toUpperCase())));
+					@Override
+					public void onClick(Player player, ActionType t, Object object) {
+						if( TranslationHandler.getLanguage(player) == type ){
+							((InventoryPageBase)object).setItem(s, UtilItem.addEnchantmentGlow(((InventoryPageBase)object).getItem(s)));
+						}
+					}
+					
+				},new Click(){
+
+					@Override
+					public void onClick(Player player, ActionType action, Object obj) {
+						TranslationHandler.changeLanguage(player, LanguageType.valueOf( ((ItemStack)obj).getItemMeta().getDisplayName().substring(2, ((ItemStack)obj).getItemMeta().getDisplayName().length()) ));
+						player.closeInventory();
+						player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "LANGUAGE_CHANGE"));
+					}
+					
+				}, UtilItem.Item(new ItemStack(Material.PAPER), new String[]{"§7Translation Progress: "+color(UtilMath.trim(2, percent))},"§a"+type.name().toUpperCase())) );
+				i++;
+			}
 		}
 		this.TranslationManager_inv.fill(Material.STAINED_GLASS_PANE,(byte)15);
+		
 		((HubManager)getManager()).getShop().addPage(this.TranslationManager_inv);
 	}
 	
@@ -263,13 +280,12 @@ public class HubListener extends kListener{
 								for(int i = 0; i<game.getServers().length ; i++){
 									ServerKey key= (ServerKey) game.getServers()[i];
 									if(getSigns().get(game.getGame()).containsKey(key.getServerSubId())){
-										if(getSigns().get(game.getGame()).get(key.getServerSubId()).size()-1 <= i){
+										if(getSigns().get(game.getGame()).get(key.getServerSubId()).size() > i){
 											Sign sign = getSigns().get(game.getGame()).get(key.getServerSubId()).get(i);
-											
 											sign_server.remove(sign);
 											sign_server.put(sign, key.getServerId());
 											
-											sign.setLine(0, Color.BOLD + game.getGame().getKuerzel() + key.getServerId().split("a")[1] + (key.getServerSubId().equalsIgnoreCase("none")?"":" "+ key.getServerSubId().replaceFirst("_", "")));
+											sign.setLine(0, Color.BOLD + game.getGame().getShortName() + key.getServerId().split("a")[1] + (key.getServerSubId().equalsIgnoreCase("none")?"":" "+ key.getServerSubId().replaceFirst("_", "")));
 											
 											if(key.getPlayer()>=key.getMaxPlayer()){
 												sign.setLine(1, Color.ORANGE+Color.BOLD+"Premium");
@@ -483,12 +499,12 @@ public class HubListener extends kListener{
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		getManager().getMoney().loadPlayer(ev.getPlayer());
-		ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "WHEREIS_TEXT",kHub.hubID+" "+kHub.hubType));
+		ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX")+TranslationHandler.getText(ev.getPlayer(), "WHEREIS_TEXT",kHub.hubID+" "+kHub.hubType));
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §a"+kHub.hubType+" "+kHub.hubID, "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.COMPASS), TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
-		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
-		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), TranslationManager.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
+		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.COMPASS), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
+		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
+		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 	}
 	
 	@EventHandler
@@ -558,7 +574,7 @@ public class HubListener extends kListener{
 					return;
 				}
 				
-				signconfig.setLocation("Signs."+(typ.getKuerzel()+ev.getLine(2)), ev.getBlock().getLocation());
+				signconfig.setLocation("Signs."+(typ.getShortName()+ev.getLine(2)), ev.getBlock().getLocation());
 				signconfig.save();
 				reloadSignConfig();
 			}
@@ -599,7 +615,7 @@ public class HubListener extends kListener{
 				UtilBG.sendToServer(ev.getPlayer(), "v", getManager().getInstance());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.BOOK_AND_QUILL){
 				ev.setCancelled(true);
-				ev.getPlayer().openInventory(TranslationManager_inv);
+				TranslationManager_inv.open(ev.getPlayer(), ((HubManager)getManager()).getShop());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.FIREWORK){
 				UtilBG.sendToServer(ev.getPlayer(), "event", getManager().getInstance());
 				ev.setCancelled(true);
@@ -607,12 +623,12 @@ public class HubListener extends kListener{
 		}
 	}
 
-	@EventHandler
-	public void loadper(PlayerLoadPermissionEvent ev){
-		if(ev.getPlayer().hasPermission(PermissionType.kFLY.getPermissionToString())){
-			ev.getPlayer().setAllowFlight(true);
-			ev.getPlayer().setFlying(true);
-			ev.getPlayer().setLevel(3);
-		}
-	}
+//	@EventHandler
+//	public void loadper(PlayerLoadPermissionEvent ev){
+//		if(ev.getPlayer().hasPermission(PermissionType.kFLY.getPermissionToString())){
+//			ev.getPlayer().setAllowFlight(true);
+//			ev.getPlayer().setFlying(true);
+//			ev.getPlayer().setLevel(3);
+//		}
+//	}
 }

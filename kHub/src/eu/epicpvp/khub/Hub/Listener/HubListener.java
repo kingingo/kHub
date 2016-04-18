@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.CreatureType;
@@ -15,12 +16,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
 import dev.wolveringer.dataserver.gamestats.ServerType;
 import dev.wolveringer.dataserver.gamestats.StatsKey;
 import dev.wolveringer.dataserver.player.LanguageType;
-import dev.wolveringer.sign.SignManager;
 import eu.epicpvp.kcore.Addons.AddonDoubleJump;
 import eu.epicpvp.kcore.Command.Admin.CommandLocations;
 import eu.epicpvp.kcore.DeliveryPet.DeliveryObject;
@@ -53,12 +54,14 @@ import eu.epicpvp.kcore.Util.UtilEvent;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilMath;
+import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.khub.kHub;
 import eu.epicpvp.khub.kManager;
 import eu.epicpvp.khub.Hub.HubManager;
 import eu.epicpvp.khub.Hub.Lobby;
 import eu.epicpvp.khub.Hub.InvisbleManager.InvisibleManager;
+import eu.epicpvp.sign.SignManager;
 import lombok.Getter;
 
 public class HubListener extends kListener{
@@ -74,6 +77,8 @@ public class HubListener extends kListener{
 	private InventoryPageBase LobbyInv;
 	private InventoryCopy TranslationManager_inv;
 	private SignManager signs;
+	private Location spawn;
+	
 	public HubListener(final HubManager manager) {
 		this(manager,true);
 	}
@@ -82,6 +87,7 @@ public class HubListener extends kListener{
 		super(manager.getInstance(), kHub.hubType+"Listener");
 		this.manager = manager;
 		this.signs = new SignManager(this);
+		this.spawn=Bukkit.getWorld("world").getSpawnLocation();
 		
 		Bukkit.getWorld("world").setAutoSave(false);
 		if(initialize)initialize();
@@ -109,7 +115,7 @@ public class HubListener extends kListener{
 	
 	public void initialize(){
 		manager.getMysql().Update("CREATE TABLE IF NOT EXISTS BG_Lobby(ip varchar(30),name varchar(30),bg varchar(30), count int,place int)");
-		manager.getMysql().Update("CREATE TABLE IF NOT EXISTS "+kHub.hubType+"_signs(typ varchar(30),ctyp varchar(30),world varchar(30), x double, z double, y double)");
+		manager.getMysql().Update("CREATE TABLE IF NOT EXISTS "+kHub.hubType.toLowerCase()+"_signs(typ varchar(30),ctyp varchar(30),world varchar(30), x double, z double, y double)");
 	
 		loadLobbys();
 		
@@ -281,9 +287,7 @@ public class HubListener extends kListener{
 		this.GameInv.fill(Material.STAINED_GLASS_PANE, 7);
 		
 		((HubManager)getManager()).getShop().addPage(this.GameInv);
-	}	
-	
-	
+	}
 	
 	public void loadLobbys(){
 		this.LobbyInv=new InventoryPageBase(InventorySize._18, "§8Hub Selector");
@@ -341,7 +345,7 @@ public class HubListener extends kListener{
 	public void Join(PlayerJoinEvent ev){
 		getManager().getMoney().loadPlayer(ev.getPlayer());
 		ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX")+TranslationHandler.getText(ev.getPlayer(), "WHEREIS_TEXT",kHub.hubID+" "+kHub.hubType));
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §a"+kHub.hubType+" "+kHub.hubID, "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
+		UtilPlayer.setTab(ev.getPlayer(), kHub.hubType+" "+kHub.hubID);
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.COMPASS), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
 		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
@@ -381,13 +385,13 @@ public class HubListener extends kListener{
 			}
 		}
 	}
-
-//	@EventHandler
-//	public void loadper(PlayerLoadPermissionEvent ev){
-//		if(ev.getPlayer().hasPermission(PermissionType.kFLY.getPermissionToString())){
-//			ev.getPlayer().setAllowFlight(true);
-//			ev.getPlayer().setFlying(true);
-//			ev.getPlayer().setLevel(3);
-//		}
-//	}
+	
+	@EventHandler
+	public void move(PlayerMoveEvent ev){
+		if(!ev.getPlayer().isOnGround()){
+			if(ev.getPlayer().getLocation().getY() < (spawn.getY()-25)){
+				ev.getPlayer().teleport(spawn);
+			}
+		}
+	}
 }

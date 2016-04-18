@@ -1,4 +1,4 @@
-package dev.wolveringer.sign;
+package eu.epicpvp.sign;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

@@ -1,4 +1,4 @@
-package dev.wolveringer.sign;
+package eu.epicpvp.sign;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -155,7 +155,7 @@ public class SignManager implements Listener{
 					return;
 				}
 				signs.get(new ServerIdentifier(GameType.get(typ), ctyp)).add(new ServerSign(ev.getBlock().getLocation(), this));
-				owner.getManager().getMysql().Update("INSERT INTO "+kHub.hubType+"_signs (typ,cTyp,world, x, z, y) VALUES ('"+ typ+ "', '"+ctyp+"','"+ p.getLocation().getWorld().getName()+ "','"+ ev.getBlock().getX()+ "','"+ ev.getBlock().getZ()+ "','" + ev.getBlock().getY() + "')");
+				owner.getManager().getMysql().Update("INSERT INTO "+kHub.hubType.toLowerCase()+"_signs (typ,cTyp,world, x, z, y) VALUES ('"+ typ+ "', '"+ctyp+"','"+ p.getLocation().getWorld().getName()+ "','"+ ev.getBlock().getX()+ "','"+ ev.getBlock().getZ()+ "','" + ev.getBlock().getY() + "')");
 			}
 		}
 	}
@@ -163,6 +163,6 @@ public class SignManager implements Listener{
 	protected void removeSign(ServerSign sign){
 		for(ServerIdentifier i : signs.keySet())
 			signs.get(i).remove(sign);
-		owner.getManager().getMysql().Update("DELETE FROM `"+kHub.hubType+"_signs` WHERE world='"+sign.getSign().getLocation().getWorld()+"' AND x='"+sign.getSign().getLocation().getBlockX()+"' AND y='"+sign.getSign().getLocation().getBlockY()+"' AND z='"+sign.getSign().getLocation().getBlockZ()+"'");
+		owner.getManager().getMysql().Update("DELETE FROM `"+kHub.hubType.toLowerCase()+"_signs` WHERE world='"+sign.getSign().getLocation().getWorld()+"' AND x='"+sign.getSign().getLocation().getBlockX()+"' AND y='"+sign.getSign().getLocation().getBlockY()+"' AND z='"+sign.getSign().getLocation().getBlockZ()+"'");
 	}
 }

@@ -644,7 +644,7 @@ public class HubVersusListener extends kListener{
 	public void load(PlayerJoinEvent ev){
 		getManager().getMoney().loadPlayer(ev.getPlayer());
 		ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX")+TranslationHandler.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §e"+kHub.hubType+" "+kHub.hubID, "§eShop.EpicPvP.de");
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §e"+kHub.hubType+" "+kHub.hubID, "§eShop.ClashMC.eu");
 		statsManager.loadPlayer(ev.getPlayer());
 		setInv(ev.getPlayer());
 	}

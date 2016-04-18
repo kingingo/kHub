@@ -1,4 +1,4 @@
-package dev.wolveringer.sign;
+package eu.epicpvp.sign;
 
 import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer.ServerKey;

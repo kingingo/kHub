@@ -104,7 +104,7 @@ public class HubManager extends kManager{
 				break;
 		}
 		
-		getCmdHandler().register(CommandURang.class, new CommandURang(getPermissionManager(),getMysql()));
+		//getCmdHandler().register(CommandURang.class, new CommandURang(getPermissionManager(),getMysql()));
 		getCmdHandler().register(CommandBroadcast.class, new CommandBroadcast());
 	}
 }

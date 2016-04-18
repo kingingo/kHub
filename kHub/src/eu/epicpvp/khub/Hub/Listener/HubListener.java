@@ -1,12 +1,9 @@
 package eu.epicpvp.khub.Hub.Listener;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.CreatureType;
@@ -15,23 +12,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-import dev.wolveringer.client.Callback;
-import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.gamestats.ServerType;
 import dev.wolveringer.dataserver.gamestats.StatsKey;
 import dev.wolveringer.dataserver.player.LanguageType;
-import dev.wolveringer.dataserver.protocoll.packets.PacketInLobbyServerRequest;
-import dev.wolveringer.dataserver.protocoll.packets.PacketInLobbyServerRequest.GameRequest;
-import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer;
-import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer.GameServers;
-import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer.ServerKey;
+import dev.wolveringer.sign.SignManager;
 import eu.epicpvp.kcore.Addons.AddonDoubleJump;
 import eu.epicpvp.kcore.Command.Admin.CommandLocations;
 import eu.epicpvp.kcore.DeliveryPet.DeliveryObject;
@@ -55,7 +44,6 @@ import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.UpdateAsync.UpdateAsyncType;
 import eu.epicpvp.kcore.UpdateAsync.Event.UpdateAsyncEvent;
-import eu.epicpvp.kcore.Util.Color;
 import eu.epicpvp.kcore.Util.InventorySize;
 import eu.epicpvp.kcore.Util.TabTitle;
 import eu.epicpvp.kcore.Util.TimeSpan;
@@ -63,12 +51,9 @@ import eu.epicpvp.kcore.Util.UtilBG;
 import eu.epicpvp.kcore.Util.UtilEnt;
 import eu.epicpvp.kcore.Util.UtilEvent;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
-import eu.epicpvp.kcore.Util.UtilFile;
 import eu.epicpvp.kcore.Util.UtilItem;
-import eu.epicpvp.kcore.Util.UtilLocation;
 import eu.epicpvp.kcore.Util.UtilMath;
 import eu.epicpvp.kcore.Util.UtilServer;
-import eu.epicpvp.kcore.kConfig.kConfig;
 import eu.epicpvp.khub.kHub;
 import eu.epicpvp.khub.kManager;
 import eu.epicpvp.khub.Hub.HubManager;
@@ -77,8 +62,6 @@ import eu.epicpvp.khub.Hub.InvisbleManager.InvisibleManager;
 import lombok.Getter;
 
 public class HubListener extends kListener{
-	private int points = 0;
-	private int maxPoints = 3;
 	@Getter
 	private kManager manager;
 	@Getter
@@ -86,23 +69,20 @@ public class HubListener extends kListener{
 	@Getter
 	private HashMap<String,Sign> gungame_signs = new HashMap<>();
 	@Getter
-	private HashMap<GameType,HashMap<String,ArrayList<Sign>>> signs = new HashMap<>();
-	@Getter
 	private HashMap<Sign,String> sign_server = new HashMap<>();
 	@Getter
 	private InventoryPageBase LobbyInv;
 	private InventoryCopy TranslationManager_inv;
-	private kConfig signconfig;
-	private GameRequest[] requests;
-	
+	private SignManager signs;
 	public HubListener(final HubManager manager) {
 		this(manager,true);
 	}
 	
 	public HubListener(final HubManager manager,boolean initialize) {
 		super(manager.getInstance(), kHub.hubType+"Listener");
-		this.manager=manager;
-		this.signconfig=new kConfig(UtilFile.getYMLFile(manager.getInstance(), "signs"));
+		this.manager = manager;
+		this.signs = new SignManager(this);
+		
 		Bukkit.getWorld("world").setAutoSave(false);
 		if(initialize)initialize();
 		
@@ -131,13 +111,13 @@ public class HubListener extends kListener{
 		manager.getMysql().Update("CREATE TABLE IF NOT EXISTS BG_Lobby(ip varchar(30),name varchar(30),bg varchar(30), count int,place int)");
 		manager.getMysql().Update("CREATE TABLE IF NOT EXISTS "+kHub.hubType+"_signs(typ varchar(30),ctyp varchar(30),world varchar(30), x double, z double, y double)");
 	
-		loadSigns();
 		loadLobbys();
 		
 		new AddonDoubleJump(manager.getInstance());
 		new InvisibleManager(manager.getInstance(),this);
 		initializeTranslationManagerInv();
 		initializeDeliveryPet();
+		signs.loadSigns();
 	}
 
 	public void initializeDeliveryPet(){
@@ -265,84 +245,6 @@ public class HubListener extends kListener{
 	}
 	
 	@EventHandler
-	public void request(UpdateAsyncEvent ev){
-		if(ev.getType() == UpdateAsyncType.SEC){
-			points = (points+1)%maxPoints;
-		}
-		if(ev.getType() == UpdateAsyncType.SEC_3 && requests!=null && UtilServer.getClient().getHandle().isConnected()){
-			UtilServer.getClient().getLobbies(requests).getAsync(new Callback<PacketOutLobbyServer>() {
-				@Override
-				public void call(PacketOutLobbyServer packet) {
-					ArrayList<Sign> used  = new ArrayList<>();
-					if(packet != null)
-						for(GameServers game : packet.getResponse()){
-							if(getSigns().containsKey(game.getGame())){
-								for(int i = 0; i<game.getServers().length ; i++){
-									ServerKey key= (ServerKey) game.getServers()[i];
-									if(getSigns().get(game.getGame()).containsKey(key.getServerSubId())){
-										if(getSigns().get(game.getGame()).get(key.getServerSubId()).size() > i){
-											Sign sign = getSigns().get(game.getGame()).get(key.getServerSubId()).get(i);
-											sign_server.remove(sign);
-											sign_server.put(sign, key.getServerId());
-											
-											sign.setLine(0, Color.BOLD + game.getGame().getShortName() + key.getServerId().split("a")[1] + (key.getServerSubId().equalsIgnoreCase("none")?"":" "+ key.getServerSubId().replaceFirst("_", "")));
-											
-											if(key.getPlayer()>=key.getMaxPlayer()){
-												sign.setLine(1, Color.ORANGE+Color.BOLD+"Premium");
-											}else{
-												sign.setLine(1, Color.GREEN+Color.BOLD+"Join");
-											}
-	
-											sign.setLine(2, key.getMots());
-											
-											sign.setLine(3, key.getPlayer()+"/"+key.getMaxPlayer());
-											sign.update();
-											used.add(sign);
-										}
-									}
-								}
-							}
-						}
-					ArrayList<Sign> allSigns = new ArrayList<>();
-					for(GameType game : getSigns().keySet())
-						for(String sid : getSigns().get(game).keySet())
-							allSigns.addAll(getSigns().get(game).get(sid));
-					allSigns.removeAll(used);
-					for(Sign s : allSigns){
-						s.setLine(0, "");
-						s.setLine(1, "Lade Server"+buildPoints());
-						s.setLine(2, "");
-						s.setLine(3, "");
-						s.update();
-					}
-				}
-			});
-		}
-		if(ev.getType() == UpdateAsyncType.SEC){
-			ArrayList<Sign> allSigns = new ArrayList<>();
-			for(GameType game : getSigns().keySet())
-				for(String sid : getSigns().get(game).keySet())
-					allSigns.addAll(getSigns().get(game).get(sid));
-			for(Sign s : allSigns){
-				if(s.getLine(1).startsWith("Lade Server")){
-					s.setLine(0, "");
-					s.setLine(1, "Lade Server"+buildPoints());
-					s.setLine(2, "");
-					s.setLine(3, "");
-					s.update();
-				}
-			}
-		}
-	}
-	
-	private String buildPoints(){
-		String out = "";
-		for(int i = 0;i<points+1;i++)
-			out+=".";
-		return out;
-	}
-	
-	@EventHandler
 	public void Portal(UpdateAsyncEvent ev){
 		if(ev.getType()==UpdateAsyncType.SEC){
 			for(Player player : UtilServer.getPlayers()){
@@ -381,68 +283,7 @@ public class HubListener extends kListener{
 		((HubManager)getManager()).getShop().addPage(this.GameInv);
 	}	
 	
-	Sign s;
-	public void loadSigns(){
-		try
-	    {
-	      ResultSet rs = manager.getMysql().Query("SELECT typ,ctyp,x,y,z FROM "+kHub.hubType.toLowerCase()+"_signs");
-	      while (rs.next()){
-	    	  try{
-	    		  if(GameType.get(rs.getString(1))==null){
-		    		  System.out.println(rs.getString(1) +" == NULL");
-	    			  continue;
-	    		  }
-	    		  
-	    		  if(GameType.get(rs.getString(1))!=null&&!signs.containsKey(GameType.get(rs.getString(1)))){
-	    			  signs.put(GameType.get(rs.getString(1)),new HashMap<>());
-	    		  }
-	    		  if(!signs.get(GameType.get(rs.getString(1))).containsKey(rs.getString(2)))signs.get(GameType.get(rs.getString(1))).put(rs.getString(2), new ArrayList<Sign>());
-	    		  try{
-	    			  s=((Sign) (new Location(Bukkit.getWorld("world"),rs.getInt(3),rs.getInt(4),rs.getInt(5))).getBlock().getState() );
-		    		  signs.get(GameType.get(rs.getString(1))).get(rs.getString(2)).add( s );
-	    		  }catch(ClassCastException e){
-	    			  System.err.println("[kHub] Sign nicht gefunden ...");
-	    		  }
-	    	  }catch(IllegalArgumentException e){
-	    		  System.out.println("NOT FOUND: "+rs.getString(1));
-	    	  }
-	      }
-	      rs.close();
-	  }catch (SQLException e){
-	      e.printStackTrace();
-	  }
-		
-		requests=new PacketInLobbyServerRequest.GameRequest[this.getSigns().keySet().size()];
-		
-		int i = 0;
-		for(GameType t : this.getSigns().keySet()){
-			requests[i]=new PacketInLobbyServerRequest.GameRequest(t, -1);
-			i++;
-			for(String ct : this.getSigns().get(t).keySet()){
-				for(Sign s : this.getSigns().get(t).get(ct)){
-					s.setLine(0, "");
-					s.setLine(1, "Lade Server");
-					s.setLine(2, "");
-					s.setLine(3, "");
-					s.update();
-				}
-			}
-		}
-		fillGameInv();
-		
-		for(String server : signconfig.getPathList("Signs").keySet()){
-			gungame_signs.put(server, ((Sign)signconfig.getLocation("Signs."+server).getBlock().getState()));
-		}
-		
-		for(Sign s : this.getGungame_signs().values()){
-			s.setLine(0, "");
-			s.setLine(1, "Lade Server");
-			s.setLine(2, "");
-			s.setLine(3, "");
-			s.update();
-		}
-		
-	}
+	
 	
 	public void loadLobbys(){
 		this.LobbyInv=new InventoryPageBase(InventorySize._18, "§8Hub Selector");
@@ -508,94 +349,12 @@ public class HubListener extends kListener{
 	}
 	
 	@EventHandler
-	public void Interact(PlayerInteractEvent ev){
-		if(UtilEvent.isAction(ev, ActionType.BLOCK)&&ev.getClickedBlock().getState() instanceof Sign){
-			Sign s =(Sign) ev.getClickedBlock().getState();
-			if(getSign_server().containsKey( s )){
-				if(s.getLine(1).startsWith("Lade Server"))return;
-				if(s.getLine(2).equalsIgnoreCase(Color.ORANGE+Color.BOLD+"Premium") && !manager.getPermissionManager().hasPermission(ev.getPlayer(), PermissionType.JOIN_FULL_SERVER))return;
-				UtilBG.sendToServer(ev.getPlayer(), getSign_server().get(s), manager.getInstance());
-			}else if(getGungame_signs().containsValue( s )){
-				if(s.getLine(1).equalsIgnoreCase("Lade Server.."))return;
-				if(s.getLine(2).equalsIgnoreCase("§4§lOFFLINE"))return;
-				if(s.getLine(2).equalsIgnoreCase(Color.RED+"Full"))return;
-				UtilBG.sendToServer(ev.getPlayer(), s.getLine(0).substring(2,s.getLine(0).length()).replaceAll(" ", ""), manager.getInstance());
-			}else if(s.getLine(0).equalsIgnoreCase("[Server]")){
-				UtilBG.sendToServer(ev.getPlayer(), s.getLine(2), manager.getInstance());
-			}
-		}
-	}
-	
-	@EventHandler
 	public void Inventory(InventoryMoveItemEvent  ev){
 		if(ev.getSource().getHolder() instanceof Player){
 			ev.setCancelled(true);
 		}
 	}
-	
-	@EventHandler
-	public void breakB(BlockBreakEvent ev){
-		if(ev.getBlock().getState() instanceof Sign){
-			Sign s = (Sign)ev.getBlock().getState();
 
-			if(gungame_signs.containsValue(s)){
-				for(String ss : gungame_signs.keySet()){
-					if(UtilLocation.isSameLocation(gungame_signs.get(ss).getLocation(), s.getLocation())){
-						signconfig.set("Signs."+ss, null);
-						signconfig.save();
-						reloadSignConfig();
-					}
-				}
-				
-			}
-		}
-	}
-	
-	@EventHandler
-	public void onSign(SignChangeEvent ev) {
-		Player p = ev.getPlayer();
-
-		if (p.isOp()) {
-			String sign = ev.getLine(0);
-			ev.setLine(0, ev.getLine(0).replaceAll("&", "§"));
-			ev.setLine(1, ev.getLine(1).replaceAll("&", "§"));
-			ev.setLine(2, ev.getLine(2).replaceAll("&", "§"));
-			ev.setLine(3, ev.getLine(3).replaceAll("&", "§"));
-
-			if (sign.equalsIgnoreCase("[S]") && p.isOp()) {
-				String typ = ev.getLine(1);
-				String ctyp = ev.getLine(2);
-				getManager().getMysql().Update("INSERT INTO "+kHub.hubType+"_signs (typ,cTyp,world, x, z, y) VALUES ('"+ typ+ "', '"+ctyp+"','"+ p.getLocation().getWorld().getName()+ "','"+ ev.getBlock().getX()+ "','"+ ev.getBlock().getZ()+ "','" + ev.getBlock().getY() + "')");
-			}else if(sign.equalsIgnoreCase("[Server]")&&p.isOp()){
-				GameType typ = GameType.get(ev.getLine(1));
-				
-				if(typ==null){
-					p.sendMessage("§cGameType == NULL");
-					return;
-				}
-				
-				signconfig.setLocation("Signs."+(typ.getShortName()+ev.getLine(2)), ev.getBlock().getLocation());
-				signconfig.save();
-				reloadSignConfig();
-			}
-		}
-	}
-	
-	public void reloadSignConfig(){
-		gungame_signs.clear();
-		for(String server : signconfig.getPathList("Signs").keySet()){
-			gungame_signs.put(server, ((Sign)signconfig.getLocation("Signs."+server).getBlock().getState()));
-		}
-		
-		for(Sign s : this.getGungame_signs().values()){
-			s.setLine(0, "");
-			s.setLine(1, "Lade Server");
-			s.setLine(2, "");
-			s.setLine(3, "");
-			s.update();
-		}
-	}
-	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void LobbyMenu(PlayerInteractEvent ev){
 		if((UtilEvent.isAction(ev, ActionType.PHYSICAL)&& (ev.getClickedBlock().getType() == Material.SOIL))||(UtilEvent.isAction(ev, ActionType.BLOCK)&&!ev.getPlayer().isOp())){

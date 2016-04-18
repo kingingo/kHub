@@ -17,6 +17,7 @@ import eu.epicpvp.kcore.Command.Admin.CommandHubFly;
 import eu.epicpvp.kcore.Command.Admin.CommandLocations;
 import eu.epicpvp.kcore.Command.Admin.CommandToggle;
 import eu.epicpvp.kcore.Command.Admin.CommandTrackingRange;
+import eu.epicpvp.kcore.Command.Admin.CommandUnBan;
 import eu.epicpvp.kcore.Command.Admin.CommandgBroadcast;
 import eu.epicpvp.kcore.Command.Commands.CommandNacht;
 import eu.epicpvp.kcore.Command.Commands.CommandPing;
@@ -63,6 +64,7 @@ public class kHub extends JavaPlugin{
 			UtilServer.getCommandHandler().register(CommandTrackingRange.class, new CommandTrackingRange());
 			UtilServer.getCommandHandler().register(CommandLocations.class, new CommandLocations(this));
 			UtilServer.getCommandHandler().register(CommandDebug.class, new CommandDebug());
+			UtilServer.getCommandHandler().register(CommandUnBan.class, new CommandUnBan());
 			
 			Location loc = CommandLocations.getLocation("spawn");
 			if(loc.getBlockX()!=0&&loc.getBlockZ()!=0)Bukkit.getWorld("world").setSpawnLocation(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());

@@ -18,19 +18,21 @@ public class SignUpdateThread implements Runnable{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			GameType[] types = manager.buildGamesIndex();
-			PacketInLobbyServerRequest.GameRequest requests[] = new PacketInLobbyServerRequest.GameRequest[types.length];
-			for(int i = 0;i<types.length;i++)
-				requests[i] = new PacketInLobbyServerRequest.GameRequest(types[i], -1);
-			try{
-				PacketOutLobbyServer response = UtilServer.getClient().getLobbies(requests).getSync(2500);
-				if(response == null || response.getResponse() == null){
-					System.out.println("Cant request signs!");
-					continue;
+			if(UtilServer.getClient().getHandle().isConnected()){
+				GameType[] types = manager.buildGamesIndex();
+				PacketInLobbyServerRequest.GameRequest requests[] = new PacketInLobbyServerRequest.GameRequest[types.length];
+				for(int i = 0;i<types.length;i++)
+					requests[i] = new PacketInLobbyServerRequest.GameRequest(types[i], -1);
+				try{
+					PacketOutLobbyServer response = UtilServer.getClient().getLobbies(requests).getSync(2500);
+					if(response == null || response.getResponse() == null){
+						System.out.println("Cant request signs!");
+						continue;
+					}
+					manager.updateSigns(response.getResponse());
+				}catch(Exception e){
+					e.printStackTrace();
 				}
-				manager.updateSigns(response.getResponse());
-			}catch(Exception e){
-				e.printStackTrace();
 			}
 		}
 	}

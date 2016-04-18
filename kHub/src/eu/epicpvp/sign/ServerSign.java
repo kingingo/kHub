@@ -63,7 +63,7 @@ public class ServerSign implements Listener {
 			if (e.getClickedBlock().getLocation().equals(location)) {
 				e.setCancelled(true);
 				if (server.getPlayer() >= server.getMaxPlayer())
-					if (owner.getOwner().getManager().getPermissionManager().hasPermission(e.getPlayer(), PermissionType.JOIN_FULL_SERVER))
+					if (!owner.getOwner().getManager().getPermissionManager().hasPermission(e.getPlayer(), PermissionType.JOIN_FULL_SERVER))
 						return;
 				UtilBG.sendToServer(e.getPlayer(), server.getServerId(), owner.getOwner().getManager().getInstance());
 			}

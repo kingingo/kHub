@@ -124,6 +124,7 @@ public class HubListener extends kListener{
 		initializeTranslationManagerInv();
 		initializeDeliveryPet();
 		signs.loadSigns();
+		fillGameInv();
 	}
 
 	public void initializeDeliveryPet(){
@@ -261,6 +262,8 @@ public class HubListener extends kListener{
 						UtilBG.sendToServer(player, "sky", getManager().getInstance());
 					}else if(CommandLocations.getLocation("versus").distance(player.getLocation())<10){
 						UtilBG.sendToServer(player, "versus", getManager().getInstance());
+					}else if(CommandLocations.getLocation("gg").distance(player.getLocation())<10){
+						UtilBG.sendToServer(player, "gungame", getManager().getInstance());
 					}
 				}
 			}
@@ -318,7 +321,8 @@ public class HubListener extends kListener{
 							@Override
 							public void onClick(Player player, ActionType a, Object obj) {
 								if(player.hasPermission(PermissionType.PREMIUM_LOBBY.getPermissionToString())){
-									UtilBG.SendToBungeeCord("lobby/"+ l.getBg() + "/" + player.getName(), player,getManager().getInstance());
+//									UtilBG.SendToBungeeCord("lobby/"+ l.getBg() + "/" + player.getName(), player,getManager().getInstance());
+									UtilBG.sendToServer(player, l.getBg(), getManager().getInstance());
 								}
 							}
 						}, UtilItem.Item(new ItemStack(353), new String[]{"§6Klicke um die Premium Lobby "+ l.getName().split(" ")[2] + " zu betreten "}, "§b"+l.getName())));
@@ -326,7 +330,8 @@ public class HubListener extends kListener{
 						this.LobbyInv.addButton(l.getPlace(), new ButtonBase(new Click() {
 							@Override
 							public void onClick(Player player, ActionType a, Object obj) {
-								UtilBG.SendToBungeeCord("lobby/"+ l.getBg() + "/" + player.getName(), player,getManager().getInstance());
+//								UtilBG.SendToBungeeCord("lobby/"+ l.getBg() + "/" + player.getName(), player,getManager().getInstance());
+								UtilBG.sendToServer(player, l.getBg(), getManager().getInstance());
 							}
 						}, UtilItem.Item(new ItemStack(289), new String[]{"§6Klicke um die Lobby "+ l.getName().split(" ")[1] + " zu betreten "}, "§a"+l.getName())));
 					}

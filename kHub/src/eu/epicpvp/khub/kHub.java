@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.wolveringer.client.connection.ClientType;
 import eu.epicpvp.kcore.Command.Admin.CommandChatMute;
+import eu.epicpvp.kcore.Command.Admin.CommandConvert;
 import eu.epicpvp.kcore.Command.Admin.CommandDebug;
 import eu.epicpvp.kcore.Command.Admin.CommandFlyspeed;
 import eu.epicpvp.kcore.Command.Admin.CommandHubFly;
@@ -65,6 +66,7 @@ public class kHub extends JavaPlugin{
 			UtilServer.getCommandHandler().register(CommandLocations.class, new CommandLocations(this));
 			UtilServer.getCommandHandler().register(CommandDebug.class, new CommandDebug());
 			UtilServer.getCommandHandler().register(CommandUnBan.class, new CommandUnBan());
+			
 			
 			Location loc = CommandLocations.getLocation("spawn");
 			if(loc.getBlockX()!=0&&loc.getBlockZ()!=0)Bukkit.getWorld("world").setSpawnLocation(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());

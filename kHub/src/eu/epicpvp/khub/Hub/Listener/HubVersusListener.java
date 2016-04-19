@@ -552,11 +552,9 @@ public class HubVersusListener extends kListener{
 	public void name(UpdateEvent ev){
 		if(ev.getType()==UpdateType.SEC_3){
 			i=tabManager.getSize();
-//			for(PacketInServerStatus a : this.server.values())i=i+a.getPlayers();
-			
 			this.online=UtilServer.getPlayers().size()+i;
 			if(this.versus_wait_list_name!=null)this.versus_wait_list_name.remove();
-			this.versus_wait_list_name = new NameTagMessage(NameTagType.PACKET, CommandLocations.getLocation("online"),new String[]{"§c§lEpicPvP Versus Server","§aOnline §e§l"+this.online});
+			this.versus_wait_list_name = new NameTagMessage(NameTagType.PACKET, CommandLocations.getLocation("online"),new String[]{"§c§lClashMC Versus Server","§aOnline §e§l"+this.online});
 			this.versus_wait_list_name.send();
 			for(Player player : UtilServer.getPlayers())player.setLevel(this.online);
 		}
@@ -644,7 +642,7 @@ public class HubVersusListener extends kListener{
 	public void load(PlayerJoinEvent ev){
 		getManager().getMoney().loadPlayer(ev.getPlayer());
 		ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX")+TranslationHandler.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7- §e"+kHub.hubType+" "+kHub.hubID, "§eShop.ClashMC.eu");
+		
 		statsManager.loadPlayer(ev.getPlayer());
 		setInv(ev.getPlayer());
 	}

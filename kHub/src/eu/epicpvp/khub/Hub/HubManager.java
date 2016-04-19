@@ -10,6 +10,7 @@ import eu.epicpvp.kcore.Addons.AddonDay;
 import eu.epicpvp.kcore.Addons.AddonNight;
 import eu.epicpvp.kcore.Calendar.Calendar;
 import eu.epicpvp.kcore.Command.CommandHandler;
+import eu.epicpvp.kcore.Command.Admin.CommandConvert;
 import eu.epicpvp.kcore.Command.Admin.CommandGiveCoins;
 import eu.epicpvp.kcore.Command.Admin.CommandGiveGems;
 import eu.epicpvp.kcore.Command.Admin.CommandURang;
@@ -21,6 +22,7 @@ import eu.epicpvp.kcore.MySQL.MySQL;
 import eu.epicpvp.kcore.Pet.Shop.PetShop;
 import eu.epicpvp.kcore.Pet.Shop.PlayerPetHandler;
 import eu.epicpvp.kcore.Util.UtilItem;
+import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.khub.kHub;
 import eu.epicpvp.khub.kManager;
 import eu.epicpvp.khub.Command.CommandBroadcast;
@@ -101,6 +103,10 @@ public class HubManager extends kManager{
 				break;
 			default:
 				new HubListener(this);
+				
+
+				if(kHub.hubID==1)
+					UtilServer.getCommandHandler().register(CommandConvert.class, new CommandConvert(getMoney(),getMysql()));
 				break;
 		}
 		

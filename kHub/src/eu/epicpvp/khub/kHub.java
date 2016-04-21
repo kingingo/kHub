@@ -14,7 +14,9 @@ import eu.epicpvp.kcore.Command.Admin.CommandChatMute;
 import eu.epicpvp.kcore.Command.Admin.CommandConvert;
 import eu.epicpvp.kcore.Command.Admin.CommandDebug;
 import eu.epicpvp.kcore.Command.Admin.CommandFlyspeed;
+import eu.epicpvp.kcore.Command.Admin.CommandGiveGems;
 import eu.epicpvp.kcore.Command.Admin.CommandHubFly;
+import eu.epicpvp.kcore.Command.Admin.CommandK;
 import eu.epicpvp.kcore.Command.Admin.CommandLocations;
 import eu.epicpvp.kcore.Command.Admin.CommandToggle;
 import eu.epicpvp.kcore.Command.Admin.CommandTrackingRange;
@@ -66,6 +68,7 @@ public class kHub extends JavaPlugin{
 			UtilServer.getCommandHandler().register(CommandLocations.class, new CommandLocations(this));
 			UtilServer.getCommandHandler().register(CommandDebug.class, new CommandDebug());
 			UtilServer.getCommandHandler().register(CommandUnBan.class, new CommandUnBan());
+			UtilServer.getCommandHandler().register(CommandK.class, new CommandK());
 			
 			
 			Location loc = CommandLocations.getLocation("spawn");

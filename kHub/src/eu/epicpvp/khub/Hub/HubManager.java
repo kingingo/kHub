@@ -18,6 +18,7 @@ import eu.epicpvp.kcore.Disguise.DisguiseShop;
 import eu.epicpvp.kcore.Inventory.InventoryBase;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
 import eu.epicpvp.kcore.Listener.Chat.ChatListener;
+import eu.epicpvp.kcore.Listener.ConvertListener.ConvertListener;
 import eu.epicpvp.kcore.MySQL.MySQL;
 import eu.epicpvp.kcore.Pet.Shop.PetShop;
 import eu.epicpvp.kcore.Pet.Shop.PlayerPetHandler;
@@ -103,14 +104,14 @@ public class HubManager extends kManager{
 				break;
 			default:
 				new HubListener(this);
-				
+				new ConvertListener(getMoney());
 
 				if(kHub.hubID==1)
 					UtilServer.getCommandHandler().register(CommandConvert.class, new CommandConvert(getMoney(),getMysql()));
 				break;
 		}
 		
-		//getCmdHandler().register(CommandURang.class, new CommandURang(getPermissionManager(),getMysql()));
+		getCmdHandler().register(CommandURang.class, new CommandURang(getPermissionManager()));
 		getCmdHandler().register(CommandBroadcast.class, new CommandBroadcast());
 	}
 }

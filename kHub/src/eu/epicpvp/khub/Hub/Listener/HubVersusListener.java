@@ -28,11 +28,8 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
-import dev.wolveringer.client.connection.PacketListener;
 import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.gamestats.StatsKey;
-import dev.wolveringer.dataserver.protocoll.packets.Packet;
-import dev.wolveringer.dataserver.protocoll.packets.PacketInServerStatus;
 import eu.epicpvp.kcore.Arena.ArenaManager;
 import eu.epicpvp.kcore.Arena.ArenaType;
 import eu.epicpvp.kcore.Arena.GameRound;
@@ -62,6 +59,8 @@ import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonUpDownVersus;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.SalesPackageBase;
 import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.PacketAPI.Packets.kPacketStatusOutServerInfo;
+import eu.epicpvp.kcore.PacketAPI.packetlistener.event.PacketListenerSendEvent;
 import eu.epicpvp.kcore.Packets.PacketArenaStatus;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.StatsManager.StatsManager;
@@ -76,7 +75,6 @@ import eu.epicpvp.kcore.UserDataConfig.UserDataConfig;
 import eu.epicpvp.kcore.UserDataConfig.Events.UserDataConfigLoadEvent;
 import eu.epicpvp.kcore.Util.InventorySize;
 import eu.epicpvp.kcore.Util.InventorySplit;
-import eu.epicpvp.kcore.Util.TabTitle;
 import eu.epicpvp.kcore.Util.TimeSpan;
 import eu.epicpvp.kcore.Util.UtilBG;
 import eu.epicpvp.kcore.Util.UtilEnt;
@@ -90,9 +88,10 @@ import eu.epicpvp.kcore.Util.UtilTime;
 import eu.epicpvp.kcore.Util.UtilWorldGuard;
 import eu.epicpvp.kcore.Versus.PlayerKit;
 import eu.epicpvp.kcore.Versus.PlayerKitManager;
-import eu.epicpvp.khub.kHub;
 import eu.epicpvp.khub.Hub.HubManager;
 import lombok.Getter;
+import net.minecraft.server.v1_8_R3.PacketStatusOutServerInfo;
+import net.minecraft.server.v1_8_R3.ServerPing.ServerPingPlayerSample;
 
 public class HubVersusListener extends kListener{
 
@@ -623,6 +622,16 @@ public class HubVersusListener extends kListener{
 		skywars_vs.remove(ev.getPlayer());
 		bedwars_vs.remove(ev.getPlayer());
 		sg_vs.remove(ev.getPlayer());
+	}
+	
+	@EventHandler
+	public void ping(PacketListenerSendEvent ev){
+		if(ev.getPacket() instanceof PacketStatusOutServerInfo){
+			kPacketStatusOutServerInfo packet = new kPacketStatusOutServerInfo(ev.getPacket());
+			
+			packet.getServerPing().setPlayerSample(new ServerPingPlayerSample(Bukkit.getMaxPlayers(), tabManager.getSize()+UtilServer.getPlayers().size()));
+			ev.setPacket(packet.getPacket());
+		}
 	}
 	
 	@EventHandler

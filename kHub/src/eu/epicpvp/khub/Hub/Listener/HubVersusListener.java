@@ -47,7 +47,6 @@ import eu.epicpvp.kcore.Disguise.disguises.livings.DisguisePlayer;
 import eu.epicpvp.kcore.Enum.GameCage;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagMessage;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagType;
-import eu.epicpvp.kcore.Inventory.InventoryBase;
 import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Inventory.InventoryBestOf;
 import eu.epicpvp.kcore.Inventory.Inventory.InventoryCopy;
@@ -80,6 +79,7 @@ import eu.epicpvp.kcore.Util.UtilBG;
 import eu.epicpvp.kcore.Util.UtilEnt;
 import eu.epicpvp.kcore.Util.UtilEvent;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
+import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilScoreboard;
@@ -98,8 +98,8 @@ public class HubVersusListener extends kListener{
 	@Getter
 	private HubManager manager;
 //	private HashMap<String,PacketInServerStatus> server = new HashMap<>();
+	private InventoryPageBase choose_game;
 	private StatsManager statsManager;
-	private InventoryBase base;
 	private LivingEntity creature_option;
 	private LivingEntity sg_wait_list;
 	private LivingEntity skywars_wait_list;
@@ -162,8 +162,8 @@ public class HubVersusListener extends kListener{
 		}
 		
 		this.case_shop.fill(Material.STAINED_GLASS_PANE, (byte)7);
-		this.manager.getShop().getMain().addButton(4, new ButtonOpenInventory(this.case_shop, UtilItem.Item(new ItemStack(Material.STAINED_GLASS,1,(byte)11), new String[]{"§bKlick mich um in den Shop zu gelangen."}, "§7CageShop")));
-		this.manager.getShop().addPage(this.case_shop);
+		this.manager.getShop().addButton(4, new ButtonOpenInventory(this.case_shop, UtilItem.Item(new ItemStack(Material.STAINED_GLASS,1,(byte)11), new String[]{"§bKlick mich um in den Shop zu gelangen."}, "§7CageShop")));
+		UtilInv.getBase().addPage(this.case_shop);
 		//CASE SHOP ^^
 		
 		Bukkit.getWorld("world").setAutoSave(false);
@@ -183,7 +183,6 @@ public class HubVersusListener extends kListener{
 		this.bestOf.addGame(bedwars_arenaManager);
 		this.bestOf.addGame(skywars_arenaManager);
 		this.bestOf.addGame(sg_arenaManager);
-		this.base=new InventoryBase(manager.getInstance());
 
 		this.versus_arenaManager=new ArenaManager(statsManager,GameType.Versus, UpdateAsyncType.SEC_2);
 		this.bestOf.addGame(versus_arenaManager);
@@ -288,7 +287,7 @@ public class HubVersusListener extends kListener{
 				
 			}, t6));
 			this.versus_wait_list_inv.fill(Material.STAINED_GLASS_PANE, 7);
-			this.base.addPage(this.versus_wait_list_inv);
+			UtilInv.getBase().addPage(this.versus_wait_list_inv);
 		}
 		
 		if(skywars_wait_list==null){
@@ -371,18 +370,17 @@ public class HubVersusListener extends kListener{
 		((DisguisePlayer)dbase).loadSkin("_Rorschach");
 		manager.getDisguiseManager().disguise(dbase);
 		
-		InventoryPageBase choose_game = new InventoryPageBase(InventorySize._9, "Versus Games:");
-		this.base.setMain(choose_game);
+		choose_game = new InventoryPageBase(InventorySize._9, "Versus Games:");
 		
 		//VERSUS -
 		InventoryPageBase versus_inv = new InventoryCopy(InventorySize._27.getSize(), "§bVersus");
 		
-		this.base.addPage(versus_inv);
-		this.base.getMain().addButton(0, new ButtonBase(new Click() {
+		UtilInv.getBase().addPage(versus_inv);
+		choose_game.addButton(0, new ButtonBase(new Click() {
 			
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
-				((InventoryCopy)versus_inv).open(p, base);
+				((InventoryCopy)versus_inv).open(p, UtilInv.getBase());
 			}
 		},UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§aVersus 1vs1")));
 		
@@ -419,13 +417,13 @@ public class HubVersusListener extends kListener{
 			}
 			
 		}, new ItemStack(Material.BEDROCK)));
-		versus_inv.addButton(0, new ButtonBack(this.base.getMain(), UtilItem.RenameItem(new ItemStack(Material.BARRIER), "§cZurück / Back")));
+		versus_inv.addButton(0, new ButtonBack(choose_game, UtilItem.RenameItem(new ItemStack(Material.BARRIER), "§cZurück / Back")));
 		versus_inv.setItem(16, UtilItem.RenameItem(new ItemStack(Material.IRON_CHESTPLATE), "§7Kit Slots §4§lCOMING SOON!"));
 		versus_inv.fill(Material.STAINED_GLASS_PANE, 7);
 		//VERSUS - 
 		
 		//SG -
-		this.base.getMain().addButton(2, new ButtonBase(new Click() {
+		choose_game.addButton(2, new ButtonBase(new Click() {
 			
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
@@ -435,7 +433,7 @@ public class HubVersusListener extends kListener{
 		//SG -
 		
 		//BW -
-		this.base.getMain().addButton(4, new ButtonBase(new Click() {
+		choose_game.addButton(4, new ButtonBase(new Click() {
 			
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
@@ -445,7 +443,7 @@ public class HubVersusListener extends kListener{
 		//BW -
 		
 		//SW -
-		this.base.getMain().addButton(6, new ButtonBase(new Click() {
+		choose_game.addButton(6, new ButtonBase(new Click() {
 			
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
@@ -455,20 +453,20 @@ public class HubVersusListener extends kListener{
 		//SW -
 		
 		//bestof -
-		InventoryBestOf bestof_inv = new InventoryBestOf(InventorySize._54.getSize(), "§cBestOf Einstellungen", this.base.getMain());
+		InventoryBestOf bestof_inv = new InventoryBestOf(InventorySize._54.getSize(), "§cBestOf Einstellungen", choose_game);
 		bestof_inv.setCreate_new_inv(true);
-		this.base.addPage(bestof_inv);
+		UtilInv.getBase().addPage(bestof_inv);
 		
-		this.base.getMain().addButton(8, new ButtonBase(new Click() {
+		choose_game.addButton(8, new ButtonBase(new Click() {
 			
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
-				((InventoryCopy)bestof_inv).open(p, base);
+				((InventoryCopy)bestof_inv).open(p, UtilInv.getBase());
 			}
 		},UtilItem.RenameItem(new ItemStack(Material.FISHING_ROD), "§aBestOf")));
 		//bestof -
 		
-		this.base.getMain().fill(Material.STAINED_GLASS_PANE);
+		choose_game.fill(Material.STAINED_GLASS_PANE);
 	}
 	
 	@EventHandler
@@ -541,7 +539,7 @@ public class HubVersusListener extends kListener{
 	public void LobbyMenu(PlayerInteractEvent ev){
 		if(UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getType()==Material.CHEST){
-				ev.getPlayer().openInventory(getManager().getShop().getMain());
+				ev.getPlayer().openInventory(choose_game);
 			}
 		}
 	}
@@ -842,7 +840,7 @@ public class HubVersusListener extends kListener{
 	public void Interact(PlayerInteractEntityEvent ev){
 		if(ev.getRightClicked().getEntityId()==this.creature_option.getEntityId()){
 			ev.setCancelled(true);
-			ev.getPlayer().openInventory(this.base.getMain());
+			ev.getPlayer().openInventory(choose_game);
 		}else if(ev.getRightClicked().getEntityId()==this.versus_wait_list.getEntityId()){
 			ev.setCancelled(true);
 			ev.getPlayer().openInventory(this.versus_wait_list_inv);

@@ -29,6 +29,7 @@ import eu.epicpvp.kcore.DeliveryPet.DeliveryPet;
 import eu.epicpvp.kcore.Disguise.DisguiseType;
 import eu.epicpvp.kcore.Disguise.disguises.DisguiseBase;
 import eu.epicpvp.kcore.Disguise.disguises.livings.DisguisePlayer;
+import eu.epicpvp.kcore.GemsShop.GemsShop;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagMessage;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagType;
 import eu.epicpvp.kcore.Inventory.InventoryPageBase;
@@ -46,12 +47,12 @@ import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.UpdateAsync.UpdateAsyncType;
 import eu.epicpvp.kcore.UpdateAsync.Event.UpdateAsyncEvent;
 import eu.epicpvp.kcore.Util.InventorySize;
-import eu.epicpvp.kcore.Util.TabTitle;
 import eu.epicpvp.kcore.Util.TimeSpan;
 import eu.epicpvp.kcore.Util.UtilBG;
 import eu.epicpvp.kcore.Util.UtilEnt;
 import eu.epicpvp.kcore.Util.UtilEvent;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
+import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilMath;
 import eu.epicpvp.kcore.Util.UtilPlayer;
@@ -125,10 +126,15 @@ public class HubListener extends kListener{
 		initializeDeliveryPet();
 		signs.loadSigns();
 		fillGameInv();
+		initializeGemsShop();
+	}
+	
+	public void initializeGemsShop(){
+		UtilServer.createGemsShop(new GemsShop(getManager().getHologram(),getManager().getMoney(),getManager().getCmdHandler(), UtilInv.getBase(),getManager().getPermissionManager(), ServerType.GAME));
 	}
 
 	public void initializeDeliveryPet(){
-		UtilServer.createDeliveryPet(new DeliveryPet(((HubManager)getManager()).getShop(),null,new DeliveryObject[]{
+		UtilServer.createDeliveryPet(new DeliveryPet(UtilInv.getBase(),null,new DeliveryObject[]{
 			new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},PermissionType.DELIVERY_PET_VOTE,false,28,"§aVote for ClashMC",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){
 
 					@Override
@@ -232,7 +238,7 @@ public class HubListener extends kListener{
 		}
 		this.TranslationManager_inv.fill(Material.STAINED_GLASS_PANE,(byte)15);
 		
-		((HubManager)getManager()).getShop().addPage(this.TranslationManager_inv);
+		UtilInv.getBase().addPage(this.TranslationManager_inv);
 	}
 	
 	public String color(double percent){
@@ -289,7 +295,7 @@ public class HubListener extends kListener{
 		this.GameInv.addButton(23, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_SPADE), "§aMasterbuilders"), CommandLocations.getLocation("masterbuilders")));
 		this.GameInv.fill(Material.STAINED_GLASS_PANE, 7);
 		
-		((HubManager)getManager()).getShop().addPage(this.GameInv);
+		UtilInv.getBase().addPage(this.GameInv);
 	}
 	
 	public void loadLobbys(){
@@ -342,7 +348,7 @@ public class HubListener extends kListener{
 			Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,manager.getMysql()));
 		}
 		this.LobbyInv.fill(Material.getMaterial(160), 1);
-		((HubManager)getManager()).getShop().addPage(this.LobbyInv);
+		UtilInv.getBase().addPage(this.LobbyInv);
 	
 	}
 
@@ -378,12 +384,12 @@ public class HubListener extends kListener{
 				ev.getPlayer().openInventory(getGameInv());
 				ev.setCancelled(true);
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.CHEST){
-				ev.getPlayer().openInventory(((HubManager)getManager()).getShop().getMain());
+				ev.getPlayer().openInventory(((HubManager)getManager()).getShop());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.DIAMOND_PICKAXE){
 				UtilBG.sendToServer(ev.getPlayer(), "v", getManager().getInstance());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.BOOK_AND_QUILL){
 				ev.setCancelled(true);
-				TranslationManager_inv.open(ev.getPlayer(), ((HubManager)getManager()).getShop());
+				TranslationManager_inv.open(ev.getPlayer(), UtilInv.getBase());
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.FIREWORK){
 				UtilBG.sendToServer(ev.getPlayer(), "event", getManager().getInstance());
 				ev.setCancelled(true);

@@ -15,13 +15,15 @@ import eu.epicpvp.kcore.Command.Admin.CommandGiveCoins;
 import eu.epicpvp.kcore.Command.Admin.CommandGiveGems;
 import eu.epicpvp.kcore.Command.Admin.CommandURang;
 import eu.epicpvp.kcore.Disguise.DisguiseShop;
-import eu.epicpvp.kcore.Inventory.InventoryBase;
+import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
 import eu.epicpvp.kcore.Listener.Chat.ChatListener;
 import eu.epicpvp.kcore.Listener.ConvertListener.ConvertListener;
 import eu.epicpvp.kcore.MySQL.MySQL;
 import eu.epicpvp.kcore.Pet.Shop.PetShop;
 import eu.epicpvp.kcore.Pet.Shop.PlayerPetHandler;
+import eu.epicpvp.kcore.Util.InventorySize;
+import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.khub.kHub;
@@ -39,7 +41,7 @@ import lombok.Getter;
 
 public class HubManager extends kManager{
 	@Getter
-	private InventoryBase shop;
+	private InventoryPageBase shop;
 	
 	public HubManager(kHub instance,CommandHandler cmdHandler,MySQL mysql){
 		super(instance,cmdHandler,mysql);
@@ -51,15 +53,17 @@ public class HubManager extends kManager{
 			getCmdHandler().register(CommandGiveCoins.class, new CommandGiveCoins(getMoney()));
 			getCmdHandler().register(CommandGiveGems.class, new CommandGiveGems(getMoney()));
 			
-			this.shop=new InventoryBase(getInstance(), 9, "Shop");
-			getPetManager().setHandler(new PlayerPetHandler(ServerType.GAME, mysql, getPetManager(), this.shop, getPermissionManager()));
+			this.shop=new InventoryPageBase(InventorySize._36, "Shop");
+			UtilInv.getBase().addPage(shop);
+			
+			getPetManager().setHandler(new PlayerPetHandler(ServerType.GAME, mysql, getPetManager(), getPermissionManager()));
 			getPetManager().setPetShop(new PetShop(getPetManager().getHandler(), getMoney()));
-			getDisguiseManager().setDisguiseShop(new DisguiseShop(mysql, this.shop,getPermissionManager(),getMoney(),getDisguiseManager()));
-			this.shop.getMain().addButton(2, new ButtonOpenInventory(getPetManager().getPetShop(), UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7PetShop")));
-			this.shop.addPage(getPetManager().getPetShop());
-			this.shop.getMain().addButton(6, new ButtonOpenInventory(getDisguiseManager().getDisguiseShop(), UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7DisguiseShop")));
-			this.shop.addPage(getDisguiseManager().getDisguiseShop());
-			this.shop.getMain().fill(Material.STAINED_GLASS_PANE,(byte)7);
+			this.shop.addButton(11, new ButtonOpenInventory(getPetManager().getPetShop(), UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7Pets")));
+			UtilInv.getBase().addPage(getPetManager().getPetShop());
+			
+			getDisguiseManager().setDisguiseShop(new DisguiseShop(mysql, getPermissionManager(),getMoney(),getDisguiseManager()));
+			this.shop.addButton(15, new ButtonOpenInventory(getDisguiseManager().getDisguiseShop(), UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7Disguises")));
+			UtilInv.getBase().addPage(getDisguiseManager().getDisguiseShop());
 			
 			getDisguiseManager().getDisguiseShop().setAsync(true);
 			getPetManager().getHandler().setAsync(true);
@@ -104,14 +108,15 @@ public class HubManager extends kManager{
 				break;
 			default:
 				new HubListener(this);
-				new ConvertListener(getMoney());
+				ConvertListener c = new ConvertListener(getMoney());
 
 				if(kHub.hubID==1)
-					UtilServer.getCommandHandler().register(CommandConvert.class, new CommandConvert(getMoney(),getMysql()));
+					UtilServer.getCommandHandler().register(CommandConvert.class, new CommandConvert(getMoney(),getMysql(),c.getMysql()));
 				break;
 		}
 		
 		getCmdHandler().register(CommandURang.class, new CommandURang(getPermissionManager()));
 		getCmdHandler().register(CommandBroadcast.class, new CommandBroadcast());
+		this.shop.fill(Material.STAINED_GLASS_PANE,(byte)7);
 	}
 }

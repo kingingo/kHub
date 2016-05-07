@@ -41,7 +41,7 @@ public class kManager {
 	}
 	
 	public PermissionManager getPermissionManager(){
-		if(this.permissionManager==null)this.permissionManager=new PermissionManager(getInstance(),GroupTyp.GAME);
+		if(this.permissionManager==null)this.permissionManager=new PermissionManager(getInstance(),null);
 		return this.permissionManager;
 	}
 	

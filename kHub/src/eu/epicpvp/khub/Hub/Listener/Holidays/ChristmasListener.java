@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+
 import dev.wolveringer.dataserver.gamestats.StatsKey;
 import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Item.Click;
@@ -21,6 +22,7 @@ import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.Util.InventorySize;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
+import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilMath;
 import eu.epicpvp.kcore.Util.UtilParticle;
@@ -90,7 +92,7 @@ public class ChristmasListener extends kListener{
 	    }
 	    
 	    this.inventory.fill(Material.STAINED_GLASS_PANE,15);
-	    getManager().getShop().addPage(this.inventory);
+	    UtilInv.getBase().addPage(this.inventory);
 		if(day==24){
 			logMessage("Heute ist Weihnachten!");
 		}else{

@@ -35,7 +35,6 @@ import eu.epicpvp.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilPlayer;
-import eu.epicpvp.kcore.Util.UtilString;
 import eu.epicpvp.khub.Hub.HubManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -83,7 +82,6 @@ public class Listener extends kListener{
 	public Listener(kManager manager) {
 		super(manager.getInstance(),"Listener");
 		this.manager=manager;
-		UtilString.setupBadWords(null);
 	}
 	
 	@EventHandler

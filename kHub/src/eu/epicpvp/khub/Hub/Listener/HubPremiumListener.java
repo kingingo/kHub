@@ -17,6 +17,7 @@ import eu.epicpvp.kcore.GagdetShop.Gagdet.SlimeHead;
 import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
 import eu.epicpvp.kcore.Listener.VoteListener.VoteListener;
+import eu.epicpvp.kcore.Particle.WingShop;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
 import eu.epicpvp.kcore.Util.UtilInv;
@@ -34,17 +35,29 @@ public class HubPremiumListener extends HubListener{
 		handler.addGadget(new PowerAxe(handler));
 		handler.addGadget(new SlimeHead(handler));
 		handler.addGadget(new Pearl(handler));
-		GadgetShop store = new GadgetShop(handler);
+		GadgetShop gadgetShop = new GadgetShop(handler);
 		manager.getShop().addButton(13, new ButtonBase(new Click(){
 
 			@Override
 			public void onClick(Player player, ActionType type, Object object) {
 				if(player.isOp()){
-					store.open(player, UtilInv.getBase());
+					gadgetShop.open(player, UtilInv.getBase());
 				}
 			}
 			
 		}, UtilItem.Item(new ItemStack(Material.PISTON_BASE), new String[]{"§bKlick mich um in den Gadget Shop zukommen."}, "§7Gadgets")));
+		
+		WingShop wingShop = new WingShop(manager.getInstance());
+		manager.getShop().addButton(29, new ButtonBase(new Click(){
+
+			@Override
+			public void onClick(Player player, ActionType type, Object object) {
+				if(player.isOp()){
+					wingShop.open(player, UtilInv.getBase());
+				}
+			}
+			
+		}, UtilItem.Item(new ItemStack(Material.FEATHER), new String[]{"§bKlick mich um in den Wings Shop zukommen."}, "§7Wings")));
 		
 		new VoteListener(manager.getInstance(), false,new Callback<String>() {
 			

@@ -53,7 +53,7 @@ public class HubManager extends kManager{
 			getCmdHandler().register(CommandGiveCoins.class, new CommandGiveCoins(getMoney()));
 			getCmdHandler().register(CommandGiveGems.class, new CommandGiveGems(getMoney()));
 			
-			this.shop=new InventoryPageBase(InventorySize._36, "Shop");
+			this.shop=new InventoryPageBase(InventorySize._45, "Shop");
 			UtilInv.getBase().addPage(shop);
 			
 			getPetManager().setHandler(new PlayerPetHandler(ServerType.GAME, mysql, getPetManager(), getPermissionManager()));

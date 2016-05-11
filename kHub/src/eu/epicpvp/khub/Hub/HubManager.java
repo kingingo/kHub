@@ -3,6 +3,7 @@ package eu.epicpvp.khub.Hub;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import dev.wolveringer.dataserver.gamestats.ServerType;
@@ -16,16 +17,21 @@ import eu.epicpvp.kcore.Command.Admin.CommandGiveGems;
 import eu.epicpvp.kcore.Command.Admin.CommandURang;
 import eu.epicpvp.kcore.Disguise.DisguiseShop;
 import eu.epicpvp.kcore.Inventory.InventoryPageBase;
+import eu.epicpvp.kcore.Inventory.Item.Click;
+import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
 import eu.epicpvp.kcore.Listener.Chat.ChatListener;
 import eu.epicpvp.kcore.Listener.ConvertListener.ConvertListener;
 import eu.epicpvp.kcore.MySQL.MySQL;
+import eu.epicpvp.kcore.MysteryChest.MysteryChestManager;
+import eu.epicpvp.kcore.MysteryChest.MysteryChestShop;
 import eu.epicpvp.kcore.Pet.Shop.PetShop;
 import eu.epicpvp.kcore.Pet.Shop.PlayerPetHandler;
 import eu.epicpvp.kcore.Util.InventorySize;
 import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilServer;
+import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
 import eu.epicpvp.khub.kHub;
 import eu.epicpvp.khub.kManager;
 import eu.epicpvp.khub.Command.CommandBroadcast;
@@ -104,6 +110,20 @@ public class HubManager extends kManager{
 				new HubVersusListener(this);
 				break;
 			case "premiumhub":
+
+				MysteryChestManager chestManager = new MysteryChestManager(getInstance());
+				MysteryChestShop shop = new MysteryChestShop(chestManager);
+				getShop().addButton(31, new ButtonBase(new Click(){
+
+					@Override
+					public void onClick(Player player, ActionType type, Object object) {
+						if(player.isOp()){
+							player.openInventory(shop);
+						}
+					}
+					
+				}, UtilItem.Item(new ItemStack(Material.ENDER_CHEST), new String[]{"§bKlick mich um in den Mystery Chest Shop zukommen."}, "§7Mystery Chests")));
+				
 				new HubPremiumListener(this);
 				break;
 			default:

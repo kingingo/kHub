@@ -467,6 +467,7 @@ public class HubVersusListener extends kListener{
 		//bestof -
 		
 		choose_game.fill(Material.STAINED_GLASS_PANE);
+		UtilInv.getBase().addPage(choose_game);
 	}
 	
 	@EventHandler
@@ -539,7 +540,7 @@ public class HubVersusListener extends kListener{
 	public void LobbyMenu(PlayerInteractEvent ev){
 		if(UtilEvent.isAction(ev, ActionType.R)){
 			if(ev.getPlayer().getItemInHand().getType()==Material.CHEST){
-				ev.getPlayer().openInventory(choose_game);
+				ev.getPlayer().openInventory(getManager().getShop());
 			}
 		}
 	}

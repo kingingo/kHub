@@ -89,6 +89,7 @@ public class HubListener extends kListener{
 		this.manager = manager;
 		this.signs = new SignManager(this);
 		this.spawn=Bukkit.getWorld("world").getSpawnLocation();
+		if(UtilServer.getMysteryChestManager()!=null)UtilServer.getMysteryChestManager().getBlocked().add(spawn);
 		
 		Bukkit.getWorld("world").setAutoSave(false);
 		if(initialize)initialize();

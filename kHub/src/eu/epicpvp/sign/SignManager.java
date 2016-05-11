@@ -19,6 +19,7 @@ import dev.wolveringer.client.threadfactory.ThreadRunner;
 import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer.GameServers;
 import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer.ServerKey;
+import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.khub.kHub;
 import eu.epicpvp.khub.Hub.Listener.HubListener;
 import lombok.AllArgsConstructor;
@@ -86,6 +87,8 @@ public class SignManager implements Listener{
 					}
 					try {
 						Location loc = new Location(Bukkit.getWorld("world"), rs.getInt(3), rs.getInt(4), rs.getInt(5));
+						if(UtilServer.getMysteryChestManager()!=null)UtilServer.getMysteryChestManager().getBlocked().add(loc);
+						
 						signs.get(new ServerIdentifier(GameType.get(rs.getString(1)), rs.getString(2))).add(new ServerSign(loc,this));
 					} catch (ClassCastException e) {
 						System.err.println("[kHub] Sign nicht gefunden ...");

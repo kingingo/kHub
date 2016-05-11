@@ -17,6 +17,8 @@ import eu.epicpvp.kcore.GagdetShop.Gagdet.SlimeHead;
 import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
 import eu.epicpvp.kcore.Listener.VoteListener.VoteListener;
+import eu.epicpvp.kcore.MysteryChest.MysteryChestManager;
+import eu.epicpvp.kcore.MysteryChest.MysteryChestShop;
 import eu.epicpvp.kcore.Particle.WingShop;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
@@ -58,6 +60,7 @@ public class HubPremiumListener extends HubListener{
 			}
 			
 		}, UtilItem.Item(new ItemStack(Material.FEATHER), new String[]{"§bKlick mich um in den Wings Shop zukommen."}, "§7Wings")));
+		
 		
 		new VoteListener(manager.getInstance(), false,new Callback<String>() {
 			

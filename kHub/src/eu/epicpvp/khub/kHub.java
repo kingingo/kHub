@@ -48,7 +48,6 @@ public class kHub extends JavaPlugin{
 			removeEntity(Bukkit.getWorld("world"));
 			this.hubType=getConfig().getString("Config.HubType");
 			this.hubID=getConfig().getInt("Config.Lobby");
-			
 			UtilServer.createMySQL(getConfig().getString("Config.MySQL.User"),getConfig().getString("Config.MySQL.Password"),getConfig().getString("Config.MySQL.Host"),getConfig().getString("Config.MySQL.DB"),this);
 			UtilServer.createUpdater(this);
 			UtilServer.createUpdaterAsync(this);

@@ -89,7 +89,7 @@ public class HubListener extends kListener{
 		this.manager = manager;
 		this.signs = new SignManager(this);
 		this.spawn=Bukkit.getWorld("world").getSpawnLocation();
-		if(UtilServer.getMysteryChestManager()!=null)UtilServer.getMysteryChestManager().getBlocked().add(spawn);
+		if(UtilServer.getMysteryBoxManager()!=null)UtilServer.getMysteryBoxManager().getBlocked().add(spawn);
 		
 		Bukkit.getWorld("world").setAutoSave(false);
 		if(initialize)initialize();
@@ -143,7 +143,7 @@ public class HubListener extends kListener{
 						p.closeInventory();
 						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+"§7-----------------------------------------");
 						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+" ");
-						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+"Vote Link:§a http://mcsl.name/29874");
+						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+"Vote Link:§a http://vote.clashmc.eu/");
 						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+" ");
 						p.sendMessage(TranslationHandler.getText(p,"PREFIX")+"§7-----------------------------------------");
 					}

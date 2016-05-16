@@ -1,29 +1,15 @@
 package eu.epicpvp.khub.Hub.Listener;
 
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.EventHandler;
+import org.bukkit.permissions.PermissibleBase;
 
 import dev.wolveringer.client.Callback;
 import dev.wolveringer.client.LoadedPlayer;
 import dev.wolveringer.dataserver.protocoll.packets.PacketInStatsEdit.Action;
-import eu.epicpvp.kcore.GagdetShop.GadgetHandler;
-import eu.epicpvp.kcore.GagdetShop.GadgetShop;
-import eu.epicpvp.kcore.GagdetShop.Gagdet.MobGun;
-import eu.epicpvp.kcore.GagdetShop.Gagdet.Pearl;
-import eu.epicpvp.kcore.GagdetShop.Gagdet.PowerAxe;
-import eu.epicpvp.kcore.GagdetShop.Gagdet.Ragebow;
-import eu.epicpvp.kcore.GagdetShop.Gagdet.SlimeHead;
-import eu.epicpvp.kcore.Inventory.Item.Click;
-import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
 import eu.epicpvp.kcore.Listener.VoteListener.VoteListener;
-import eu.epicpvp.kcore.MysteryChest.MysteryChestManager;
-import eu.epicpvp.kcore.MysteryChest.MysteryChestShop;
-import eu.epicpvp.kcore.Particle.WingShop;
+import eu.epicpvp.kcore.Permission.Permission;
+import eu.epicpvp.kcore.Permission.Events.PlayerLoadPermissionEvent;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
-import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
-import eu.epicpvp.kcore.Util.UtilInv;
-import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.khub.Hub.HubManager;
 
@@ -31,37 +17,7 @@ public class HubPremiumListener extends HubListener{
 	
 	public HubPremiumListener(final HubManager manager) {
 		super(manager,true);
-		GadgetHandler handler = new GadgetHandler(manager.getInstance());
-		handler.addGadget(new MobGun(handler));
-		handler.addGadget(new Ragebow(handler));
-		handler.addGadget(new PowerAxe(handler));
-		handler.addGadget(new SlimeHead(handler));
-		handler.addGadget(new Pearl(handler));
-		GadgetShop gadgetShop = new GadgetShop(handler);
-		manager.getShop().addButton(13, new ButtonBase(new Click(){
 
-			@Override
-			public void onClick(Player player, ActionType type, Object object) {
-				if(player.isOp()){
-					gadgetShop.open(player, UtilInv.getBase());
-				}
-			}
-			
-		}, UtilItem.Item(new ItemStack(Material.PISTON_BASE), new String[]{"§bKlick mich um in den Gadget Shop zukommen."}, "§7Gadgets")));
-		
-		WingShop wingShop = new WingShop(manager.getInstance());
-		manager.getShop().addButton(29, new ButtonBase(new Click(){
-
-			@Override
-			public void onClick(Player player, ActionType type, Object object) {
-				if(player.isOp()){
-					wingShop.open(player, UtilInv.getBase());
-				}
-			}
-			
-		}, UtilItem.Item(new ItemStack(Material.FEATHER), new String[]{"§bKlick mich um in den Wings Shop zukommen."}, "§7Wings")));
-		
-		
 		new VoteListener(manager.getInstance(), false,new Callback<String>() {
 			
 			@Override
@@ -74,4 +30,5 @@ public class HubPremiumListener extends HubListener{
 			}
 		});
 	}	
+
 }

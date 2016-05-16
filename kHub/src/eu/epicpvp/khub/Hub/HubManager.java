@@ -1,6 +1,5 @@
 package eu.epicpvp.khub.Hub;
 
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,24 +13,35 @@ import eu.epicpvp.kcore.Command.CommandHandler;
 import eu.epicpvp.kcore.Command.Admin.CommandConvert;
 import eu.epicpvp.kcore.Command.Admin.CommandGiveCoins;
 import eu.epicpvp.kcore.Command.Admin.CommandGiveGems;
+import eu.epicpvp.kcore.Command.Admin.CommandGivePro;
 import eu.epicpvp.kcore.Command.Admin.CommandURang;
 import eu.epicpvp.kcore.Disguise.DisguiseShop;
+import eu.epicpvp.kcore.GagdetShop.GadgetHandler;
+import eu.epicpvp.kcore.GagdetShop.GadgetShop;
+import eu.epicpvp.kcore.GagdetShop.Gagdet.MobGun;
+import eu.epicpvp.kcore.GagdetShop.Gagdet.Pearl;
+import eu.epicpvp.kcore.GagdetShop.Gagdet.PowerAxe;
+import eu.epicpvp.kcore.GagdetShop.Gagdet.Ragebow;
+import eu.epicpvp.kcore.GagdetShop.Gagdet.SlimeHead;
 import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
+import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonOpenInventoryCopy;
 import eu.epicpvp.kcore.Listener.Chat.ChatListener;
 import eu.epicpvp.kcore.Listener.ConvertListener.ConvertListener;
 import eu.epicpvp.kcore.MySQL.MySQL;
-import eu.epicpvp.kcore.MysteryChest.MysteryChestManager;
-import eu.epicpvp.kcore.MysteryChest.MysteryChestShop;
+import eu.epicpvp.kcore.MysteryBox.MysteryBoxManager;
+import eu.epicpvp.kcore.MysteryBox.Store.MysteryStore;
+import eu.epicpvp.kcore.Particle.WingShop;
 import eu.epicpvp.kcore.Pet.Shop.PetShop;
 import eu.epicpvp.kcore.Pet.Shop.PlayerPetHandler;
 import eu.epicpvp.kcore.Util.InventorySize;
+import eu.epicpvp.kcore.Util.InventorySplit;
+import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
 import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilServer;
-import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
 import eu.epicpvp.khub.kHub;
 import eu.epicpvp.khub.kManager;
 import eu.epicpvp.khub.Command.CommandBroadcast;
@@ -58,6 +68,7 @@ public class HubManager extends kManager{
 			
 			getCmdHandler().register(CommandGiveCoins.class, new CommandGiveCoins(getMoney()));
 			getCmdHandler().register(CommandGiveGems.class, new CommandGiveGems(getMoney()));
+			getCmdHandler().register(CommandGivePro.class, new CommandGivePro());
 			
 			this.shop=new InventoryPageBase(InventorySize._45, "Shop");
 			UtilInv.getBase().addPage(shop);
@@ -73,6 +84,20 @@ public class HubManager extends kManager{
 			
 			getDisguiseManager().getDisguiseShop().setAsync(true);
 			getPetManager().getHandler().setAsync(true);
+			
+			GadgetHandler handler = new GadgetHandler(getInstance());
+			handler.addGadget(new MobGun(handler));
+			handler.addGadget(new Ragebow(handler));
+			handler.addGadget(new PowerAxe(handler));
+			handler.addGadget(new SlimeHead(handler));
+			handler.addGadget(new Pearl(handler));
+			GadgetShop gadgetShop = new GadgetShop(handler);
+			getShop().addButton(13, new ButtonOpenInventoryCopy(gadgetShop, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.PISTON_BASE), new String[]{"§bKlick mich um in den Gadget Shop zukommen."}, "§7Gadgets")));
+			WingShop wingShop = new WingShop(getInstance());
+			getShop().addButton(29, new ButtonOpenInventoryCopy(wingShop, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.FEATHER), new String[]{"§bKlick mich um in den Wings Shop zukommen."}, "§7Wings")));
+			MysteryBoxManager boxManager = new MysteryBoxManager(getInstance());
+			MysteryStore store = new MysteryStore(boxManager.getChest("MysteryBox"));
+			getShop().addButton(31, new ButtonOpenInventoryCopy(store, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.ENDER_CHEST), new String[]{"§bKlick mich um in den Mystery Box Shop zukommen."}, "§7MysteryBox")));
 			
 			if(Calendar.getHoliday()!=null){
 				switch(Calendar.holiday){
@@ -100,6 +125,7 @@ public class HubManager extends kManager{
 			}
 
 			new ChatListener(instance, null,getPermissionManager(),null);
+			this.shop.fill(Material.STAINED_GLASS_PANE,(byte)7);
 		}
 
 		switch(kHub.hubType.toLowerCase()){
@@ -110,20 +136,6 @@ public class HubManager extends kManager{
 				new HubVersusListener(this);
 				break;
 			case "premiumhub":
-
-				MysteryChestManager chestManager = new MysteryChestManager(getInstance());
-				MysteryChestShop shop = new MysteryChestShop(chestManager);
-				getShop().addButton(31, new ButtonBase(new Click(){
-
-					@Override
-					public void onClick(Player player, ActionType type, Object object) {
-						if(player.isOp()){
-							player.openInventory(shop);
-						}
-					}
-					
-				}, UtilItem.Item(new ItemStack(Material.ENDER_CHEST), new String[]{"§bKlick mich um in den Mystery Chest Shop zukommen."}, "§7Mystery Chests")));
-				
 				new HubPremiumListener(this);
 				break;
 			default:
@@ -137,6 +149,5 @@ public class HubManager extends kManager{
 		
 		getCmdHandler().register(CommandURang.class, new CommandURang(getPermissionManager()));
 		getCmdHandler().register(CommandBroadcast.class, new CommandBroadcast());
-		this.shop.fill(Material.STAINED_GLASS_PANE,(byte)7);
 	}
 }

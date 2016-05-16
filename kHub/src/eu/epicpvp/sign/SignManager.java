@@ -87,7 +87,7 @@ public class SignManager implements Listener{
 					}
 					try {
 						Location loc = new Location(Bukkit.getWorld("world"), rs.getInt(3), rs.getInt(4), rs.getInt(5));
-						if(UtilServer.getMysteryChestManager()!=null)UtilServer.getMysteryChestManager().getBlocked().add(loc);
+						if(UtilServer.getMysteryBoxManager()!=null)UtilServer.getMysteryBoxManager().getBlocked().add(loc);
 						
 						signs.get(new ServerIdentifier(GameType.get(rs.getString(1)), rs.getString(2))).add(new ServerSign(loc,this));
 					} catch (ClassCastException e) {

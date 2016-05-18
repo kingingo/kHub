@@ -78,7 +78,6 @@ public class kHub extends JavaPlugin{
 			new BungeeCordFirewallListener(this,UtilServer.getCommandHandler());
 			this.manager=new HubManager(this, UtilServer.getCommandHandler(), UtilServer.getMysql());
 			
-
 			new AntiCrashListener(UtilServer.getClient(),UtilServer.getMysql());
 			this.manager.DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){

@@ -105,6 +105,7 @@ public class SignManager implements Listener{
 	}
 	@SuppressWarnings("serial")
 	protected void updateSigns(GameServers[] server){
+		
 		HashMap<ServerIdentifier, Iterator<ServerSign>> ssigns = new HashMap<ServerIdentifier, Iterator<ServerSign>>(){
 			@Override
 			public Iterator<ServerSign> get(Object key) {

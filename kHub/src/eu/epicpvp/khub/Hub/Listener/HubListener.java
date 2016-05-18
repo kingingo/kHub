@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
+import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.gamestats.ServerType;
 import dev.wolveringer.dataserver.gamestats.StatsKey;
 import dev.wolveringer.dataserver.player.LanguageType;
@@ -43,6 +44,8 @@ import eu.epicpvp.kcore.Listener.EntityClick.EntityClickListener;
 import eu.epicpvp.kcore.MySQL.MySQLErr;
 import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
 import eu.epicpvp.kcore.Permission.PermissionType;
+import eu.epicpvp.kcore.StatsManager.StatsManager;
+import eu.epicpvp.kcore.StatsManager.StatsManagerRepository;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.UpdateAsync.UpdateAsyncType;
 import eu.epicpvp.kcore.UpdateAsync.Event.UpdateAsyncEvent;
@@ -51,7 +54,9 @@ import eu.epicpvp.kcore.Util.TimeSpan;
 import eu.epicpvp.kcore.Util.UtilBG;
 import eu.epicpvp.kcore.Util.UtilEnt;
 import eu.epicpvp.kcore.Util.UtilEvent;
+import eu.epicpvp.kcore.Util.UtilFile;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
+import eu.epicpvp.kcore.kConfig.kConfig;
 import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilMath;
@@ -79,6 +84,8 @@ public class HubListener extends kListener{
 	private InventoryCopy TranslationManager_inv;
 	private SignManager signs;
 	private Location spawn;
+	@Getter
+	private StatsManager timer;
 	
 	public HubListener(final HubManager manager) {
 		this(manager,true);
@@ -113,6 +120,7 @@ public class HubListener extends kListener{
 			}
 			
 		}, z);
+		this.timer=StatsManagerRepository.getStatsManager(GameType.TIME);
 	}	
 	
 	public void initialize(){
@@ -130,8 +138,31 @@ public class HubListener extends kListener{
 		initializeGemsShop();
 	}
 	
+	GemsShop payToWin;
+	GemsShop eula;
 	public void initializeGemsShop(){
-		UtilServer.createGemsShop(new GemsShop(getManager().getHologram(),getManager().getMoney(),getManager().getCmdHandler(), UtilInv.getBase(),getManager().getPermissionManager(), ServerType.GAME));
+		eula = new GemsShop("§d§lShop",null,ServerType.GAME);
+		payToWin = new GemsShop("§d§lShop",null,ServerType.GAME,new kConfig(UtilFile.getYMLFile(UtilServer.getPermissionManager().getInstance(), "gemsshop_payToWin")),null);
+		payToWin.setClick(new Click(){
+
+			@Override
+			public void onClick(Player player, ActionType type, Object object) {
+				if( (UtilServer.getPermissionManager().getPermissionPlayer(player)!=null 
+						&& !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty()
+						&& !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default"))
+						||
+						getTimer().getTotalInteger(player, new StatsKey[]{StatsKey.SKY_TIME,StatsKey.PVP_TIME,StatsKey.GUNGAME_TIME,StatsKey.GAME_TIME}) > TimeSpan.MINUTE * 30){
+					
+					payToWin.openInv(player);
+				}else{
+					eula.openInv(player);
+				}
+			}
+			
+		});
+		
+		payToWin.setEtype(EntityType.VILLAGER);
+		payToWin.setCreature();
 	}
 
 	public void initializeDeliveryPet(){
@@ -356,11 +387,13 @@ public class HubListener extends kListener{
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		getManager().getMoney().loadPlayer(ev.getPlayer());
+		getTimer().loadPlayer(ev.getPlayer());
 		ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX")+TranslationHandler.getText(ev.getPlayer(), "WHEREIS_TEXT",kHub.hubID+" "+kHub.hubType));
 		UtilPlayer.setTab(ev.getPlayer(), kHub.hubType+" "+kHub.hubID);
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.COMPASS), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
-		ev.getPlayer().getInventory().setItem(4, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
+		if(kHub.hubType.toLowerCase().startsWith("premiumhub")||kHub.hubType.toLowerCase().startsWith("hub"))ev.getPlayer().getInventory().setItem(3, UtilItem.RenameItem(new ItemStack(Material.DIAMOND),"§d§lOnline-Shop"));
+		ev.getPlayer().getInventory().setItem(5, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL),TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_BUCH")+" §c§lBETA"));
 		ev.getPlayer().getInventory().setItem(8,UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 	}
 	
@@ -394,6 +427,9 @@ public class HubListener extends kListener{
 			}else if(ev.getPlayer().getItemInHand().getType()==Material.FIREWORK){
 				UtilBG.sendToServer(ev.getPlayer(), "event", getManager().getInstance());
 				ev.setCancelled(true);
+			}else if(ev.getPlayer().getItemInHand().getType()==Material.DIAMOND){
+				ev.setCancelled(true);
+				payToWin.getClick().onClick(ev.getPlayer(), ActionType.R, null);
 			}
 		}
 	}

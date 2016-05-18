@@ -140,10 +140,6 @@ public class HubManager extends kManager{
 				break;
 			default:
 				new HubListener(this);
-				ConvertListener c = new ConvertListener(getMoney());
-
-				if(kHub.hubID==1)
-					UtilServer.getCommandHandler().register(CommandConvert.class, new CommandConvert(getMoney(),getMysql(),c.getMysql()));
 				break;
 		}
 		

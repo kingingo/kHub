@@ -64,11 +64,13 @@ import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.khub.kHub;
 import eu.epicpvp.khub.kManager;
+import eu.epicpvp.khub.Command.CommandStore;
 import eu.epicpvp.khub.Hub.HubManager;
 import eu.epicpvp.khub.Hub.Lobby;
 import eu.epicpvp.khub.Hub.InvisbleManager.InvisibleManager;
 import eu.epicpvp.sign.SignManager;
 import lombok.Getter;
+import lombok.Setter;
 
 public class HubListener extends kListener{
 	@Getter
@@ -86,6 +88,9 @@ public class HubListener extends kListener{
 	private Location spawn;
 	@Getter
 	private StatsManager timer;
+	@Getter
+	@Setter
+	private boolean onlinestore=true;
 	
 	public HubListener(final HubManager manager) {
 		this(manager,true);
@@ -96,6 +101,7 @@ public class HubListener extends kListener{
 		this.manager = manager;
 		this.signs = new SignManager(this);
 		this.spawn=Bukkit.getWorld("world").getSpawnLocation();
+		UtilServer.getCommandHandler().register(CommandStore.class, new CommandStore(this));
 		if(UtilServer.getMysteryBoxManager()!=null)UtilServer.getMysteryBoxManager().getBlocked().add(spawn);
 		
 		Bukkit.getWorld("world").setAutoSave(false);
@@ -147,11 +153,11 @@ public class HubListener extends kListener{
 
 			@Override
 			public void onClick(Player player, ActionType type, Object object) {
-				if( (UtilServer.getPermissionManager().getPermissionPlayer(player)!=null 
+				if(isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player)!=null 
 						&& !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty()
 						&& !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default"))
 						||
-						getTimer().getTotalInteger(player, new StatsKey[]{StatsKey.SKY_TIME,StatsKey.PVP_TIME,StatsKey.GUNGAME_TIME,StatsKey.GAME_TIME}) > TimeSpan.MINUTE * 30){
+						getTimer().getTotalInteger(player, new StatsKey[]{StatsKey.SKY_TIME,StatsKey.PVP_TIME,StatsKey.GUNGAME_TIME,StatsKey.GAME_TIME}) > TimeSpan.HOUR * 3)){
 					
 					payToWin.openInv(player);
 				}else{

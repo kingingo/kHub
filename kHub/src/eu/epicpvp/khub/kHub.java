@@ -75,7 +75,7 @@ public class kHub extends JavaPlugin{
 			if(loc.getBlockX()!=0&&loc.getBlockZ()!=0)Bukkit.getWorld("world").setSpawnLocation(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 			
 			new ListenerCMD(this);
-			new BungeeCordFirewallListener(this,UtilServer.getCommandHandler());
+			new BungeeCordFirewallListener(UtilServer.getCommandHandler());
 			this.manager=new HubManager(this, UtilServer.getCommandHandler(), UtilServer.getMysql());
 			
 			new AntiCrashListener(UtilServer.getClient(),UtilServer.getMysql());

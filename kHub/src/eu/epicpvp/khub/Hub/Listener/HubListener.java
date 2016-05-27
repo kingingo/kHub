@@ -157,7 +157,7 @@ public class HubListener extends kListener{
 						&& !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty()
 						&& !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default"))
 						||
-						getTimer().getTotalInteger(player, new StatsKey[]{StatsKey.SKY_TIME,StatsKey.PVP_TIME,StatsKey.GUNGAME_TIME,StatsKey.GAME_TIME}) > TimeSpan.HOUR * 3)){
+						getTimer().getTotalInteger(player, new StatsKey[]{StatsKey.SKY_TIME,StatsKey.PVP_TIME,StatsKey.GUNGAME_TIME,StatsKey.GAME_TIME}) > TimeSpan.HOUR * 1)){
 					
 					payToWin.openInv(player);
 				}else{

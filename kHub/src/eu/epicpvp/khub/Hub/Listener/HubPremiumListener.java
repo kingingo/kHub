@@ -26,7 +26,7 @@ public class HubPremiumListener extends HubListener{
 				
 				loadedplayer.changeGems(Action.ADD, 5);
 				loadedplayer.changeCoins(Action.ADD, 100);
-				UtilServer.getClient().brotcastMessage(null, TranslationHandler.getText("PREFIX")+ "§b" + playerName + " hat gevotet und §a5 Gems + 100 Coins §berhalten§l! §7>>§5§l /Vote");
+				UtilServer.getClient().broadcastMessage(null, TranslationHandler.getText("PREFIX")+ "§b" + playerName + " hat gevotet und §a5 Gems + 100 Coins §berhalten§l! §7>>§5§l /Vote");
 			}
 		});
 	}	

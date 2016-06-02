@@ -67,7 +67,7 @@ public class ChristmasListener extends kListener{
 							if(!player.hasPermission(PermissionType.PET_SNOWMAN.getPermissionToString()) && UtilMath.r( (int) (250 * Math.pow(0.962540842, day)) ) == 74){
 								getManager().getPermissionManager().addPermission(player, PermissionType.PET_SNOWMAN);
 								player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "XMAS_DOOR1"));
-								UtilServer.getClient().brotcastMessage(null, TranslationHandler.getText("PREFIX")+TranslationHandler.getText("XMAS_RARE",player.getName()));
+								UtilServer.getClient().broadcastMessage(null, TranslationHandler.getText("PREFIX")+TranslationHandler.getText("XMAS_RARE",player.getName()));
 							}
 							c=0;
 						}

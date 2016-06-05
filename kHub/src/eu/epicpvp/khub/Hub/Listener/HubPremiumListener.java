@@ -21,7 +21,7 @@ public class HubPremiumListener extends HubListener{
 		new VoteListener(manager.getInstance(), false,new Callback<String>() {
 			
 			@Override
-			public void call(String playerName) {
+			public void call(String playerName,Throwable ex) {
 				LoadedPlayer loadedplayer = UtilServer.getClient().getPlayerAndLoad(playerName);
 				
 				loadedplayer.changeGems(Action.ADD, 5);

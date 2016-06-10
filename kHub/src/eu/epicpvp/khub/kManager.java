@@ -1,6 +1,7 @@
 package eu.epicpvp.khub;
 
 
+import dev.wolveringer.bukkit.permissions.GroupTyp;
 import dev.wolveringer.dataserver.gamestats.GameType;
 import eu.epicpvp.kcore.Calendar.Calendar;
 import eu.epicpvp.kcore.Command.CommandHandler;
@@ -8,7 +9,6 @@ import eu.epicpvp.kcore.Disguise.DisguiseManager;
 import eu.epicpvp.kcore.Hologram.Hologram;
 import eu.epicpvp.kcore.MySQL.MySQL;
 import eu.epicpvp.kcore.Permission.PermissionManager;
-import eu.epicpvp.kcore.Permission.Group.GroupTyp;
 import eu.epicpvp.kcore.Pet.PetManager;
 import eu.epicpvp.kcore.StatsManager.StatsManager;
 import eu.epicpvp.kcore.Util.UtilServer;

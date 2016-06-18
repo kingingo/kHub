@@ -308,6 +308,8 @@ public class HubListener extends kListener{
 						UtilBG.sendToServer(player, "versus", getManager().getInstance());
 					}else if(CommandLocations.getLocation("gg").distance(player.getLocation())<10){
 						UtilBG.sendToServer(player, "gungame", getManager().getInstance());
+					}else if(CommandLocations.getLocation("cc").distance(player.getLocation())<10){
+						UtilBG.sendToServer(player, "creative", getManager().getInstance());
 					}
 				}
 			}
@@ -316,23 +318,23 @@ public class HubListener extends kListener{
 	
 	//UNSICHTBAR / PET SHOP / Walk Effect / FLY
 	public void fillGameInv(){
-		this.GameInv = new InventoryPageBase(InventorySize._36, "§8Game Menu");
+		this.GameInv = new InventoryPageBase(InventorySize._54, "§8Game Menu");
 		
-		this.GameInv.addButton(4, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.ANVIL), "§6Spawn"), Bukkit.getWorld("world").getSpawnLocation()));
-		this.GameInv.addButton(11, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD), "§aQuickSurvivalGames"), CommandLocations.getLocation("QuickSurvivalGames")));
-		this.GameInv.addButton(12, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.STICK), "§aTroubleInMinecraft"), CommandLocations.getLocation("TroubleInMinecraft")));
-		this.GameInv.addButton(13, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.EYE_OF_ENDER), "§aSkyWars"), CommandLocations.getLocation("SkyWars")));
-		this.GameInv.addButton(14, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), "§aFalldown §7[§d§lNEW§7]"), CommandLocations.getLocation("DeathGames")));
-		this.GameInv.addButton(15, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BED), "§aBedWars"), CommandLocations.getLocation("BedWars")));
-		this.GameInv.addButton(16, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§aVersus"), CommandLocations.getLocation("vs")));
-		this.GameInv.addButton(10, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.MONSTER_EGG,1,(byte)91), "§aSheepWars"), CommandLocations.getLocation("SheepWars")));
-		this.GameInv.addButton(31, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_AXE), "§aGunGame"), CommandLocations.getLocation("GunGame")));
-
-		this.GameInv.addButton(21, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GRASS), "§aSkyBlock"), CommandLocations.getLocation("skyblock")));
-		this.GameInv.addButton(22, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_AXE), "§aPvP"), CommandLocations.getLocation("pvpt")));
-		this.GameInv.addButton(23, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_SPADE), "§aMasterbuilders"), CommandLocations.getLocation("masterbuilders")));
+		this.GameInv.addButton(4, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.MAGMA_CREAM), "§6Spawn"), Bukkit.getWorld("world").getSpawnLocation()));
+		this.GameInv.addButton(11, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_AXE), "§aPvP"), CommandLocations.getLocation("pvpt")));
+		this.GameInv.addButton(15, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GRASS), "§aSkyBlock"), CommandLocations.getLocation("skyblock")));
+		this.GameInv.addButton(18, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_AXE), "§aGunGame"), CommandLocations.getLocation("GunGame")));
+		this.GameInv.addButton(22, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_PICKAXE), "§aCreative"), CommandLocations.getLocation("creative")));
+		this.GameInv.addButton(26, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§aVersus"), CommandLocations.getLocation("vs")));
+		this.GameInv.addButton(30, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD), "§aQuickSurvivalGames"), CommandLocations.getLocation("QuickSurvivalGames")));
+		this.GameInv.addButton(32, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), "§aFalldown"), CommandLocations.getLocation("DeathGames")));
+		this.GameInv.addButton(38, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_SPADE), "§aMasterbuilders"), CommandLocations.getLocation("masterbuilders")));
+		this.GameInv.addButton(39, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.MONSTER_EGG,1,(byte)91), "§aSheepWars"), CommandLocations.getLocation("SheepWars")));
+		this.GameInv.addButton(40, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BED), "§aBedWars"), CommandLocations.getLocation("BedWars")));
+		this.GameInv.addButton(41, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.EYE_OF_ENDER), "§aSkyWars"), CommandLocations.getLocation("SkyWars")));
+		this.GameInv.addButton(42, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.STICK), "§aTroubleInMinecraft"), CommandLocations.getLocation("TroubleInMinecraft")));
+		
 		this.GameInv.fill(Material.STAINED_GLASS_PANE, 7);
-		
 		UtilInv.getBase().addPage(this.GameInv);
 	}
 	

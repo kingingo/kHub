@@ -62,7 +62,7 @@ public class InvisibleManager extends kListener{
 			ev.setCancelled(true);
 		}
 		
-		if(UtilEvent.isAction(ev, ActionType.R)){
+		if(UtilEvent.isAction(ev, ActionType.RIGHT)){
 			if(ev.getPlayer().getItemInHand().getTypeId()==351){
 				if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 10){
 					ev.getPlayer().getItemInHand().setDurability((byte)8);

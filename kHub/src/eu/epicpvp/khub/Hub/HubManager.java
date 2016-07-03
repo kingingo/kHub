@@ -47,36 +47,38 @@ import eu.epicpvp.khub.Hub.Listener.Holidays.HalloweenListener;
 import eu.epicpvp.khub.Hub.Listener.Holidays.SilvesterListener;
 import lombok.Getter;
 
-public class HubManager extends kManager{
+public class HubManager extends kManager {
 	@Getter
 	private InventoryPageBase shop;
-	
-	public HubManager(kHub instance,CommandHandler cmdHandler,MySQL mysql){
-		super(instance,cmdHandler,mysql);
-		
-		if(!kHub.hubType.equalsIgnoreCase("LoginHub")){
+
+	public HubManager(kHub instance, CommandHandler cmdHandler, MySQL mysql) {
+		super(instance, cmdHandler, mysql);
+
+		if (!kHub.hubType.equalsIgnoreCase("LoginHub")) {
 			getPermissionManager();
 			getHologram().RemoveText();
-			
+
 			getCmdHandler().register(CommandGiveCoins.class, new CommandGiveCoins(getMoney()));
 			getCmdHandler().register(CommandGiveGems.class, new CommandGiveGems(getMoney()));
 			getCmdHandler().register(CommandGivePro.class, new CommandGivePro());
-			
-			this.shop=new InventoryPageBase(InventorySize._45, "Shop");
+
+			this.shop = new InventoryPageBase(InventorySize._45, "Shop");
 			UtilInv.getBase().addPage(shop);
-			
+
 			getPetManager().setHandler(new PlayerPetHandler(ServerType.GAME, mysql, getPetManager(), getPermissionManager()));
 			getPetManager().setPetShop(new PetShop(getPetManager().getHandler(), getMoney()));
-			this.shop.addButton(11, new ButtonOpenInventory(getPetManager().getPetShop(), UtilItem.Item(new ItemStack(Material.BONE), new String[]{"§bKlick mich um in den Pet Shop zukommen."}, "§7Pets")));
+			this.shop.addButton(11, new ButtonOpenInventory(getPetManager().getPetShop(), UtilItem.Item(new ItemStack(Material.BONE), new String[]
+			{ "§bKlick mich um in den Pet Shop zukommen." }, "§7Pets")));
 			UtilInv.getBase().addPage(getPetManager().getPetShop());
-			
-			getDisguiseManager().setDisguiseShop(new DisguiseShop(mysql, getPermissionManager(),getMoney(),getDisguiseManager()));
-			this.shop.addButton(15, new ButtonOpenInventory(getDisguiseManager().getDisguiseShop(), UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§bKlick mich um in den Disguise Shop zukommen."}, "§7Disguises")));
+
+			getDisguiseManager().setDisguiseShop(new DisguiseShop(mysql, getPermissionManager(), getMoney(), getDisguiseManager()));
+			this.shop.addButton(15, new ButtonOpenInventory(getDisguiseManager().getDisguiseShop(), UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]
+			{ "§bKlick mich um in den Disguise Shop zukommen." }, "§7Disguises")));
 			UtilInv.getBase().addPage(getDisguiseManager().getDisguiseShop());
-			
+
 			getDisguiseManager().getDisguiseShop().setAsync(true);
 			getPetManager().getHandler().setAsync(true);
-			
+
 			GadgetHandler handler = new GadgetHandler(getInstance());
 			handler.addGadget(new MobGun(handler));
 			handler.addGadget(new Ragebow(handler));
@@ -84,15 +86,18 @@ public class HubManager extends kManager{
 			handler.addGadget(new SlimeHead(handler));
 			handler.addGadget(new Pearl(handler));
 			GadgetShop gadgetShop = new GadgetShop(handler);
-			getShop().addButton(13, new ButtonOpenInventoryCopy(gadgetShop, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.PISTON_BASE), new String[]{"§bKlick mich um in den Gadget Shop zukommen."}, "§7Gadgets")));
+			getShop().addButton(13, new ButtonOpenInventoryCopy(gadgetShop, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.PISTON_BASE), new String[]
+			{ "§bKlick mich um in den Gadget Shop zukommen." }, "§7Gadgets")));
 			WingShop wingShop = new WingShop(getInstance());
-			getShop().addButton(29, new ButtonOpenInventoryCopy(wingShop, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.FEATHER), new String[]{"§bKlick mich um in den Wings Shop zukommen."}, "§7Wings")));
+			getShop().addButton(29, new ButtonOpenInventoryCopy(wingShop, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.FEATHER), new String[]
+			{ "§bKlick mich um in den Wings Shop zukommen." }, "§7Wings")));
 			MysteryBoxManager boxManager = new MysteryBoxManager(getInstance());
 			MysteryStore store = new MysteryStore(boxManager.getChest("MysteryBox"));
-			getShop().addButton(31, new ButtonOpenInventoryCopy(store, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.ENDER_CHEST), new String[]{"§bKlick mich um in den Mystery Box Shop zukommen."}, "§7MysteryBox")));
-			
-			if(Calendar.getHoliday()!=null){
-				switch(Calendar.holiday){
+			getShop().addButton(31, new ButtonOpenInventoryCopy(store, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.ENDER_CHEST), new String[]
+			{ "§bKlick mich um in den Mystery Box Shop zukommen." }, "§7MysteryBox")));
+
+			if (Calendar.getHoliday() != null) {
+				switch (Calendar.holiday) {
 				case HALLOWEEN:
 					new HalloweenListener(this);
 					new AddonNight(getInstance(), Bukkit.getWorld("world"));
@@ -102,39 +107,39 @@ public class HubManager extends kManager{
 					new AddonDay(instance, Bukkit.getWorld("world"));
 					break;
 				case WEIHNACHTEN:
-						new ChristmasListener(this);
-						new AddonNight(getInstance(), Bukkit.getWorld("world"));
+					new ChristmasListener(this);
+					new AddonNight(getInstance(), Bukkit.getWorld("world"));
 					break;
 				case SILVESTER:
-						new SilvesterListener(this);
-						new AddonNight(getInstance(), Bukkit.getWorld("world"));
+					new SilvesterListener(this);
+					new AddonNight(getInstance(), Bukkit.getWorld("world"));
 					break;
 				default:
 					new AddonDay(instance, Bukkit.getWorld("world"));
 				}
-			}else{
+			} else {
 				new AddonDay(instance, Bukkit.getWorld("world"));
 			}
 
-			new ChatListener(instance, null,getPermissionManager(),null);
-			this.shop.fill(Material.STAINED_GLASS_PANE,(byte)7);
+			new ChatListener(instance, null, getPermissionManager(), null);
+			this.shop.fill(Material.STAINED_GLASS_PANE, (byte) 7);
 		}
 
-		switch(kHub.hubType.toLowerCase()){
-			case "loginhub":
+		switch (kHub.hubType.toLowerCase()) {
+		case "loginhub":
 			new HubLoginListener(this);
-				break;
-			case "versushub":
-				new HubVersusListener(this);
-				break;
-			case "premiumhub":
-				new HubPremiumListener(this);
-				break;
-			default:
-				new HubListener(this);
-				break;
+			break;
+		case "versushub":
+			new HubVersusListener(this);
+			break;
+		case "premiumhub":
+			new HubPremiumListener(this);
+			break;
+		default:
+			new HubListener(this);
+			break;
 		}
-		
+
 		getCmdHandler().register(CommandURang.class, new CommandURang(getPermissionManager()));
 		getCmdHandler().register(CommandBroadcast.class, new CommandBroadcast());
 	}

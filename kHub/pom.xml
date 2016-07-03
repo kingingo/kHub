@@ -15,11 +15,6 @@
             <url>http://149.202.150.185:8081/artifactory/epicpvp-snapshots/</url>
         </snapshotRepository>
 	</distributionManagement>
-  	<parent>
-		<groupId>eu.epicpvp</groupId>
-		<artifactId>core-parent</artifactId>
-		<version>1.0</version>
-	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -52,10 +47,6 @@
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
-			<id>my-local-repo</id>
-			<url>file://C:\Dev\minecraftServer\</url>
 		</repository>
 		<repository>
 			<id>sk89q-repo</id>

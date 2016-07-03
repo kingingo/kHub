@@ -63,6 +63,7 @@ import eu.epicpvp.kcore.PacketAPI.packetlistener.event.PacketListenerSendEvent;
 import eu.epicpvp.kcore.Packets.PacketArenaStatus;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.StatsManager.StatsManager;
+import eu.epicpvp.kcore.StatsManager.StatsManagerRepository;
 import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsCreateEvent;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Update.UpdateType;
@@ -171,7 +172,7 @@ public class HubVersusListener extends kListener{
 		this.manager.getCmdHandler().register(CommandVersusMore.class, new CommandVersusMore());
 		this.kitManager=new PlayerKitManager(manager.getMysql(), GameType.Versus);
 		this.kitManager.setAsync(true);
-		this.statsManager=new StatsManager(manager.getInstance(),UtilServer.getClient(),GameType.Versus);
+		this.statsManager=StatsManagerRepository.getStatsManager(GameType.Versus);
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.spawn=CommandLocations.getLocation("spawn");
 		
@@ -538,7 +539,7 @@ public class HubVersusListener extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void LobbyMenu(PlayerInteractEvent ev){
-		if(UtilEvent.isAction(ev, ActionType.R)){
+		if(UtilEvent.isAction(ev, ActionType.RIGHT)){
 			if(ev.getPlayer().getItemInHand().getType()==Material.CHEST){
 				ev.getPlayer().openInventory(getManager().getShop());
 			}

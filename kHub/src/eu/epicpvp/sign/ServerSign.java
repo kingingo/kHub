@@ -57,7 +57,8 @@ public class ServerSign implements Listener {
 
 	@EventHandler
 	public void click(PlayerInteractEvent e) {
-		if (server == null) return;
+		if (server == null)
+			return;
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock().getState() instanceof Sign) {
 			if (e.getClickedBlock().getLocation().equals(location)) {
 				e.setCancelled(true);
@@ -78,7 +79,7 @@ public class ServerSign implements Listener {
 	private void setLines(String[] lines) {
 		for (int i = 0; i < 4; i++)
 			getSign().setLine(i, lines[i]);
-		getSign().update(false,false);
+		getSign().update(false, false);
 	}
 
 	private String[] getLines() {

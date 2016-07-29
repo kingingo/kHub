@@ -114,8 +114,7 @@ public class HubListener extends kListener {
 		UtilEnt.setNoAI(z, true);
 		UtilEnt.setSilent(z, true);
 
-		DisguiseBase dbase = DisguiseType.newDisguise(z, DisguiseType.PLAYER, new Object[]
-		{ " " });
+		DisguiseBase dbase = DisguiseType.newDisguise(z, DisguiseType.PLAYER, new Object[] { " " });
 		((DisguisePlayer) dbase).loadSkin("EpicPvPMC");
 
 		manager.getDisguiseManager().disguise(dbase);
@@ -155,8 +154,7 @@ public class HubListener extends kListener {
 
 			@Override
 			public void onClick(Player player, ActionType type, Object object) {
-				if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, new StatsKey[]
-				{ StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME }) > TimeSpan.MINUTE * 30)) {
+				if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, new StatsKey[] { StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME }) > TimeSpan.MINUTE * 30)) {
 
 					payToWin.openInv(player);
 				} else {
@@ -171,75 +169,71 @@ public class HubListener extends kListener {
 	}
 
 	public void initializeDeliveryPet() {
-		UtilServer.createDeliveryPet(new DeliveryPet(UtilInv.getBase(), null, new DeliveryObject[]
-		{ new DeliveryObject(new String[]
-				{ "", "§7Click for Vote!", "", "§ePvP Rewards:", "§7   200 Epics", "§7   1x Inventory Repair", "", "§eGame Rewards:", "§7   25 Gems", "§7   100 Coins", "", "§eSkyBlock Rewards:", "§7   200 Epics", "§7   2x Diamonds", "§7   2x Iron Ingot", "§7   2x Gold Ingot" }, PermissionType.DELIVERY_PET_VOTE, false, 28, "§aVote for ClashMC", Material.PAPER, Material.REDSTONE_BLOCK, new Click() {
+		UtilServer.createDeliveryPet(new DeliveryPet(UtilInv.getBase(), null, new DeliveryObject[] { new DeliveryObject(new String[] { "", "§7Click for Vote!", "", "§ePvP Rewards:", "§7   200 Epics", "§7   1x Inventory Repair", "", "§eGame Rewards:", "§7   25 Gems", "§7   100 Coins", "", "§eSkyBlock Rewards:", "§7   200 Epics", "§7   2x Diamonds", "§7   2x Iron Ingot", "§7   2x Gold Ingot" }, PermissionType.DELIVERY_PET_VOTE, false, 28, "§aVote for ClashMC", Material.PAPER, Material.REDSTONE_BLOCK, new Click() {
 
-					@Override
-					public void onClick(Player p, ActionType a, Object obj) {
-						p.closeInventory();
-						p.sendMessage(TranslationHandler.getText(p, "PREFIX") + "§7-----------------------------------------");
-						p.sendMessage(TranslationHandler.getText(p, "PREFIX") + " ");
-						p.sendMessage(TranslationHandler.getText(p, "PREFIX") + "Vote Link:§a http://vote.clashmc.eu/");
-						p.sendMessage(TranslationHandler.getText(p, "PREFIX") + " ");
-						p.sendMessage(TranslationHandler.getText(p, "PREFIX") + "§7-----------------------------------------");
-					}
+			@Override
+			public void onClick(Player p, ActionType a, Object obj) {
+				p.closeInventory();
+				p.sendMessage(TranslationHandler.getText(p, "PREFIX") + "§7-----------------------------------------");
+				p.sendMessage(TranslationHandler.getText(p, "PREFIX") + " ");
+				p.sendMessage(TranslationHandler.getText(p, "PREFIX") + "Vote Link:§a http://vote.clashmc.eu/");
+				p.sendMessage(TranslationHandler.getText(p, "PREFIX") + " ");
+				p.sendMessage(TranslationHandler.getText(p, "PREFIX") + "§7-----------------------------------------");
+			}
 
-				}, -1), new DeliveryObject(new String[]
-				{ "§aOnly for §eVIP§a!", "", "§ePvP Rewards:", "§7   200 Epics", "§7   10 Level", "", "§eGame Rewards:", "§7   200 Coins", "§7   2x TTT Paesse", "", "§eSkyBlock Rewards:", "§7   200 Epics", "§7   2x Diamonds", "§7   2x Iron Ingot", "§7   2x Gold Ingot" }, PermissionType.DELIVERY_PET_VIP_WEEK, true, 11, "§cRank §eVIP§c Reward", Material.getMaterial(342), Material.MINECART, new Click() {
+		}, -1), new DeliveryObject(new String[] { "§aOnly for §eVIP§a!", "", "§ePvP Rewards:", "§7   200 Epics", "§7   10 Level", "", "§eGame Rewards:", "§7   200 Coins", "§7   2x TTT Paesse", "", "§eSkyBlock Rewards:", "§7   200 Epics", "§7   2x Diamonds", "§7   2x Iron Ingot", "§7   2x Gold Ingot" }, PermissionType.DELIVERY_PET_VIP_WEEK, true, 11, "§cRank §eVIP§c Reward", Material.getMaterial(342), Material.MINECART, new Click() {
 
-					@Override
-					public void onClick(Player p, ActionType a, Object obj) {
-						getManager().getMoney().add(p, StatsKey.COINS, 200);
-					}
+			@Override
+			public void onClick(Player p, ActionType a, Object obj) {
+				getManager().getMoney().add(p, StatsKey.COINS, 200);
+			}
 
-				}, TimeSpan.DAY * 7), new DeliveryObject(new String[]
-				{ "§aOnly for §6ULTRA§a!", "", "§ePvP Rewards:", "§7   300 Epics", "§7   15 Level", "", "§eGame Rewards:", "§7   300 Coins", "§7   2x TTT Paesse", "", "§eSkyBlock Rewards:", "§7   300 Epics", "§7   4x Diamonds", "§7   4x Iron Ingot", "§7   4x Gold Ingot" }, PermissionType.DELIVERY_PET_ULTRA_WEEK, true, 12, "§cRank §6ULTRA§c Reward", Material.getMaterial(342), Material.MINECART, new Click() {
+		}, TimeSpan.DAY * 7), new DeliveryObject(new String[] { "§aOnly for §6ULTRA§a!", "", "§ePvP Rewards:", "§7   300 Epics", "§7   15 Level", "", "§eGame Rewards:", "§7   300 Coins", "§7   2x TTT Paesse", "", "§eSkyBlock Rewards:", "§7   300 Epics", "§7   4x Diamonds", "§7   4x Iron Ingot", "§7   4x Gold Ingot" }, PermissionType.DELIVERY_PET_ULTRA_WEEK, true, 12, "§cRank §6ULTRA§c Reward", Material.getMaterial(342), Material.MINECART, new Click() {
 
-					@Override
-					public void onClick(Player p, ActionType a, Object obj) {
-						getManager().getMoney().add(p, StatsKey.COINS, 300);
-					}
+			@Override
+			public void onClick(Player p, ActionType a, Object obj) {
+				getManager().getMoney().add(p, StatsKey.COINS, 300);
+			}
 
-				}, TimeSpan.DAY * 7), new DeliveryObject(new String[]
-				{ "§aOnly for §aLEGEND§a!", "", "§ePvP Rewards:", "§7   400 Epics", "§7   20 Level", "", "§eGame Rewards:", "§7   400 Coins", "§7   3x TTT Paesse", "", "§eSkyBlock Rewards:", "§7   400 Epics", "§7   6x Diamonds", "§7   6x Iron Ingot", "§7   6x Gold Ingot" }, PermissionType.DELIVERY_PET_LEGEND_WEEK, true, 13, "§cRank §5LEGEND§c Reward", Material.getMaterial(342), Material.MINECART, new Click() {
+		}, TimeSpan.DAY * 7), new DeliveryObject(new String[] { "§aOnly for §aLEGEND§a!", "", "§ePvP Rewards:", "§7   400 Epics", "§7   20 Level", "", "§eGame Rewards:", "§7   400 Coins", "§7   3x TTT Paesse", "", "§eSkyBlock Rewards:", "§7   400 Epics", "§7   6x Diamonds", "§7   6x Iron Ingot", "§7   6x Gold Ingot" }, PermissionType.DELIVERY_PET_LEGEND_WEEK, true, 13, "§cRank §5LEGEND§c Reward", Material.getMaterial(342), Material.MINECART, new Click() {
 
-					@Override
-					public void onClick(Player p, ActionType a, Object obj) {
-						getManager().getMoney().add(p, StatsKey.COINS, 400);
-					}
+			@Override
+			public void onClick(Player p, ActionType a, Object obj) {
+				getManager().getMoney().add(p, StatsKey.COINS, 400);
+			}
 
-				}, TimeSpan.DAY * 7), new DeliveryObject(new String[]
-				{ "§aOnly for §bMVP§a!", "", "§ePvP Rewards:", "§7   500 Epics", "§7   25 Level", "", "§eGame Rewards:", "§7   500 Coins", "§7   3x TTT Paesse", "", "§eSkyBlock Rewards:", "§7   500 Epics", "§7   8x Diamonds", "§7   8x Iron Ingot", "§7   8x Gold Ingot" }, PermissionType.DELIVERY_PET_MVP_WEEK, true, 14, "§cRank §3MVP§c Reward", Material.getMaterial(342), Material.MINECART, new Click() {
+		}, TimeSpan.DAY * 7), new DeliveryObject(new String[] { "§aOnly for §bMVP§a!", "", "§ePvP Rewards:", "§7   500 Epics", "§7   25 Level", "", "§eGame Rewards:", "§7   500 Coins", "§7   3x TTT Paesse", "", "§eSkyBlock Rewards:", "§7   500 Epics", "§7   8x Diamonds", "§7   8x Iron Ingot", "§7   8x Gold Ingot" }, PermissionType.DELIVERY_PET_MVP_WEEK, true, 14, "§cRank §3MVP§c Reward", Material.getMaterial(342), Material.MINECART, new Click() {
 
-					@Override
-					public void onClick(Player p, ActionType a, Object obj) {
-						getManager().getMoney().add(p, StatsKey.COINS, 500);
-					}
+			@Override
+			public void onClick(Player p, ActionType a, Object obj) {
+				getManager().getMoney().add(p, StatsKey.COINS, 500);
+			}
 
-				}, TimeSpan.DAY * 7), new DeliveryObject(new String[]
-				{ "§aOnly for §bMVP§c+§a!", "", "§ePvP Rewards:", "§7   600 Epics", "§7   30 Level", "", "§eGame Rewards:", "§7   600 Coins", "§7   4x TTT Paesse", "", "§eSkyBlock Rewards:", "§7   600 Epics", "§7   10x Diamonds", "§7   10x Iron Ingot", "§7   10x Gold Ingot" }, PermissionType.DELIVERY_PET_MVPPLUS_WEEK, true, 15, "§cRank §9MVP§e+§c Reward", Material.getMaterial(342), Material.MINECART, new Click() {
+		}, TimeSpan.DAY * 7), new DeliveryObject(new String[] { "§aOnly for §bMVP§c+§a!", "", "§ePvP Rewards:", "§7   600 Epics", "§7   30 Level", "", "§eGame Rewards:", "§7   600 Coins", "§7   4x TTT Paesse", "", "§eSkyBlock Rewards:", "§7   600 Epics", "§7   10x Diamonds", "§7   10x Iron Ingot", "§7   10x Gold Ingot" }, PermissionType.DELIVERY_PET_MVPPLUS_WEEK, true, 15, "§cRank §9MVP§e+§c Reward", Material.getMaterial(342), Material.MINECART, new Click() {
 
-					@Override
-					public void onClick(Player p, ActionType a, Object obj) {
-						getManager().getMoney().add(p, StatsKey.COINS, 600);
-					}
+			@Override
+			public void onClick(Player p, ActionType a, Object obj) {
+				getManager().getMoney().add(p, StatsKey.COINS, 600);
+			}
 
-				}, TimeSpan.DAY * 7), new DeliveryObject(new String[]
-				{ "§7/twitter [TwitterName]", "", "§ePvP Rewards:", "§7   300 Epics", "§7   15 Level", "", "§eGame Rewards:", "§7   300 Coins", "", "§eSkyBlock Rewards:", "§7   300 Epics", "§7   15 Level" }, PermissionType.DELIVERY_PET_TWITTER, false, 34, "§cTwitter Reward", Material.getMaterial(351), 4, new Click() {
+		}, TimeSpan.DAY * 7), new DeliveryObject(new String[] { "§7/twitter [TwitterName]", "", "§ePvP Rewards:", "§7   300 Epics", "§7   15 Level", "", "§eGame Rewards:", "§7   300 Coins", "", "§eSkyBlock Rewards:", "§7   300 Epics", "§7   15 Level" }, PermissionType.DELIVERY_PET_TWITTER, false, 34, "§cTwitter Reward", Material.getMaterial(351), 4, new Click() {
 
-					@Override
-					public void onClick(Player p, ActionType a, Object obj) {
-						//						String s1 = getManager().getMysql().getString("SELECT twitter FROM BG_TWITTER WHERE uuid='"+UtilPlayer.getRealUUID(p)+"'");
-						//						if(s1.equalsIgnoreCase("null")){
-						//							p.sendMessage(TranslationManager.getText(p,"PREFIX")+TranslationManager.getText(p, "TWITTER_ACC_NOT"));
-						//						}else{
-						//							getManager().getPacketManager().SendPacket("DATA", new TWIITTER_IS_PLAYER_FOLLOWER(s1, p.getName()));
-						//							p.sendMessage(TranslationManager.getText(p,"PREFIX")+TranslationManager.getText(p, "TWITTER_CHECK"));
-						//						}
-					}
+			@Override
+			public void onClick(Player p, ActionType a, Object obj) {
+				// String s1 = getManager().getMysql().getString("SELECT twitter
+				// FROM BG_TWITTER WHERE uuid='"+UtilPlayer.getRealUUID(p)+"'");
+				// if(s1.equalsIgnoreCase("null")){
+				// p.sendMessage(TranslationManager.getText(p,"PREFIX")+TranslationManager.getText(p,
+				// "TWITTER_ACC_NOT"));
+				// }else{
+				// getManager().getPacketManager().SendPacket("DATA", new
+				// TWIITTER_IS_PLAYER_FOLLOWER(s1, p.getName()));
+				// p.sendMessage(TranslationManager.getText(p,"PREFIX")+TranslationManager.getText(p,
+				// "TWITTER_CHECK"));
+				// }
+			}
 
-				}, TimeSpan.DAY * 7), }, "§bThe Delivery Jockey!", EntityType.CHICKEN, CommandLocations.getLocation("DeliveryPet"), ServerType.GAME, getManager().getHologram(), getManager().getMysql()));
+		}, TimeSpan.DAY * 7), }, "§bThe Delivery Jockey!", EntityType.CHICKEN, CommandLocations.getLocation("DeliveryPet"), ServerType.GAME, getManager().getHologram(), getManager().getMysql()));
 	}
 
 	public void initializeTranslationManagerInv() {
@@ -269,8 +263,7 @@ public class HubListener extends kListener {
 						player.sendMessage(TranslationHandler.getText(player, "PREFIX") + TranslationHandler.getText(player, "LANGUAGE_CHANGE"));
 					}
 
-				}, UtilItem.Item(new ItemStack(Material.PAPER), new String[]
-				{ "§7Translation Progress: " + color(UtilMath.trim(2, percent)) }, "§a" + type.name().toUpperCase())));
+				}, UtilItem.Item(new ItemStack(Material.PAPER), new String[] { "§7Translation Progress: " + color(UtilMath.trim(2, percent)) }, "§a" + type.name().toUpperCase())));
 				i++;
 			}
 		}
@@ -316,7 +309,7 @@ public class HubListener extends kListener {
 		}
 	}
 
-	//UNSICHTBAR / PET SHOP / Walk Effect / FLY
+	// UNSICHTBAR / PET SHOP / Walk Effect / FLY
 	public void fillGameInv() {
 		this.GameInv = new InventoryPageBase(InventorySize._54, "§8Game Menu");
 
@@ -352,16 +345,14 @@ public class HubListener extends kListener {
 							public void onClick(Player player, ActionType a, Object obj) {
 								player.closeInventory();
 							}
-						}, UtilItem.Item(new ItemStack(Material.GLOWSTONE_DUST), new String[]
-						{ "§6Klicke um die Premium Lobby " + l.getName().split(" ")[2] + " zu betreten " }, "§b" + l.getName())));
+						}, UtilItem.Item(new ItemStack(Material.GLOWSTONE_DUST), new String[] { "§6Klicke um die Premium Lobby " + l.getName().split(" ")[2] + " zu betreten " }, "§b" + l.getName())));
 					} else {
 						this.LobbyInv.addButton(l.getPlace(), new ButtonBase(new Click() {
 							@Override
 							public void onClick(Player player, ActionType a, Object obj) {
 								player.closeInventory();
 							}
-						}, UtilItem.Item(new ItemStack(Material.GLOWSTONE_DUST), new String[]
-						{ "§6Klicke um die Lobby " + l.getName().split(" ")[1] + " zu betreten " }, "§a" + l.getName())));
+						}, UtilItem.Item(new ItemStack(Material.GLOWSTONE_DUST), new String[] { "§6Klicke um die Lobby " + l.getName().split(" ")[1] + " zu betreten " }, "§a" + l.getName())));
 					}
 				} else {
 					if (l.getBg().startsWith("premiumhub")) {
@@ -369,21 +360,23 @@ public class HubListener extends kListener {
 							@Override
 							public void onClick(Player player, ActionType a, Object obj) {
 								if (player.hasPermission(PermissionType.PREMIUM_LOBBY.getPermissionToString())) {
-									//									UtilBG.SendToBungeeCord("lobby/"+ l.getBg() + "/" + player.getName(), player,getManager().getInstance());
+									// UtilBG.SendToBungeeCord("lobby/"+
+									// l.getBg() + "/" + player.getName(),
+									// player,getManager().getInstance());
 									UtilBG.sendToServer(player, l.getBg(), getManager().getInstance());
 								}
 							}
-						}, UtilItem.Item(new ItemStack(353), new String[]
-						{ "§6Klicke um die Premium Lobby " + l.getName().split(" ")[2] + " zu betreten " }, "§b" + l.getName())));
+						}, UtilItem.Item(new ItemStack(353), new String[] { "§6Klicke um die Premium Lobby " + l.getName().split(" ")[2] + " zu betreten " }, "§b" + l.getName())));
 					} else {
 						this.LobbyInv.addButton(l.getPlace(), new ButtonBase(new Click() {
 							@Override
 							public void onClick(Player player, ActionType a, Object obj) {
-								//								UtilBG.SendToBungeeCord("lobby/"+ l.getBg() + "/" + player.getName(), player,getManager().getInstance());
+								// UtilBG.SendToBungeeCord("lobby/"+ l.getBg() +
+								// "/" + player.getName(),
+								// player,getManager().getInstance());
 								UtilBG.sendToServer(player, l.getBg(), getManager().getInstance());
 							}
-						}, UtilItem.Item(new ItemStack(289), new String[]
-						{ "§6Klicke um die Lobby " + l.getName().split(" ")[1] + " zu betreten " }, "§a" + l.getName())));
+						}, UtilItem.Item(new ItemStack(289), new String[] { "§6Klicke um die Lobby " + l.getName().split(" ")[1] + " zu betreten " }, "§a" + l.getName())));
 					}
 				}
 			}
@@ -398,16 +391,16 @@ public class HubListener extends kListener {
 
 	@EventHandler
 	public void Join(PlayerJoinEvent ev) {
-		UtilServer.loopbackUntilValidDataserverConnection(()->{
+		UtilServer.loopbackUntilValidDataserverConnection(() -> {
 			getManager().getMoney().loadPlayer(ev.getPlayer());
-		}, "money loader "+ev.getPlayer().getName(), false);
-		UtilServer.loopbackUntilValidDataserverConnection(()->{
+		}, "money loader " + ev.getPlayer().getName(), false);
+		UtilServer.loopbackUntilValidDataserverConnection(() -> {
 			getTimer().loadPlayer(ev.getPlayer());
-		}, "timer loader "+ev.getPlayer().getName(), false);
-		UtilServer.loopbackUntilValidDataserverConnection(()->{
+		}, "timer loader " + ev.getPlayer().getName(), false);
+		UtilServer.loopbackUntilValidDataserverConnection(() -> {
 			ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX") + TranslationHandler.getText(ev.getPlayer(), "WHEREIS_TEXT", kHub.hubID + " " + kHub.hubType));
 		}, "welcome message", true);
-		
+
 		UtilPlayer.setTab(ev.getPlayer(), kHub.hubType + " " + kHub.hubID);
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.COMPASS), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));

@@ -39,7 +39,7 @@ import eu.epicpvp.khub.Hub.HubManager;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Listener extends kListener{
+public class Listener extends kListener {
 
 	@Getter
 	private kManager manager;
@@ -78,59 +78,59 @@ public class Listener extends kListener{
 	private boolean playerDropItem = true;
 	@Getter
 	private GameMode gameMode = GameMode.ADVENTURE;
-	
+
 	public Listener(kManager manager) {
-		super(manager.getInstance(),"Listener");
-		this.manager=manager;
+		super(manager.getInstance(), "Listener");
+		this.manager = manager;
 	}
-	
+
 	@EventHandler
-	public void status(ServerStatusUpdateEvent ev){
+	public void status(ServerStatusUpdateEvent ev) {
 		ev.getPacket().setPlayers(Bukkit.getOnlinePlayers().size());
 	}
-	
+
 	@EventHandler
-	public void soilChangeEntity(EntityInteractEvent event){
-	    if ((event.getEntityType() != EntityType.PLAYER) && (event.getBlock().getType() == Material.SOIL)){
-	    	event.setCancelled(isEntityInteract());
-	    }
+	public void soilChangeEntity(EntityInteractEvent event) {
+		if ((event.getEntityType() != EntityType.PLAYER) && (event.getBlock().getType() == Material.SOIL)) {
+			event.setCancelled(isEntityInteract());
+		}
 	}
-	
+
 	@EventHandler
-	public void Sign(SignChangeEvent ev){
-		if(ev.getPlayer().hasPermission(PermissionType.CHAT_FARBIG.getPermissionToString())){
+	public void Sign(SignChangeEvent ev) {
+		if (ev.getPlayer().hasPermission(PermissionType.CHAT_FARBIG.getPermissionToString())) {
 			ev.setLine(0, ev.getLine(0).replaceAll("&", "§"));
 			ev.setLine(1, ev.getLine(1).replaceAll("&", "§"));
 			ev.setLine(2, ev.getLine(2).replaceAll("&", "§"));
 			ev.setLine(3, ev.getLine(3).replaceAll("&", "§"));
 		}
 	}
-	
+
 	@EventHandler
-	public void combust(EntityCombustEvent ev){
+	public void combust(EntityCombustEvent ev) {
 		ev.setCancelled(true);
 	}
-	
+
 	@EventHandler
-	public void BlockRedstoneEventon(BlockRedstoneEvent ev){
+	public void BlockRedstoneEventon(BlockRedstoneEvent ev) {
 		ev.setNewCurrent(ev.getOldCurrent());
 	}
-	
+
 	@EventHandler
-	public void Quit(PlayerQuitEvent ev){
+	public void Quit(PlayerQuitEvent ev) {
 		ev.setQuitMessage(null);
 		ev.getPlayer().getInventory().clear();
 	}
-	
+
 	@EventHandler
-	public void AddBoard(PlayerSetScoreboardEvent ev){
-		if(!kHub.hubType.equalsIgnoreCase("LoginHub") && this.manager instanceof HubManager){
-			UtilPlayer.setScoreboardGemsAndCoins(ev.getPlayer(), ((HubManager)this.manager).getMoney());
+	public void AddBoard(PlayerSetScoreboardEvent ev) {
+		if (!kHub.hubType.equalsIgnoreCase("LoginHub") && this.manager instanceof HubManager) {
+			UtilPlayer.setScoreboardGemsAndCoins(ev.getPlayer(), ((HubManager) this.manager).getMoney());
 		}
 	}
-	
-	@EventHandler(priority=EventPriority.LOWEST)
-	public void Join(PlayerJoinEvent ev){
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void Join(PlayerJoinEvent ev) {
 		ev.setJoinMessage(null);
 		ev.getPlayer().setGameMode(getGameMode());
 		ev.getPlayer().getWorld().setWeatherDuration(0);
@@ -141,19 +141,20 @@ public class Listener extends kListener{
 		ev.getPlayer().getInventory().setLeggings(null);
 		ev.getPlayer().getInventory().setBoots(null);
 		ev.getPlayer().getInventory().clear();
-		if(!kHub.hubType.equalsIgnoreCase("LoginHub"))ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
+		if (!kHub.hubType.equalsIgnoreCase("LoginHub"))
+			ev.getPlayer().getInventory().setItem(0, UtilItem.RenameItem(new ItemStack(Material.CHEST), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_CHEST")));
 	}
-	
+
 	@EventHandler
-	public void Food(FoodLevelChangeEvent ev){
+	public void Food(FoodLevelChangeEvent ev) {
 		ev.setCancelled(isFoodLevelChange());
 	}
-	
+
 	@EventHandler
 	public void onPlayer(PlayerDropItemEvent event) {
 		event.setCancelled(isPlayerDropItem());
 	}
-	
+
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		Player p = event.getPlayer();
@@ -170,7 +171,7 @@ public class Listener extends kListener{
 		} else if (cmd.equalsIgnoreCase("/msg")) {
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + "Nope :3");
-		}else if (cmd.equalsIgnoreCase("/ban")) {
+		} else if (cmd.equalsIgnoreCase("/ban")) {
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + "Nope :3");
 		} else if (cmd.equalsIgnoreCase("/kill")) {
@@ -203,50 +204,52 @@ public class Listener extends kListener{
 		} else if (cmd.equalsIgnoreCase("/me")) {
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + "Nope :3");
-		}else if (cmd.equalsIgnoreCase("/bukkit:kill")) {
-		    event.setCancelled(true);
-		    p.sendMessage(ChatColor.RED + "Nope :3");
-	    } else if (cmd.equalsIgnoreCase("/bukkit:msg")) {
-		    event.setCancelled(true);
-		    p.sendMessage(ChatColor.RED + "Nope :3");
-	    } else if (cmd.equalsIgnoreCase("/bukkit:tell")) {
-		    event.setCancelled(true);
-		    p.sendMessage(ChatColor.RED + "Nope :3");
-	    } else if (cmd.equalsIgnoreCase("/bukkit:me")) {
-		    event.setCancelled(true);
-		    p.sendMessage(ChatColor.RED + "Nope :3");
-	    } else if (cmd.equalsIgnoreCase("/?")) {
-	    	event.setCancelled(true);
-	       	p.sendMessage(ChatColor.RED + "Nope :3");
-	    } else if (cmd.equalsIgnoreCase("/help")) {
+		} else if (cmd.equalsIgnoreCase("/bukkit:kill")) {
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + "Nope :3");
-	    }
+		} else if (cmd.equalsIgnoreCase("/bukkit:msg")) {
+			event.setCancelled(true);
+			p.sendMessage(ChatColor.RED + "Nope :3");
+		} else if (cmd.equalsIgnoreCase("/bukkit:tell")) {
+			event.setCancelled(true);
+			p.sendMessage(ChatColor.RED + "Nope :3");
+		} else if (cmd.equalsIgnoreCase("/bukkit:me")) {
+			event.setCancelled(true);
+			p.sendMessage(ChatColor.RED + "Nope :3");
+		} else if (cmd.equalsIgnoreCase("/?")) {
+			event.setCancelled(true);
+			p.sendMessage(ChatColor.RED + "Nope :3");
+		} else if (cmd.equalsIgnoreCase("/help")) {
+			event.setCancelled(true);
+			p.sendMessage(ChatColor.RED + "Nope :3");
+		}
 	}
-	
+
 	@EventHandler
-	public void Command(PlayerCommandPreprocessEvent ev){
-		 if(ev.getMessage().contains("/bukkit:")){
-			Player p=ev.getPlayer();
+	public void Command(PlayerCommandPreprocessEvent ev) {
+		if (ev.getMessage().contains("/bukkit:")) {
+			Player p = ev.getPlayer();
 			ev.setCancelled(true);
 			p.sendMessage("§cDein Ernst?");
-		 }
+		}
 	}
-	
+
 	@EventHandler
 	public void ex(EntityExplodeEvent ev) {
 		ev.setCancelled(isEntityExplode());
 	}
-	
+
 	@EventHandler
 	public void Break(BlockBreakEvent ev) {
-		if (ev.getPlayer().isOp())return;
+		if (ev.getPlayer().isOp())
+			return;
 		ev.setCancelled(isBlockBreak());
 	}
 
 	@EventHandler
 	public void Break(BlockPlaceEvent ev) {
-		if (ev.getPlayer().isOp()) return;
+		if (ev.getPlayer().isOp())
+			return;
 		ev.setCancelled(isBlockPlace());
 	}
 
@@ -274,9 +277,9 @@ public class Listener extends kListener{
 	public void damage(EntityDamageByEntityEvent e) {
 		e.setCancelled(isEntityDamageByEntity());
 	}
-	
+
 	@EventHandler
-	public void death(PlayerDeathEvent ev){
+	public void death(PlayerDeathEvent ev) {
 		ev.setDeathMessage(null);
 		ev.setDroppedExp(0);
 		ev.getDrops().clear();

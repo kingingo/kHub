@@ -24,54 +24,58 @@ import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.khub.Hub.Listener.HubListener;
 import lombok.Setter;
 
-public class InvisibleManager extends kListener{
+public class InvisibleManager extends kListener {
 
-	private HashMap<Player,Long> invisible = new HashMap<>();
+	private HashMap<Player, Long> invisible = new HashMap<>();
 	@Setter
-	private HubListener listener=null;
-	
-	public InvisibleManager(JavaPlugin instance,HubListener listener){
-		super(instance,"InvisbleManager");		
-		this.listener=listener;
+	private HubListener listener = null;
+
+	public InvisibleManager(JavaPlugin instance, HubListener listener) {
+		super(instance, "InvisbleManager");
+		this.listener = listener;
 	}
-	
-	public boolean visible(Player player){
-		if(!invisible.containsKey(player))return true;
-		if(invisible.get(player)>System.currentTimeMillis()){
+
+	public boolean visible(Player player) {
+		if (!invisible.containsKey(player))
+			return true;
+		if (invisible.get(player) > System.currentTimeMillis()) {
 			return false;
 		}
 		invisible.remove(player);
-		for(Player p : UtilServer.getPlayers()){
-			if(p.getName().equalsIgnoreCase(player.getName()))continue;
+		for (Player p : UtilServer.getPlayers()) {
+			if (p.getName().equalsIgnoreCase(player.getName()))
+				continue;
 			player.showPlayer(p);
 		}
 		return true;
 	}
-	
-	public void invisible(Player player){
-		invisible.put(player, System.currentTimeMillis()+(TimeSpan.SECOND*3));
-		for(Player p : UtilServer.getPlayers()){
-			if(p.getName().equalsIgnoreCase(player.getName()))continue;
-			if(!p.hasPermission(PermissionType.TEAM_MESSAGE.getPermissionToString()))player.hidePlayer(p);
+
+	public void invisible(Player player) {
+		invisible.put(player, System.currentTimeMillis() + (TimeSpan.SECOND * 3));
+		for (Player p : UtilServer.getPlayers()) {
+			if (p.getName().equalsIgnoreCase(player.getName()))
+				continue;
+			if (!p.hasPermission(PermissionType.TEAM_MESSAGE.getPermissionToString()))
+				player.hidePlayer(p);
 		}
 	}
-	
-	@EventHandler(priority=EventPriority.HIGHEST)
-	public void LobbyMenu(PlayerInteractEvent ev){
-		if(UtilEvent.isAction(ev, ActionType.BLOCK)&&!ev.getPlayer().isOp()){
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void LobbyMenu(PlayerInteractEvent ev) {
+		if (UtilEvent.isAction(ev, ActionType.BLOCK) && !ev.getPlayer().isOp()) {
 			ev.setCancelled(true);
 		}
-		
-		if(UtilEvent.isAction(ev, ActionType.RIGHT)){
-			if(ev.getPlayer().getItemInHand().getTypeId()==351){
-				if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 10){
-					ev.getPlayer().getItemInHand().setDurability((byte)8);
+
+		if (UtilEvent.isAction(ev, ActionType.RIGHT)) {
+			if (ev.getPlayer().getItemInHand().getTypeId() == 351) {
+				if (UtilInv.GetData(ev.getPlayer().getItemInHand()) == 10) {
+					ev.getPlayer().getItemInHand().setDurability((byte) 8);
 					ev.getPlayer().setItemInHand(UtilItem.RenameItem(ev.getPlayer().getItemInHand(), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_GRAY.DYE_PLAYERS_OFF")));
 					ev.getPlayer().updateInventory();
 					invisible(ev.getPlayer());
-				}else if(UtilInv.GetData(ev.getPlayer().getItemInHand()) == 8){
-					if(visible(ev.getPlayer())){
-						ev.getPlayer().getItemInHand().setDurability((byte)10);
+				} else if (UtilInv.GetData(ev.getPlayer().getItemInHand()) == 8) {
+					if (visible(ev.getPlayer())) {
+						ev.getPlayer().getItemInHand().setDurability((byte) 10);
 						ev.getPlayer().setItemInHand(UtilItem.RenameItem(ev.getPlayer().getItemInHand(), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
 						ev.getPlayer().updateInventory();
 					}
@@ -79,19 +83,21 @@ public class InvisibleManager extends kListener{
 			}
 		}
 	}
-	
+
 	@EventHandler
-	public void Quit(PlayerQuitEvent ev){
+	public void Quit(PlayerQuitEvent ev) {
 		invisible.remove(ev.getPlayer());
 	}
-	
+
 	@EventHandler
-	public void load(PlayerLoadPermissionEvent ev){
-		if(!ev.getPlayer().hasPermission(PermissionType.TEAM_MESSAGE.getPermissionToString())) for(Player p : invisible.keySet())p.hidePlayer(ev.getPlayer());
+	public void load(PlayerLoadPermissionEvent ev) {
+		if (!ev.getPlayer().hasPermission(PermissionType.TEAM_MESSAGE.getPermissionToString()))
+			for (Player p : invisible.keySet())
+				p.hidePlayer(ev.getPlayer());
 	}
-	
-	@EventHandler(priority=EventPriority.LOW)
-	public void Join(PlayerJoinEvent ev){
-		ev.getPlayer().getInventory().setItem(7, UtilItem.RenameItem(new ItemStack(351,1,(byte)10),TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
+
+	@EventHandler(priority = EventPriority.LOW)
+	public void Join(PlayerJoinEvent ev) {
+		ev.getPlayer().getInventory().setItem(7, UtilItem.RenameItem(new ItemStack(351, 1, (byte) 10), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_GREEN.DYE_PLAYERS_ON")));
 	}
 }

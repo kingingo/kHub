@@ -67,13 +67,11 @@ public class HubManager extends kManager {
 
 			getPetManager().setHandler(new PlayerPetHandler(ServerType.GAME, mysql, getPetManager(), getPermissionManager()));
 			getPetManager().setPetShop(new PetShop(getPetManager().getHandler(), getMoney()));
-			this.shop.addButton(11, new ButtonOpenInventory(getPetManager().getPetShop(), UtilItem.Item(new ItemStack(Material.BONE), new String[]
-			{ "§bKlick mich um in den Pet Shop zukommen." }, "§7Pets")));
+			this.shop.addButton(11, new ButtonOpenInventory(getPetManager().getPetShop(), UtilItem.Item(new ItemStack(Material.BONE), new String[] { "§bKlick mich um in den Pet Shop zukommen." }, "§7Pets")));
 			UtilInv.getBase().addPage(getPetManager().getPetShop());
 
 			getDisguiseManager().setDisguiseShop(new DisguiseShop(mysql, getPermissionManager(), getMoney(), getDisguiseManager()));
-			this.shop.addButton(15, new ButtonOpenInventory(getDisguiseManager().getDisguiseShop(), UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]
-			{ "§bKlick mich um in den Disguise Shop zukommen." }, "§7Disguises")));
+			this.shop.addButton(15, new ButtonOpenInventory(getDisguiseManager().getDisguiseShop(), UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[] { "§bKlick mich um in den Disguise Shop zukommen." }, "§7Disguises")));
 			UtilInv.getBase().addPage(getDisguiseManager().getDisguiseShop());
 
 			getDisguiseManager().getDisguiseShop().setAsync(true);
@@ -86,15 +84,12 @@ public class HubManager extends kManager {
 			handler.addGadget(new SlimeHead(handler));
 			handler.addGadget(new Pearl(handler));
 			GadgetShop gadgetShop = new GadgetShop(handler);
-			getShop().addButton(13, new ButtonOpenInventoryCopy(gadgetShop, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.PISTON_BASE), new String[]
-			{ "§bKlick mich um in den Gadget Shop zukommen." }, "§7Gadgets")));
+			getShop().addButton(13, new ButtonOpenInventoryCopy(gadgetShop, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.PISTON_BASE), new String[] { "§bKlick mich um in den Gadget Shop zukommen." }, "§7Gadgets")));
 			WingShop wingShop = new WingShop(getInstance());
-			getShop().addButton(29, new ButtonOpenInventoryCopy(wingShop, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.FEATHER), new String[]
-			{ "§bKlick mich um in den Wings Shop zukommen." }, "§7Wings")));
+			getShop().addButton(29, new ButtonOpenInventoryCopy(wingShop, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.FEATHER), new String[] { "§bKlick mich um in den Wings Shop zukommen." }, "§7Wings")));
 			MysteryBoxManager boxManager = new MysteryBoxManager(getInstance());
 			MysteryStore store = new MysteryStore(boxManager.getChest("MysteryBox"));
-			getShop().addButton(31, new ButtonOpenInventoryCopy(store, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.ENDER_CHEST), new String[]
-			{ "§bKlick mich um in den Mystery Box Shop zukommen." }, "§7MysteryBox")));
+			getShop().addButton(31, new ButtonOpenInventoryCopy(store, UtilInv.getBase(), UtilItem.Item(new ItemStack(Material.ENDER_CHEST), new String[] { "§bKlick mich um in den Mystery Box Shop zukommen." }, "§7MysteryBox")));
 
 			if (Calendar.getHoliday() != null) {
 				switch (Calendar.holiday) {

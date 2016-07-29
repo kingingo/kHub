@@ -43,14 +43,14 @@ public class HalloweenListener extends kListener{
 				ev.setType( DisguiseType.WITHER_SKELETON );
 			}
 		}else{
-			ev.setType( types[UtilMath.r(types.length)] );
+			ev.setType( types[UtilMath.randomInteger(types.length)] );
 		}
 	}
 	
 	@EventHandler
 	public void rdm(UpdateEvent ev){
 		if(ev.getType()==UpdateType.SLOWEST){
-				Bukkit.getWorld("world").strikeLightningEffect(Bukkit.getWorld("world").getSpawnLocation().add(UtilMath.r(30), 0, UtilMath.r(30)));
+				Bukkit.getWorld("world").strikeLightningEffect(Bukkit.getWorld("world").getSpawnLocation().add(UtilMath.randomInteger(30), 0, UtilMath.randomInteger(30)));
 		}
 	}
 

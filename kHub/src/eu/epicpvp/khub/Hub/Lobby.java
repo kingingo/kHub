@@ -14,14 +14,13 @@ public class Lobby {
 	private String ip;
 	@Getter
 	private int port;
-	
-    public Lobby(String name,String bg,String ip,int place) {
-    	this.name=name;
-    	this.place=place;
-    	this.bg=bg;
-    	this.ip=ip.split(":")[0];
-    	this.port=Integer.valueOf(ip.split(":")[1]);
-	}
-    
-}
 
+	public Lobby(String name, String bg, String ip, int place) {
+		this.name = name;
+		this.place = place;
+		this.bg = bg;
+		this.ip = ip.split(":")[0];
+		this.port = Integer.valueOf(ip.split(":")[1]);
+	}
+
+}

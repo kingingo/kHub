@@ -45,9 +45,9 @@ public class BirthdayListener extends kListener{
 	@EventHandler
 	public void rdm(UpdateEvent ev){
 		if(ev.getType()==UpdateType.SEC_2){
-			UtilFirework.start(Bukkit.getWorld("world").getSpawnLocation().add(UtilMath.RandomInt(30, -30), UtilMath.r(20), UtilMath.RandomInt(30, -30)), null,null);
-			UtilFirework.start(Bukkit.getWorld("world").getSpawnLocation().add(UtilMath.RandomInt(30, -30), UtilMath.r(20), UtilMath.RandomInt(30, -30)), null,null);
-			UtilFirework.start(Bukkit.getWorld("world").getSpawnLocation().add(UtilMath.RandomInt(30, -30), UtilMath.r(20), UtilMath.RandomInt(30, -30)), null,null);
+			UtilFirework.start(Bukkit.getWorld("world").getSpawnLocation().add(UtilMath.RandomInt(30, -30), UtilMath.randomInteger(20), UtilMath.RandomInt(30, -30)), null,null);
+			UtilFirework.start(Bukkit.getWorld("world").getSpawnLocation().add(UtilMath.RandomInt(30, -30), UtilMath.randomInteger(20), UtilMath.RandomInt(30, -30)), null,null);
+			UtilFirework.start(Bukkit.getWorld("world").getSpawnLocation().add(UtilMath.RandomInt(30, -30), UtilMath.randomInteger(20), UtilMath.RandomInt(30, -30)), null,null);
 		}
 	}
 	

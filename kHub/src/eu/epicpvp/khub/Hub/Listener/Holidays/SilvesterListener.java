@@ -36,7 +36,7 @@ public class SilvesterListener extends kListener{
 	@EventHandler
 	public void Updater(UpdateEvent ev){
 		if(ev.getType()!=UpdateType.SEC)return;
-		UtilFirework.start(getSpawn().clone().add(UtilMath.RandomInt(10, -10), UtilMath.RandomInt(10,8), UtilMath.RandomInt(10, -10)), null, types[UtilMath.r(types.length)]);
+		UtilFirework.start(getSpawn().clone().add(UtilMath.RandomInt(10, -10), UtilMath.RandomInt(10,8), UtilMath.RandomInt(10, -10)), null, types[UtilMath.randomInteger(types.length)]);
 	}
 	
 }

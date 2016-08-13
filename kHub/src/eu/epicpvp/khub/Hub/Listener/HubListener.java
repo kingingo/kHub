@@ -3,22 +3,6 @@ package eu.epicpvp.khub.Hub.Listener;
 import java.sql.ResultSet;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.CreatureType;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.ItemStack;
-
 import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.gamestats.ServerType;
 import dev.wolveringer.dataserver.gamestats.StatsKey;
@@ -33,22 +17,22 @@ import eu.epicpvp.kcore.Disguise.disguises.livings.DisguisePlayer;
 import eu.epicpvp.kcore.GemsShop.GemsShop;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagMessage;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagType;
-import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Inventory.InventoryCopy;
-import eu.epicpvp.kcore.Inventory.Item.Click;
+import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonCopy;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonTeleport;
-import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.Listener.EntityClick.EntityClickListener;
-import eu.epicpvp.kcore.MySQL.MySQLErr;
+import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
+import eu.epicpvp.kcore.MySQL.MySQLErr;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.StatsManager.StatsManager;
 import eu.epicpvp.kcore.StatsManager.StatsManagerRepository;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
-import eu.epicpvp.kcore.UpdateAsync.UpdateAsyncType;
 import eu.epicpvp.kcore.UpdateAsync.Event.UpdateAsyncEvent;
+import eu.epicpvp.kcore.UpdateAsync.UpdateAsyncType;
 import eu.epicpvp.kcore.Util.InventorySize;
 import eu.epicpvp.kcore.Util.TimeSpan;
 import eu.epicpvp.kcore.Util.UtilBG;
@@ -62,16 +46,51 @@ import eu.epicpvp.kcore.Util.UtilMath;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.kcore.kConfig.kConfig;
+import eu.epicpvp.khub.Hub.HubManager;
+import eu.epicpvp.khub.Hub.InvisbleManager.InvisibleManager;
+import eu.epicpvp.khub.Hub.Lobby;
 import eu.epicpvp.khub.kHub;
 import eu.epicpvp.khub.kManager;
-import eu.epicpvp.khub.Hub.HubManager;
-import eu.epicpvp.khub.Hub.Lobby;
-import eu.epicpvp.khub.Hub.InvisbleManager.InvisibleManager;
 import eu.epicpvp.sign.SignManager;
 import lombok.Getter;
 import lombok.Setter;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class HubListener extends kListener {
+	private static final net.md_5.bungee.api.chat.BaseComponent[] JOIN_SHOP_MESSAGE = new ComponentBuilder("")
+			.append("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n\n").color(ChatColor.GRAY).bold(true)
+			.append("                    Ränge").color(ChatColor.YELLOW).bold(false)
+			.append(" und ").color(ChatColor.RED)
+			.append("Gems").color(ChatColor.YELLOW)
+			.append(" erhälst du bei\n               dem ").color(ChatColor.RED)
+			.append("Shop-Villager").color(ChatColor.YELLOW)
+			.append(" in der Lobby oder...\n\n").color(ChatColor.RED)
+			.append("                          ")
+			.append("wenn du hier klickst").color(ChatColor.YELLOW).underlined(true)
+				.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Klicke, um den Shop zu öffnen!").color(ChatColor.RED).create()))
+				.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/shop"))
+			.append("\n\n\n").event((HoverEvent) null).event((ClickEvent) null).underlined(false)
+			.append("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬").color(ChatColor.GRAY).bold(true)
+			.create();
 	@Getter
 	private kManager manager;
 	@Getter
@@ -154,7 +173,7 @@ public class HubListener extends kListener {
 
 			@Override
 			public void onClick(Player player, ActionType type, Object object) {
-				if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, new StatsKey[] { StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME }) > TimeSpan.MINUTE * 30)) {
+				if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME) > TimeSpan.MINUTE * 30)) {
 
 					payToWin.openInv(player);
 				} else {
@@ -166,6 +185,29 @@ public class HubListener extends kListener {
 
 		payToWin.setEtype(EntityType.VILLAGER);
 		payToWin.setCreature();
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onJoinShopMessage(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		Bukkit.getScheduler().runTaskLater(manager.getInstance(), () -> {
+			if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME) > TimeSpan.MINUTE * 30))
+				player.spigot().sendMessage(JOIN_SHOP_MESSAGE);
+		}, 20);
+	}
+	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onShopCommand(PlayerCommandPreprocessEvent event) {
+		Player player = event.getPlayer();
+		if (event.getMessage().toLowerCase().startsWith("/shop")) {
+			if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME) > TimeSpan.MINUTE * 30)) {
+				payToWin.openInv(player);
+				event.setCancelled(true);
+			} else {
+				eula.openInv(player);
+				event.setCancelled(true);
+			}
+		}
 	}
 
 	public void initializeDeliveryPet() {

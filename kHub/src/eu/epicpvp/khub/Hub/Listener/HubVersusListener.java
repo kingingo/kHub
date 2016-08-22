@@ -58,7 +58,7 @@ import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonOpenInventory;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonUpDownVersus;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.SalesPackageBase;
 import eu.epicpvp.kcore.Listener.kListener;
-import eu.epicpvp.kcore.PacketAPI.Packets.kPacketStatusOutServerInfo;
+import eu.epicpvp.kcore.PacketAPI.Packets.WrapperPacketStatusOutServerInfo;
 import eu.epicpvp.kcore.PacketAPI.packetlistener.event.PacketListenerSendEvent;
 import eu.epicpvp.kcore.Packets.PacketArenaStatus;
 import eu.epicpvp.kcore.Permission.PermissionType;
@@ -627,7 +627,7 @@ public class HubVersusListener extends kListener{
 	@EventHandler
 	public void ping(PacketListenerSendEvent ev){
 		if(ev.getPacket() instanceof PacketStatusOutServerInfo){
-			kPacketStatusOutServerInfo packet = new kPacketStatusOutServerInfo(ev.getPacket());
+			WrapperPacketStatusOutServerInfo packet = new WrapperPacketStatusOutServerInfo(ev.getPacket());
 			
 			packet.getServerPing().setPlayerSample(new ServerPingPlayerSample(Bukkit.getMaxPlayers(), tabManager.getSize()+UtilServer.getPlayers().size()));
 			ev.setPacket(packet.getPacket());

@@ -169,7 +169,7 @@ public class HubListener extends kListener {
 	}
 
 	public void initializeDeliveryPet() {
-		UtilServer.createDeliveryPet(new DeliveryPet(UtilInv.getBase(), null, new DeliveryObject[] { new DeliveryObject(new String[] { "", "§7Click for Vote!", "", "§ePvP Rewards:", "§7   200 Epics", "§7   1x Inventory Repair", "", "§eGame Rewards:", "§7   25 Gems", "§7   100 Coins", "", "§eSkyBlock Rewards:", "§7   200 Epics", "§7   2x Diamonds", "§7   2x Iron Ingot", "§7   2x Gold Ingot" }, PermissionType.DELIVERY_PET_VOTE, false, 28, "§aVote for ClashMC", Material.PAPER, Material.REDSTONE_BLOCK, new Click() {
+		UtilServer.getDeliveryPet(new DeliveryPet(UtilInv.getBase(), null, new DeliveryObject[] { new DeliveryObject(new String[] { "", "§7Click for Vote!", "", "§ePvP Rewards:", "§7   200 Epics", "§7   1x Inventory Repair", "", "§eGame Rewards:", "§7   25 Gems", "§7   100 Coins", "", "§eSkyBlock Rewards:", "§7   200 Epics", "§7   2x Diamonds", "§7   2x Iron Ingot", "§7   2x Gold Ingot" }, PermissionType.DELIVERY_PET_VOTE, false, 28, "§aVote for ClashMC", Material.PAPER, Material.REDSTONE_BLOCK, new Click() {
 
 			@Override
 			public void onClick(Player p, ActionType a, Object obj) {

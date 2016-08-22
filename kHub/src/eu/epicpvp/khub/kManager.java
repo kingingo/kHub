@@ -36,8 +36,7 @@ public class kManager {
 		if (kHub.hubType.toLowerCase().endsWith("hub"))
 			this.type = GroupTyp.GAME;
 		Calendar.getHoliday();
-
-		UtilServer.createLagListener(getCmdHandler());
+		UtilServer.getLagListener(); //Init lag listener
 		new Listener(this);
 	}
 

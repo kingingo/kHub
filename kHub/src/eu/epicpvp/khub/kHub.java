@@ -49,11 +49,10 @@ public class kHub extends JavaPlugin {
 			removeEntity(Bukkit.getWorld("world"));
 			this.hubType = getConfig().getString("Config.HubType");
 			this.hubID = getConfig().getInt("Config.Lobby");
-			UtilServer.createMySQL(getConfig().getString("Config.MySQL.User"), getConfig().getString("Config.MySQL.Password"), getConfig().getString("Config.MySQL.Host"), getConfig().getString("Config.MySQL.DB"), this);
-			UtilServer.createUpdater(this);
-			UtilServer.createUpdaterAsync(this);
+			
+			UtilServer.setPluginInstance(this); //KCore init some stuff with other plugin instance...
+			UtilServer.createMySQL(getConfig().getString("Config.MySQL.User"), getConfig().getString("Config.MySQL.Password"), getConfig().getString("Config.MySQL.Host"), getConfig().getString("Config.MySQL.DB"));
 			UtilServer.createClient(this, ClientType.LOBBY, getConfig().getString("Config.Client.Host"), getConfig().getInt("Config.Client.Port"), this.hubType + this.hubID);
-			UtilServer.createCommandHandler(this);
 			UtilServer.getCommandHandler().register(CommandHubFly.class, new CommandHubFly(this));
 			UtilServer.getCommandHandler().register(CommandFlyspeed.class, new CommandFlyspeed());
 			UtilServer.getCommandHandler().register(CommandChatMute.class, new CommandChatMute(this));

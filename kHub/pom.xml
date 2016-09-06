@@ -1,23 +1,28 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>eu.epicpvp</groupId>
 	<artifactId>core-khub</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
 	<distributionManagement>
-        <repository>
-            <id>epicpvp-releases</id>
-            <name>epicpvp-artifactory-releases</name>
-            <url>http://149.202.150.185:8081/artifactory/epicpvp-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>epicpvp-snapshots</id>
-            <name>epicpvp-artifactory-snapshots</name>
-            <url>http://149.202.150.185:8081/artifactory/epicpvp-snapshots/</url>
-        </snapshotRepository>
+		<repository>
+			<id>epicpvp-releases</id>
+			<name>epicpvp-artifactory-releases</name>
+			<url>http://149.202.150.185:8081/artifactory/epicpvp-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>epicpvp-snapshots</id>
+			<name>epicpvp-artifactory-snapshots</name>
+			<url>http://149.202.150.185:8081/artifactory/epicpvp-snapshots/</url>
+		</snapshotRepository>
 	</distributionManagement>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
 	<build>
 		<finalName>kHub</finalName>
 		<sourceDirectory>src</sourceDirectory>
@@ -25,7 +30,8 @@
 			<resource>
 				<directory>src</directory>
 				<excludes>
-					<exclude>**/*.java</exclude>
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/*.orig</exclude>
 				</excludes>
 			</resource>
 		</resources>
@@ -41,10 +47,10 @@
 		</plugins>
 	</build>
 	<repositories>
-	 	<repository>
-            <id>epicpvp-all</id>
-            <url>http://149.202.150.185:8081/artifactory/epicpvp-all/</url>
-        </repository>
+		<repository>
+			<id>epicpvp-all</id>
+			<url>http://149.202.150.185:8081/artifactory/epicpvp-all/</url>
+		</repository>
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -66,22 +72,28 @@
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot</artifactId>
 			<version>1.8.8-R0.1-SNAPSHOT</version>
-			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-		<!--Bukkit API -->
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>1.8.8-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- epicpvp dependencies -->
 		<dependency>
 			<groupId>eu.epicpvp</groupId>
 			<artifactId>core-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>dev.wolveringer</groupId>
+			<artifactId>DatenClient</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- other plugin dependencies -->
 		<dependency>
 			<groupId>eu.epicpvp</groupId>
 			<artifactId>ViaVersion</artifactId>
@@ -107,6 +119,7 @@
 			<version>6.1.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- other -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

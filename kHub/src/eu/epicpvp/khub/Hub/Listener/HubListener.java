@@ -1,7 +1,10 @@
 package eu.epicpvp.khub.Hub.Listener;
 
 import java.sql.ResultSet;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.gamestats.ServerType;
@@ -15,6 +18,7 @@ import eu.epicpvp.kcore.Disguise.DisguiseType;
 import eu.epicpvp.kcore.Disguise.disguises.DisguiseBase;
 import eu.epicpvp.kcore.Disguise.disguises.livings.DisguisePlayer;
 import eu.epicpvp.kcore.GemsShop.GemsShop;
+import eu.epicpvp.kcore.Hologram.Hologram;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagMessage;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagType;
 import eu.epicpvp.kcore.Inventory.Inventory.InventoryCopy;
@@ -45,6 +49,7 @@ import eu.epicpvp.kcore.Util.UtilItem;
 import eu.epicpvp.kcore.Util.UtilMath;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilServer;
+import eu.epicpvp.kcore.Util.UtilTime;
 import eu.epicpvp.kcore.kConfig.kConfig;
 import eu.epicpvp.khub.Hub.HubManager;
 import eu.epicpvp.khub.Hub.InvisbleManager.InvisibleManager;
@@ -61,6 +66,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.EntityType;
@@ -330,9 +336,27 @@ public class HubListener extends kListener {
 		return "§a" + percent + "%";
 	}
 
+	NameTagMessage msg;
+	long time = 0;
 	@EventHandler
 	public void Portal(UpdateAsyncEvent ev) {
 		if (ev.getType() == UpdateAsyncType.SEC) {
+			if(msg==null){
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTimeZone(TimeZone.getTimeZone( "Europe/Berlin" ));
+				calendar.set(2016, 8, 16, 18, 0, 0);
+				this.time=calendar.getTimeInMillis();
+				this.msg=new NameTagMessage(NameTagType.PACKET, CommandLocations.getLocation("wzh"), "§aWarz Release in "+UtilTime.formatMili( (this.time-System.currentTimeMillis()) ));
+			}
+			
+			if( (this.time-System.currentTimeMillis()) < 0 && this.time!=-1){
+				this.time=-1;
+				this.msg.remove();
+			}else{
+				this.msg.setLines(new String[]{"§aWarz Release in §e"+UtilTime.formatMili( (this.time-System.currentTimeMillis()) )});
+				this.msg.send();
+			}
+			
 			for (Player player : UtilServer.getPlayers()) {
 				if (player.getEyeLocation().getBlock().getType() == Material.PORTAL) {
 					if (CommandLocations.getLocation("pvp").distance(player.getLocation()) < 10) {
@@ -345,6 +369,8 @@ public class HubListener extends kListener {
 						UtilBG.sendToServer(player, "gungame", getManager().getInstance());
 					} else if (CommandLocations.getLocation("cc").distance(player.getLocation()) < 10) {
 						UtilBG.sendToServer(player, "creative", getManager().getInstance());
+					} else if (CommandLocations.getLocation("wz").distance(player.getLocation()) < 10 && (this.time==-1)) {
+						UtilBG.sendToServer(player, "warz", getManager().getInstance());
 					}
 				}
 			}
@@ -353,21 +379,22 @@ public class HubListener extends kListener {
 
 	// UNSICHTBAR / PET SHOP / Walk Effect / FLY
 	public void fillGameInv() {
-		this.GameInv = new InventoryPageBase(InventorySize._54, "§8Game Menu");
-
+		this.GameInv = new InventoryPageBase(InventorySize._45, "§8Game Menu");
+		
 		this.GameInv.addButton(4, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.MAGMA_CREAM), "§6Spawn"), Bukkit.getWorld("world").getSpawnLocation()));
-		this.GameInv.addButton(11, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_AXE), "§aPvP"), CommandLocations.getLocation("pvpt")));
-		this.GameInv.addButton(15, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GRASS), "§aSkyBlock"), CommandLocations.getLocation("skyblock")));
-		this.GameInv.addButton(18, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_AXE), "§aGunGame"), CommandLocations.getLocation("GunGame")));
-		this.GameInv.addButton(22, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_PICKAXE), "§aCreative"), CommandLocations.getLocation("creative")));
-		this.GameInv.addButton(26, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§aVersus"), CommandLocations.getLocation("vs")));
-		this.GameInv.addButton(30, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD), "§aQuickSurvivalGames"), CommandLocations.getLocation("QuickSurvivalGames")));
-		this.GameInv.addButton(32, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), "§aFalldown"), CommandLocations.getLocation("DeathGames")));
-		this.GameInv.addButton(38, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_SPADE), "§aMasterbuilders"), CommandLocations.getLocation("masterbuilders")));
-		this.GameInv.addButton(39, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.MONSTER_EGG, 1, (byte) 91), "§aSheepWars"), CommandLocations.getLocation("SheepWars")));
-		this.GameInv.addButton(40, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BED), "§aBedWars"), CommandLocations.getLocation("BedWars")));
-		this.GameInv.addButton(41, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.EYE_OF_ENDER), "§aSkyWars §7| §6LuckyWars"), CommandLocations.getLocation("SkyWars")));
-		this.GameInv.addButton(42, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.STICK), "§aTroubleInMinecraft"), CommandLocations.getLocation("TroubleInMinecraft")));
+		this.GameInv.addButton(8+2, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.MONSTER_EGG, 1, (byte) 91), "§eSheepWars"), CommandLocations.getLocation("SheepWars")));
+		this.GameInv.addButton(8+3, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_SPADE), "§eMasterbuilders"), CommandLocations.getLocation("masterbuilders")));
+		this.GameInv.addButton(8+4, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BED), "§eBedWars"), CommandLocations.getLocation("BedWars")));
+		this.GameInv.addButton(8+5, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD), "§eQuickSG"), CommandLocations.getLocation("QuickSurvivalGames")));
+		this.GameInv.addButton(8+6, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), "§eFalldown"), CommandLocations.getLocation("DeathGames")));
+		this.GameInv.addButton(8+7, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.EYE_OF_ENDER), "§eSkyWars §7| §eLuckyWars"), CommandLocations.getLocation("SkyWars")));
+		this.GameInv.addButton(8+8, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.STICK), "§eTroubleInMinecraft"), CommandLocations.getLocation("TroubleInMinecraft")));
+		this.GameInv.addButton(8+9+9+2, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(byte)SkullType.ZOMBIE.ordinal()), "§eWarZ"), CommandLocations.getLocation("warz")));
+		this.GameInv.addButton(8+9+9+3, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_AXE), "§ePvP"), CommandLocations.getLocation("pvpt")));
+		this.GameInv.addButton(8+9+9+4, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_PICKAXE), "§eCreative"), CommandLocations.getLocation("creative")));
+		this.GameInv.addButton(8+9+9+6, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GRASS), "§eSkyBlock"), CommandLocations.getLocation("skyblock")));
+		this.GameInv.addButton(8+9+9+7, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_AXE), "§eGunGame"), CommandLocations.getLocation("GunGame")));
+		this.GameInv.addButton(8+9+9+8, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§eVersus 1vs1"), CommandLocations.getLocation("vs")));
 
 		this.GameInv.fill(Material.STAINED_GLASS_PANE, 7);
 		UtilInv.getBase().addPage(this.GameInv);

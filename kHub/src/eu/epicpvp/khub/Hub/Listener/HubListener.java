@@ -336,27 +336,9 @@ public class HubListener extends kListener {
 		return "§a" + percent + "%";
 	}
 
-	NameTagMessage msg;
-	long time = 0;
 	@EventHandler
 	public void Portal(UpdateAsyncEvent ev) {
 		if (ev.getType() == UpdateAsyncType.SEC) {
-			if(msg==null){
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTimeZone(TimeZone.getTimeZone( "Europe/Berlin" ));
-				calendar.set(2016, 8, 16, 18, 0, 0);
-				this.time=calendar.getTimeInMillis();
-				this.msg=new NameTagMessage(NameTagType.PACKET, CommandLocations.getLocation("wzh"), "§aWarz Release in "+UtilTime.formatMili( (this.time-System.currentTimeMillis()) ));
-			}
-			
-			if( (this.time-System.currentTimeMillis()) < 0 && this.time!=-1){
-				this.time=-1;
-				this.msg.remove();
-			}else{
-				this.msg.setLines(new String[]{"§aWarz Release in §e"+UtilTime.formatMili( (this.time-System.currentTimeMillis()) )});
-				this.msg.send();
-			}
-			
 			for (Player player : UtilServer.getPlayers()) {
 				if (player.getEyeLocation().getBlock().getType() == Material.PORTAL) {
 					if (CommandLocations.getLocation("pvp").distance(player.getLocation()) < 10) {
@@ -369,7 +351,7 @@ public class HubListener extends kListener {
 						UtilBG.sendToServer(player, "gungame", getManager().getInstance());
 					} else if (CommandLocations.getLocation("cc").distance(player.getLocation()) < 10) {
 						UtilBG.sendToServer(player, "creative", getManager().getInstance());
-					} else if (CommandLocations.getLocation("wz").distance(player.getLocation()) < 10 && (this.time==-1)) {
+					} else if (CommandLocations.getLocation("wz").distance(player.getLocation()) < 10) {
 						UtilBG.sendToServer(player, "warz", getManager().getInstance());
 					}
 				}

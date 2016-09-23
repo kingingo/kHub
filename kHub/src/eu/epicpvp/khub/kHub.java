@@ -43,6 +43,7 @@ public class kHub extends JavaPlugin {
 
 	public void onEnable() {
 		try {
+			UtilServer.setPluginInstance(this);
 			long time = System.currentTimeMillis();
 			loadConfig();
 

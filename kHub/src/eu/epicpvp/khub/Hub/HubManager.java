@@ -116,7 +116,7 @@ public class HubManager extends kManager {
 				new AddonDay(instance, Bukkit.getWorld("world"));
 			}
 
-			new ChatListener(instance, null, getPermissionManager(), null);
+			new ChatListener();
 			this.shop.fill(Material.STAINED_GLASS_PANE, (byte) 7);
 		}
 

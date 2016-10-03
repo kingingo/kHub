@@ -119,9 +119,9 @@ public class HubVersusListener extends kListener{
 	private HashMap<Player,Player> sg_vs = new HashMap<>();
 	private HashMap<Player,Player> bestof_vs = new HashMap<>();
 	private Scoreboard board;
-	
+
 	private BestOf bestOf;
-	
+
 	@Getter
 	private PlayerKitManager kitManager;
 	private Location spawn;
@@ -133,9 +133,9 @@ public class HubVersusListener extends kListener{
 	private int online = 0;
 	private UserDataConfig userData;
 	private TabManager tabManager;
-	
+
 	public HubVersusListener(final HubManager manager) {
-		super(manager.getInstance(),"VersusListener"); 
+		super(manager.getInstance(),"VersusListener");
 		new UpdaterAsync(manager.getInstance());
 		this.manager=manager;
 		this.tabManager=new TabManager(manager.getInstance(), new GameType[]{GameType.Versus,GameType.BedWars1vs1,GameType.SurvivalGames1vs1,GameType.SkyWars1vs1});
@@ -144,11 +144,11 @@ public class HubVersusListener extends kListener{
 		this.board=Bukkit.getScoreboardManager().getNewScoreboard();
 		//CASE SHOP
 		this.case_shop = new InventoryPageBase(InventorySize._45, "§7Cage-Shop:");
-		
+
 		int slot = 10;
 		for(GameCage gcase : GameCage.values()){
 			this.case_shop.addButton(slot, new SalesPackageBase(new Click(){
-				
+
 				@Override
 				public void onClick(Player player, ActionType action, Object obj) {
 					if(player.hasPermission(gcase.getPermission().getPermissionToString())||player.hasPermission(PermissionType.ALL_PERMISSION.getPermissionToString())){
@@ -157,16 +157,16 @@ public class HubVersusListener extends kListener{
 						player.closeInventory();
 					}
 				}
-				
+
 			}, gcase.getGround()));
 			slot=InventorySplit.getSlotBorder(slot);
 		}
-		
+
 		this.case_shop.fill(Material.STAINED_GLASS_PANE, (byte)7);
 		this.manager.getShop().addButton(4, new ButtonOpenInventory(this.case_shop, UtilItem.Item(new ItemStack(Material.STAINED_GLASS,1,(byte)11), new String[]{"§bKlick mich um in den Shop zu gelangen."}, "§7CageShop")));
 		UtilInv.getBase().addPage(this.case_shop);
 		//CASE SHOP ^^
-		
+
 		Bukkit.getWorld("world").setAutoSave(false);
 		this.manager.getCmdHandler().register(CommandVersusDurability.class, new CommandVersusDurability());
 		this.manager.getCmdHandler().register(CommandVersusMore.class, new CommandVersusMore());
@@ -175,9 +175,9 @@ public class HubVersusListener extends kListener{
 		this.statsManager=StatsManagerRepository.getStatsManager(GameType.Versus);
 		UtilTime.setTimeManager(manager.getPermissionManager());
 		this.spawn=CommandLocations.getLocation("spawn");
-		
+
 		CommandArena arena = new CommandArena();
-		
+
 		this.bedwars_arenaManager=new ArenaManager(statsManager,GameType.BedWars1vs1, UpdateAsyncType.SEC_2);
 		this.skywars_arenaManager=new ArenaManager(statsManager,GameType.SkyWars1vs1, UpdateAsyncType.SEC_2);
 		this.sg_arenaManager=new ArenaManager(statsManager,GameType.SurvivalGames1vs1, UpdateAsyncType.SEC_2);
@@ -207,9 +207,9 @@ public class HubVersusListener extends kListener{
 				}
 				return false;
 			}
-			
+
 		}, RulePriority.HIGHEST);
-		
+
 		this.versus_arenaManager.addRule(new Rule(){
 
 			@Override
@@ -219,12 +219,12 @@ public class HubVersusListener extends kListener{
 				}
 				return false;
 			}
-			
+
 		}, RulePriority.HIGHEST);
-		
+
 		if(versus_wait_list==null){
 			this.versus_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lVersus", true, EntityType.ZOMBIE, CommandLocations.getLocation("Versus"));
-			UtilScoreboard.addTeam(this.board, "versus", "§c").setCanSeeFriendlyInvisibles(false);
+			UtilScoreboard.addTeam(this.board, "versus", "§c");
 			((Zombie)this.versus_wait_list).getEquipment().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
 			((Zombie)this.versus_wait_list).getEquipment().setItemInHand(new ItemStack(Material.DIAMOND_SWORD));
 			NameTagMessage m;
@@ -245,7 +245,7 @@ public class HubVersusListener extends kListener{
 					if(versus_arenaManager.addPlayer(p, ArenaType._TEAMx2))
 						p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "VERSUS_ADDED"));
 				}
-				
+
 			}, t2));
 			this.t3=  UtilItem.Item(new ItemStack(Material.IRON_SWORD,0,(short)0), new String[]{}, "§cFFA for 3");
 			this.versus_wait_list_inv.addButton(10, new ButtonBase(new Click(){
@@ -255,7 +255,7 @@ public class HubVersusListener extends kListener{
 					if(versus_arenaManager.addPlayer(p, ArenaType._TEAMx3))
 						p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "VERSUS_ADDED"));
 				}
-				
+
 			},t3));
 			this.t4=  UtilItem.Item(new ItemStack(Material.IRON_SWORD,0,(short)0), new String[]{}, "§cFFA for 4");
 			this.versus_wait_list_inv.addButton(12, new ButtonBase(new Click(){
@@ -265,7 +265,7 @@ public class HubVersusListener extends kListener{
 					if(versus_arenaManager.addPlayer(p, ArenaType._TEAMx4))
 						p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "VERSUS_ADDED"));
 				}
-				
+
 			}, t4));
 			this.t5=  UtilItem.Item(new ItemStack(Material.IRON_SWORD,0,(short)0), new String[]{}, "§cFFA for 5");
 			this.versus_wait_list_inv.addButton(14, new ButtonBase(new Click(){
@@ -275,7 +275,7 @@ public class HubVersusListener extends kListener{
 					if(versus_arenaManager.addPlayer(p, ArenaType._TEAMx5))
 						p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "VERSUS_ADDED"));
 				}
-				
+
 			}, t5));
 			this.t6=  UtilItem.Item(new ItemStack(Material.IRON_SWORD,0,(short)0), new String[]{}, "§cFFA for 6");
 			this.versus_wait_list_inv.addButton(16, new ButtonBase(new Click(){
@@ -285,21 +285,21 @@ public class HubVersusListener extends kListener{
 					if(versus_arenaManager.addPlayer(p, ArenaType._TEAMx6))
 						p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "VERSUS_ADDED"));
 				}
-				
+
 			}, t6));
 			this.versus_wait_list_inv.fill(Material.STAINED_GLASS_PANE, 7);
 			UtilInv.getBase().addPage(this.versus_wait_list_inv);
 		}
-		
+
 		if(skywars_wait_list==null){
 			this.skywars_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lSkyWars", true, EntityType.ZOMBIE, CommandLocations.getLocation("SkyWars"));
 
-			UtilScoreboard.addTeam(this.board, "skywars", "§b").setCanSeeFriendlyInvisibles(false);
+			UtilScoreboard.addTeam(this.board, "skywars", "§b");
 			((Zombie)this.skywars_wait_list).getEquipment().setItemInHand(new ItemStack(Material.IRON_AXE));
 			NameTagMessage m;
 			m=new NameTagMessage(NameTagType.SERVER, skywars_wait_list.getLocation().add(0, 2, 0), skywars_wait_list.getCustomName());
 			m.send();
-			
+
 			this.skywars_wait_list.setCustomName("");
 			UtilEnt.setSilent(this.skywars_wait_list, true);
 			UtilEnt.setNoAI(this.skywars_wait_list, true);
@@ -307,11 +307,11 @@ public class HubVersusListener extends kListener{
 			((DisguisePlayer)dbase).loadSkin("julle139");
 			manager.getDisguiseManager().disguise(dbase);
 		}
-		
+
 		if(sg_wait_list==null){
 			this.sg_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lSurvivalGames", true, EntityType.ZOMBIE, CommandLocations.getLocation("SurvivalGames"));
 
-			UtilScoreboard.addTeam(this.board, "survivalgames", "§a").setCanSeeFriendlyInvisibles(false);
+			UtilScoreboard.addTeam(this.board, "survivalgames", "§a");
 			((Zombie)this.sg_wait_list).getEquipment().setItemInHand(new ItemStack(Material.BOW));
 			NameTagMessage m;
 			m=new NameTagMessage(NameTagType.SERVER, sg_wait_list.getLocation().add(0, 2, 0), sg_wait_list.getCustomName());
@@ -323,11 +323,11 @@ public class HubVersusListener extends kListener{
 			((DisguisePlayer)dbase).loadSkin("akmund47");
 			manager.getDisguiseManager().disguise(dbase);
 		}
-		
+
 		if(bedwars_wait_list==null){
 			this.bedwars_wait_list=manager.getPetManager().AddPetWithOutOwner("§c§lBedWars", true, EntityType.ZOMBIE, CommandLocations.getLocation("BedWars"));
 
-			UtilScoreboard.addTeam(this.board, "bedwars", "§d").setCanSeeFriendlyInvisibles(false);
+			UtilScoreboard.addTeam(this.board, "bedwars", "§d");
 			((Zombie)this.bedwars_wait_list).getEquipment().setItemInHand(new ItemStack(Material.GOLD_SWORD));
 			NameTagMessage m;
 			m=new NameTagMessage(NameTagType.SERVER, bedwars_wait_list.getLocation().add(0, 2, 0), bedwars_wait_list.getCustomName());
@@ -339,14 +339,14 @@ public class HubVersusListener extends kListener{
 			((DisguisePlayer)dbase).loadSkin("Kablion");
 			manager.getDisguiseManager().disguise(dbase);
 		}
-		
+
 //		UtilServer.getClient().getHandle().getHandlerBoss().addListener(new PacketListener() {
-//			
+//
 //			@Override
 //			public void handle(Packet packet) {
 //				if(packet instanceof PacketInServerStatus){
 //					PacketInServerStatus in = (PacketInServerStatus)packet;
-//					
+//
 //					if (in.getTyp() != GameType.Versus&&in.getTyp() != GameType.SkyWars1vs1&&in.getTyp() != GameType.BedWars1vs1&&in.getTyp() != GameType.SurvivalGames1vs1) {
 //				      } else if(server.containsKey(in.getServerId())){
 //				    	  server.remove(in.getServerId());
@@ -355,10 +355,10 @@ public class HubVersusListener extends kListener{
 //				}
 //			}
 //		});
-		
+
 		loadSettingNPC();
 	}
-	
+
 	public void loadSettingNPC(){
 		this.creature_option=manager.getPetManager().AddPetWithOutOwner("§b§lEinstellungen", true, EntityType.ZOMBIE, CommandLocations.getLocation("Optionen"));
 		NameTagMessage m=new NameTagMessage(NameTagType.SERVER, creature_option.getLocation().add(0, 2, 0), creature_option.getCustomName());
@@ -366,25 +366,25 @@ public class HubVersusListener extends kListener{
 		creature_option.setCustomName("");
 		UtilEnt.setSilent(this.creature_option, true);
 		UtilEnt.setNoAI(this.creature_option, true);
-		
+
 		DisguiseBase dbase = DisguiseType.newDisguise(creature_option, DisguiseType.PLAYER, new Object[]{"  "});
 		((DisguisePlayer)dbase).loadSkin("_Rorschach");
 		manager.getDisguiseManager().disguise(dbase);
-		
+
 		choose_game = new InventoryPageBase(InventorySize._9, "Versus Games:");
-		
+
 		//VERSUS -
 		InventoryPageBase versus_inv = new InventoryCopy(InventorySize._27.getSize(), "§bVersus");
-		
+
 		UtilInv.getBase().addPage(versus_inv);
 		choose_game.addButton(0, new ButtonBase(new Click() {
-			
+
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
 				((InventoryCopy)versus_inv).open(p, UtilInv.getBase());
 			}
 		},UtilItem.RenameItem(new ItemStack(Material.DIAMOND_SWORD), "§aVersus 1vs1")));
-		
+
 		((InventoryCopy)versus_inv).setCreate_new_inv(true);
 		versus_inv.addButton(new ButtonUpDownVersus(versus_inv, UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), "§bMin. Team"), 10, statsManager, StatsKey.TEAM_MIN,1,3));
 		versus_inv.addButton(new ButtonUpDownVersus(versus_inv, UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(short)3), "§6Max. Team"), 12, statsManager, StatsKey.TEAM_MAX,1,3));
@@ -402,7 +402,7 @@ public class HubVersusListener extends kListener{
 					}
 				}
 			}
-			
+
 		}, new Click(){
 
 			@Override
@@ -414,82 +414,82 @@ public class HubVersusListener extends kListener{
 					p.getOpenInventory().setItem(14, UtilItem.RenameItem(new ItemStack(Material.REDSTONE), "§7Kit zufall: §caus"));
 					statsManager.setString(p, "false", StatsKey.KIT_RANDOM);
 				}
-				
+
 			}
-			
+
 		}, new ItemStack(Material.BEDROCK)));
 		versus_inv.addButton(0, new ButtonBack(choose_game, UtilItem.RenameItem(new ItemStack(Material.BARRIER), "§cZurück / Back")));
 		versus_inv.setItem(16, UtilItem.RenameItem(new ItemStack(Material.IRON_CHESTPLATE), "§7Kit Slots §4§lCOMING SOON!"));
 		versus_inv.fill(Material.STAINED_GLASS_PANE, 7);
-		//VERSUS - 
-		
+		//VERSUS -
+
 		//SG -
 		choose_game.addButton(2, new ButtonBase(new Click() {
-			
+
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
 //				((InventoryCopy)versus_inv).open(p, base);
 			}
 		},UtilItem.RenameItem(new ItemStack(Material.BOW), "§aSurvivalGames 1vs1 §4§lCOMING SOON")));
 		//SG -
-		
+
 		//BW -
 		choose_game.addButton(4, new ButtonBase(new Click() {
-			
+
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
 //				((InventoryCopy)versus_inv).open(p, base);
 			}
 		},UtilItem.RenameItem(new ItemStack(Material.GOLD_SWORD), "§aBedWars 1vs1 §4§lCOMING SOON")));
 		//BW -
-		
+
 		//SW -
 		choose_game.addButton(6, new ButtonBase(new Click() {
-			
+
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
 //				((InventoryCopy)versus_inv).open(p, base);
 			}
 		},UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1 §4§lCOMING SOON")));
 		//SW -
-		
+
 		//bestof -
 		InventoryBestOf bestof_inv = new InventoryBestOf(InventorySize._54.getSize(), "§cBestOf Einstellungen", choose_game);
 		bestof_inv.setCreate_new_inv(true);
 		UtilInv.getBase().addPage(bestof_inv);
-		
+
 		choose_game.addButton(8, new ButtonBase(new Click() {
-			
+
 			@Override
 			public void onClick(Player p, ActionType a, Object o) {
 				((InventoryCopy)bestof_inv).open(p, UtilInv.getBase());
 			}
 		},UtilItem.RenameItem(new ItemStack(Material.FISHING_ROD), "§aBestOf")));
 		//bestof -
-		
+
 		choose_game.fill(Material.STAINED_GLASS_PANE);
 		UtilInv.getBase().addPage(choose_game);
 	}
-	
+
 	@EventHandler
 	public void save(PlayerQuitEvent ev){
 		statsManager.SaveAllPlayerData(ev.getPlayer());
 	}
-	
+
 	@EventHandler
 	public void Inventory(InventoryMoveItemEvent  ev){
 		if(ev.getSource().getHolder() instanceof Player){
 			ev.setCancelled(true);
 		}
 	}
-	
+
 	@EventHandler
 	public void bucket(PlayerBucketEmptyEvent ev){
 		if(!ev.getPlayer().isOp()){
 			ev.setCancelled(true);
 		}
 	}
-	
+
 	PlayerKit k;
 	@EventHandler
 	public void gamemodeCHANGE(UpdateEvent ev){
@@ -499,7 +499,7 @@ public class HubVersusListener extends kListener{
 					if(player.getGameMode()!=GameMode.CREATIVE){
 						player.setGameMode(GameMode.CREATIVE);
 						player.getInventory().clear();
-						
+
 
 						if(statsManager.isLoaded(player)){
 							k = getKitManager().getKit(UtilPlayer.getPlayerId(player),statsManager.getInt(StatsKey.KIT_ID, player));
@@ -525,7 +525,7 @@ public class HubVersusListener extends kListener{
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void Portal(UpdateEvent ev){
 		if(ev.getType()==UpdateType.SEC){
@@ -536,7 +536,7 @@ public class HubVersusListener extends kListener{
 			}
 		}
 	}
-	
+
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void LobbyMenu(PlayerInteractEvent ev){
 		if(UtilEvent.isAction(ev, ActionType.RIGHT)){
@@ -545,7 +545,7 @@ public class HubVersusListener extends kListener{
 			}
 		}
 	}
-	
+
 	int i=0;
 	@EventHandler
 	public void name(UpdateEvent ev){
@@ -558,18 +558,18 @@ public class HubVersusListener extends kListener{
 			for(Player player : UtilServer.getPlayers())player.setLevel(this.online);
 		}
 	}
-	
+
 	@EventHandler
 	public void configCreate(UserDataConfigLoadEvent ev){
 		if(!ev.getConfig().contains("BestOf.Rounds"))ev.getConfig().set("BestOf.Rounds", 6);
-		
+
 		if(!ev.getConfig().contains("BestOf.Round")){
 			for(int i = 0; i<10; i++){
 				ev.getConfig().set("BestOf.Round."+i, "Versus");
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void Inv(UpdateAsyncEvent ev){
 		if(ev.getType()==UpdateAsyncType.SEC){
@@ -614,7 +614,7 @@ public class HubVersusListener extends kListener{
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void Quit(PlayerQuitEvent ev){
 		statsManager.SaveAllPlayerData(ev.getPlayer());
@@ -623,17 +623,17 @@ public class HubVersusListener extends kListener{
 		bedwars_vs.remove(ev.getPlayer());
 		sg_vs.remove(ev.getPlayer());
 	}
-	
+
 	@EventHandler
 	public void ping(PacketListenerSendEvent ev){
 		if(ev.getPacket() instanceof PacketStatusOutServerInfo){
 			WrapperPacketStatusOutServerInfo packet = new WrapperPacketStatusOutServerInfo(ev.getPacket());
-			
+
 			packet.getServerPing().setPlayerSample(new ServerPingPlayerSample(Bukkit.getMaxPlayers(), tabManager.getSize()+UtilServer.getPlayers().size()));
 			ev.setPacket(packet.getPacket());
 		}
 	}
-	
+
 	@EventHandler
 	public void create(PlayerStatsCreateEvent ev){
 		if(UtilPlayer.isOnline(ev.getPlayerId())){
@@ -646,16 +646,16 @@ public class HubVersusListener extends kListener{
 			statsManager.SaveAllPlayerData(player);
 		}
 	}
-	
+
 	@EventHandler(priority=EventPriority.HIGH)
 	public void load(PlayerJoinEvent ev){
 		getManager().getMoney().loadPlayer(ev.getPlayer());
 		ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX")+TranslationHandler.getText(ev.getPlayer(), "WHEREIS_TEXT","Versus Hub"));
-		
+
 		statsManager.loadPlayer(ev.getPlayer());
 		setInv(ev.getPlayer());
 	}
-	
+
 	public void setInv(Player player){
 		player.setGameMode(GameMode.ADVENTURE);
 		player.setExp(0);
@@ -670,7 +670,7 @@ public class HubVersusListener extends kListener{
 		player.getInventory().setItem(7,UtilItem.setUnbreakable(UtilItem.RenameItem(new ItemStack(Material.IRON_AXE), "§aSkyWars 1vs1"), true));
 		player.updateInventory();
 	}
-	
+
 	private String s;
 	@EventHandler
 	public void Entity(EntityDamageByEntityEvent ev){
@@ -695,7 +695,7 @@ public class HubVersusListener extends kListener{
 								return;
 							}
 						}
-						
+
 						versus_vs.remove(((Player)ev.getDamager()));
 						versus_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
 						((Player)ev.getEntity()).sendMessage(TranslationHandler.getText(((Player)ev.getEntity()), "PREFIX")+TranslationHandler.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
@@ -721,7 +721,7 @@ public class HubVersusListener extends kListener{
 							return;
 						}
 					}
-					
+
 					skywars_vs.remove(((Player)ev.getDamager()));
 					skywars_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
 					((Player)ev.getEntity()).sendMessage(TranslationHandler.getText(((Player)ev.getEntity()), "PREFIX")+TranslationHandler.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
@@ -747,7 +747,7 @@ public class HubVersusListener extends kListener{
 							return;
 						}
 					}
-					
+
 					bedwars_vs.remove(((Player)ev.getDamager()));
 					bedwars_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
 					((Player)ev.getEntity()).sendMessage(TranslationHandler.getText(((Player)ev.getEntity()), "PREFIX")+TranslationHandler.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
@@ -773,7 +773,7 @@ public class HubVersusListener extends kListener{
 							return;
 						}
 					}
-					
+
 					sg_vs.remove(((Player)ev.getDamager()));
 					sg_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
 					((Player)ev.getEntity()).sendMessage(TranslationHandler.getText(((Player)ev.getEntity()), "PREFIX")+TranslationHandler.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
@@ -794,7 +794,7 @@ public class HubVersusListener extends kListener{
 							return;
 						}
 					}
-					
+
 					bestof_vs.remove(((Player)ev.getDamager()));
 					bestof_vs.put(((Player)ev.getDamager()), ((Player)ev.getEntity()));
 					((Player)ev.getEntity()).sendMessage(TranslationHandler.getText(((Player)ev.getEntity()), "PREFIX")+TranslationHandler.getText(((Player)ev.getEntity()), "HUB_VERSUS_1VS1_FROM_QUESTION", ((Player)ev.getDamager()).getName()));
@@ -827,7 +827,7 @@ public class HubVersusListener extends kListener{
 									return;
 								}
 							}
-							
+
 							bestof_vs.remove(fishplayer);
 							bestof_vs.put(fishplayer, caught);
 							caught.sendMessage(TranslationHandler.getText(caught, "PREFIX")+TranslationHandler.getText(caught, "HUB_VERSUS_1VS1_FROM_QUESTION", fishplayer.getName()));
@@ -837,7 +837,7 @@ public class HubVersusListener extends kListener{
 		        }
 		 	}
 	    }
-	
+
 	@EventHandler
 	public void Interact(PlayerInteractEntityEvent ev){
 		if(ev.getRightClicked().getEntityId()==this.creature_option.getEntityId()){

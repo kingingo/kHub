@@ -1,6 +1,6 @@
 package eu.epicpvp.sign;
 
-import dev.wolveringer.dataserver.gamestats.GameType;
+import eu.epicpvp.datenserver.definitions.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer.ServerKey;
 import lombok.Getter;
 
@@ -12,7 +12,7 @@ public class ServerData {
 	private int player;
 	private int maxPlayer;
 	private String mots;
-	
+
 	public ServerData(GameType type,ServerKey data) {
 		this.game = type;
 		this.serverId = data.getServerId();

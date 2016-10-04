@@ -1,6 +1,6 @@
 package eu.epicpvp.sign;
 
-import dev.wolveringer.dataserver.gamestats.GameType;
+import eu.epicpvp.datenserver.definitions.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.protocoll.packets.PacketInLobbyServerRequest;
 import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer;
 import eu.epicpvp.kcore.Util.UtilServer;
@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SignUpdateThread implements Runnable{
 	private SignManager manager;
-	
+
 	@Override
 	public void run() {
 		while (manager.getOwner().getManager().getInstance().isEnabled()) {

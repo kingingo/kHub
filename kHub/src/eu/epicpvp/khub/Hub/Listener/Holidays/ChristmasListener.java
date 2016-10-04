@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-import dev.wolveringer.dataserver.gamestats.StatsKey;
+import eu.epicpvp.datenserver.definitions.dataserver.gamestats.StatsKey;
 import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.Inventory.Item.Buttons.ButtonBase;
@@ -40,7 +40,7 @@ public class ChristmasListener extends kListener{
 	private InventoryPageBase inventory;
 	private ItemStack item;
 	private Click click;
-	
+
 	public ChristmasListener(HubManager manager){
 		super(manager.getInstance(),"ChristmasListener");
 		this.manager=manager;
@@ -50,13 +50,13 @@ public class ChristmasListener extends kListener{
 
 		getManager().getMysql().Update("CREATE TABLE IF NOT EXISTS CHRISTMAS(playerId int,day int)");
 		click = new Click() {
-			
+
 			@Override
 			public void onClick(Player player, ActionType action, Object obj) {
 				if( ((ItemStack)obj).getType() == Material.SNOW_BALL ){
 					if(day==((ItemStack)obj).getAmount()){
 						if(!getManager().getMysql().getString("SELECT `playerId` FROM `CHRISTMAS` WHERE day='"+day+"' AND playerId='"+UtilPlayer.getPlayerId(player)+"'").equalsIgnoreCase("null")){
-							player.sendMessage(TranslationHandler.getText(player, "PREFIX")+"§cDu hast bereits dein Türchen geöffnet!");						
+							player.sendMessage(TranslationHandler.getText(player, "PREFIX")+"§cDu hast bereits dein Türchen geöffnet!");
 						}else{
 							getManager().getMysql().Update("INSERT INTO CHRISTMAS (playerId,day) VALUES ('"+UtilPlayer.getPlayerId(player)+"','"+day+"');");
 							int c = ((ItemStack)obj).getAmount()*UtilMath.RandomInt(4, 1)*7;
@@ -77,7 +77,7 @@ public class ChristmasListener extends kListener{
 				}
 			}
 		};
-		
+
 	    int place=0;
 	    for(int i = 1; i<=24;i++){
 	    	for(int a = 0; a < 200; a++){
@@ -90,7 +90,7 @@ public class ChristmasListener extends kListener{
 	    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§cTürchen "+i)));
 	    	}
 	    }
-	    
+
 	    this.inventory.fill(Material.STAINED_GLASS_PANE,15);
 	    UtilInv.getBase().addPage(this.inventory);
 		if(day==24){
@@ -99,7 +99,7 @@ public class ChristmasListener extends kListener{
 			logMessage("Heute ist der "+day+"te dauert noch bis Weihnachten!");
 		}
 	}
-	
+
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void LobbyMenu(PlayerInteractEvent ev){
 		if(ev.getPlayer().getItemInHand().getType()==Material.SNOW_BALL){
@@ -107,7 +107,7 @@ public class ChristmasListener extends kListener{
 			ev.setCancelled(true);
 		}
 	}
-	
+
 	int tday;
 	@EventHandler
 	public void timer(UpdateEvent ev){
@@ -128,11 +128,11 @@ public class ChristmasListener extends kListener{
 		    		this.inventory.addButton(place, new ButtonBase(click, UtilItem.RenameItem(new ItemStack(Material.SNOW_BALL,i), "§cTürchen "+i)));
 		    	}
 		    }
-		    
+
 		    this.inventory.fill(Material.STAINED_GLASS_PANE,15);
 	    }
 	}
-	
+
 	@EventHandler
 	public void Updater(UpdateEvent ev){
 		if(ev.getType()!=UpdateType.FAST)return;
@@ -143,10 +143,10 @@ public class ChristmasListener extends kListener{
 			e.printStackTrace();
 		}
 	}
-	
+
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Join(PlayerJoinEvent ev){
 		if(!kHub.hubType.equalsIgnoreCase("VersusHub"))ev.getPlayer().getInventory().setItem(6, item.clone());
 	}
-	
+
 }

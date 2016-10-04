@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import dev.wolveringer.dataserver.gamestats.ServerType;
+import eu.epicpvp.datenserver.definitions.dataserver.gamestats.ServerType;
 import eu.epicpvp.kcore.Addons.AddonDay;
 import eu.epicpvp.kcore.Addons.AddonNight;
 import eu.epicpvp.kcore.Calendar.Calendar;

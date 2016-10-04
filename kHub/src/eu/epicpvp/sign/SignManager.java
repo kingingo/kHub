@@ -14,7 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
-import dev.wolveringer.dataserver.gamestats.GameType;
+import eu.epicpvp.datenserver.definitions.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer.GameServers;
 import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer.ServerKey;
 import dev.wolveringer.thread.ThreadFactory;
@@ -61,8 +61,8 @@ public class SignManager implements Listener{
 	@Getter
 	private HubListener owner;
 	private ThreadRunner updater;
-	
-	@SuppressWarnings("serial")	
+
+	@SuppressWarnings("serial")
 	private HashMap<ServerIdentifier, ArrayList<ServerSign>> signs = new HashMap<ServerIdentifier, ArrayList<ServerSign>>(){
 		public ArrayList<ServerSign> get(Object key) {
 			ArrayList<ServerSign> out = super.get(key);
@@ -88,7 +88,7 @@ public class SignManager implements Listener{
 					try {
 						Location loc = new Location(Bukkit.getWorld("world"), rs.getInt(3), rs.getInt(4), rs.getInt(5));
 						if(UtilServer.getMysteryBoxManager()!=null)UtilServer.getMysteryBoxManager().getBlocked().add(loc);
-						
+
 						signs.get(new ServerIdentifier(GameType.get(rs.getString(1)), rs.getString(2))).add(new ServerSign(loc,this));
 					} catch (ClassCastException e) {
 						System.err.println("[kHub] Sign nicht gefunden ...");
@@ -105,7 +105,7 @@ public class SignManager implements Listener{
 	}
 	@SuppressWarnings("serial")
 	protected void updateSigns(GameServers[] server){
-		
+
 		HashMap<ServerIdentifier, Iterator<ServerSign>> ssigns = new HashMap<ServerIdentifier, Iterator<ServerSign>>(){
 			@Override
 			public Iterator<ServerSign> get(Object key) {
@@ -130,7 +130,7 @@ public class SignManager implements Listener{
 			}
 		}
 	}
-	
+
 	protected GameType[] buildGamesIndex(){
 		ArrayList<GameType> types = new ArrayList<>();
 		for(ServerIdentifier i : signs.keySet())
@@ -138,7 +138,7 @@ public class SignManager implements Listener{
 				types.add(i.getType());
 		return  types.toArray(new GameType[0]);
 	}
-	
+
 	@EventHandler
 	public void onSign(SignChangeEvent ev) {
 		Player p = ev.getPlayer();
@@ -163,7 +163,7 @@ public class SignManager implements Listener{
 			}
 		}
 	}
-	
+
 	protected void removeSign(ServerSign sign){
 		for(ServerIdentifier i : signs.keySet())
 			signs.get(i).remove(sign);

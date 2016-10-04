@@ -1,7 +1,7 @@
 package eu.epicpvp.khub.Hub.Listener;
 
-import dev.wolveringer.client.Callback;
-import dev.wolveringer.client.LoadedPlayer;
+import eu.epicpvp.datenclient.client.Callback;
+import eu.epicpvp.datenclient.client.LoadedPlayer;
 import dev.wolveringer.dataserver.protocoll.packets.PacketInStatsEdit.Action;
 import eu.epicpvp.kcore.Listener.VoteListener.VoteListener;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
@@ -12,7 +12,7 @@ public class HubPremiumListener extends HubListener {
 
 	public HubPremiumListener(final HubManager manager) {
 		super(manager, true);
-		
+
 		new VoteListener(manager.getInstance(), false, new Callback<String>() {
 
 			@Override

@@ -88,7 +88,7 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>dev.wolveringer</groupId>
+			<groupId>eu.epicpvp</groupId>
 			<artifactId>DatenClient</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>provided</scope>
@@ -97,7 +97,7 @@
 		<dependency>
 			<groupId>eu.epicpvp</groupId>
 			<artifactId>ViaVersion</artifactId>
-			<version>0.9.2</version>
+			<version>0.9.9</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

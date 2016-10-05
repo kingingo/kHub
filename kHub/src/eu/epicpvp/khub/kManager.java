@@ -1,7 +1,7 @@
 package eu.epicpvp.khub;
 
-import dev.wolveringer.bukkit.permissions.GroupTyp;
 import eu.epicpvp.datenserver.definitions.dataserver.gamestats.GameType;
+import eu.epicpvp.datenserver.definitions.permissions.GroupTyp;
 import eu.epicpvp.kcore.Calendar.Calendar;
 import eu.epicpvp.kcore.Command.CommandHandler;
 import eu.epicpvp.kcore.Disguise.DisguiseManager;

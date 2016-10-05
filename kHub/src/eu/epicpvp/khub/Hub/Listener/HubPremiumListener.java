@@ -1,8 +1,8 @@
 package eu.epicpvp.khub.Hub.Listener;
 
+import eu.epicpvp.dataserver.protocoll.packets.PacketInStatsEdit.Action;
 import eu.epicpvp.datenclient.client.Callback;
 import eu.epicpvp.datenclient.client.LoadedPlayer;
-import dev.wolveringer.dataserver.protocoll.packets.PacketInStatsEdit.Action;
 import eu.epicpvp.kcore.Listener.VoteListener.VoteListener;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Util.UtilServer;

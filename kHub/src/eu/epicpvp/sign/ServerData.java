@@ -1,7 +1,7 @@
 package eu.epicpvp.sign;
 
+import eu.epicpvp.dataserver.protocoll.packets.PacketOutLobbyServer.ServerKey;
 import eu.epicpvp.datenserver.definitions.dataserver.gamestats.GameType;
-import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer.ServerKey;
 import lombok.Getter;
 
 @Getter

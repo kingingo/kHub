@@ -1,8 +1,8 @@
 package eu.epicpvp.sign;
 
+import eu.epicpvp.dataserver.protocoll.packets.PacketInLobbyServerRequest;
+import eu.epicpvp.dataserver.protocoll.packets.PacketOutLobbyServer;
 import eu.epicpvp.datenserver.definitions.dataserver.gamestats.GameType;
-import dev.wolveringer.dataserver.protocoll.packets.PacketInLobbyServerRequest;
-import dev.wolveringer.dataserver.protocoll.packets.PacketOutLobbyServer;
 import eu.epicpvp.kcore.Util.UtilServer;
 import lombok.AllArgsConstructor;
 

@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-import dev.wolveringer.skin.Skin;
+import eu.epicpvp.datenserver.definitions.skin.Skin;
 import eu.epicpvp.kcore.Calendar.Calendar;
 import eu.epicpvp.kcore.Calendar.Calendar.CalendarType;
 import eu.epicpvp.kcore.Listener.kListener;

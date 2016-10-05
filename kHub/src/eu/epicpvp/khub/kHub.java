@@ -9,7 +9,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import dev.wolveringer.client.connection.ClientType;
+import eu.epicpvp.datenserver.definitions.connection.ClientType;
 import eu.epicpvp.kcore.Command.Admin.CommandAddItem;
 import eu.epicpvp.kcore.Command.Admin.CommandChatMute;
 import eu.epicpvp.kcore.Command.Admin.CommandDebug;

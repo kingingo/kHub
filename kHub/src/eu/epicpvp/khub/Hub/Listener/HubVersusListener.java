@@ -553,7 +553,7 @@ public class HubVersusListener extends kListener{
 			i=tabManager.getSize();
 			this.online=UtilServer.getPlayers().size()+i;
 			if(this.versus_wait_list_name!=null)this.versus_wait_list_name.remove();
-			this.versus_wait_list_name = new NameTagMessage(NameTagType.PACKET, CommandLocations.getLocation("online"),new String[]{"§c§lClashMC Versus Server","§aOnline §e§l"+this.online});
+			this.versus_wait_list_name = new NameTagMessage(NameTagType.PACKET, CommandLocations.getLocation("online"),new String[]{"§c§lEpicPvP Versus Server","§aOnline §e§l"+this.online});
 			this.versus_wait_list_name.send();
 			for(Player player : UtilServer.getPlayers())player.setLevel(this.online);
 		}

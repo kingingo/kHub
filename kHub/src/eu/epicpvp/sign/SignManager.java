@@ -74,6 +74,7 @@ public class SignManager implements Listener{
 	public SignManager(HubListener owner) {
 		this.owner = owner;
 		this.updater = ThreadFactory.getFactory().createThread(new SignUpdateThread(this));
+		Bukkit.getPluginManager().registerEvents(this, owner.getPlugin());
 	}
 
 	public void loadSigns() {

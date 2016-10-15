@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -169,8 +170,8 @@ public class HubListener extends kListener {
 	GemsShop eula;
 
 	public void initializeGemsShop() {
-		eula = new GemsShop("§d§lShop", null, ServerType.GAME);
 		payToWin = new GemsShop("§d§lShop", null, ServerType.GAME, new kConfig(UtilFile.getYMLFile(UtilServer.getPermissionManager().getInstance(), "gemsshop_payToWin")), null);
+		eula = new GemsShop("§d§lShop", null, ServerType.GAME);
 		payToWin.setClick(new Click() {
 
 			@Override
@@ -337,17 +338,17 @@ public class HubListener extends kListener {
 		if (ev.getType() == UpdateAsyncType.SEC) {
 			for (Player player : UtilServer.getPlayers()) {
 				if (player.getEyeLocation().getBlock().getType() == Material.PORTAL) {
-					if (CommandLocations.getLocation("pvp").distance(player.getLocation()) < 10) {
+					if (CommandLocations.getLocation("pvp_tel").distance(player.getLocation()) < 10) {
 						UtilBG.sendToServer(player, "pvp", getManager().getInstance());
-					} else if (CommandLocations.getLocation("sky").distance(player.getLocation()) < 10) {
+					} else if (CommandLocations.getLocation("sky_tel").distance(player.getLocation()) < 10) {
 						UtilBG.sendToServer(player, "sky", getManager().getInstance());
-					} else if (CommandLocations.getLocation("versus").distance(player.getLocation()) < 10) {
+					} else if (CommandLocations.getLocation("versus_tel").distance(player.getLocation()) < 10) {
 						UtilBG.sendToServer(player, "versus", getManager().getInstance());
-					} else if (CommandLocations.getLocation("gg").distance(player.getLocation()) < 10) {
+					} else if (CommandLocations.getLocation("gungame_tel").distance(player.getLocation()) < 3) {
 						UtilBG.sendToServer(player, "gungame", getManager().getInstance());
-					} else if (CommandLocations.getLocation("cc").distance(player.getLocation()) < 10) {
+					} else if (CommandLocations.getLocation("creative_tel").distance(player.getLocation()) < 3) {
 						UtilBG.sendToServer(player, "creative", getManager().getInstance());
-					} else if (CommandLocations.getLocation("wz").distance(player.getLocation()) < 10) {
+					} else if (CommandLocations.getLocation("warz_tel").distance(player.getLocation()) < 10) {
 						UtilBG.sendToServer(player, "warz", getManager().getInstance());
 					}
 				}
@@ -364,15 +365,15 @@ public class HubListener extends kListener {
 		this.GameInv.addButton(8+3, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_SPADE), "§eMasterbuilders"), CommandLocations.getLocation("masterbuilders")));
 		this.GameInv.addButton(8+4, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BED), "§eBedWars"), CommandLocations.getLocation("BedWars")));
 		this.GameInv.addButton(8+5, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.IRON_SWORD), "§eQuickSG"), CommandLocations.getLocation("QuickSurvivalGames")));
-		this.GameInv.addButton(8+6, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), "§eFalldown"), CommandLocations.getLocation("DeathGames")));
+		this.GameInv.addButton(8+6, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), "§eFalldown"), CommandLocations.getLocation("falldown")));
 		this.GameInv.addButton(8+7, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.EYE_OF_ENDER), "§eSkyWars §7| §eLuckyWars"), CommandLocations.getLocation("SkyWars")));
 		this.GameInv.addButton(8+8, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.STICK), "§eTroubleInMinecraft"), CommandLocations.getLocation("TroubleInMinecraft")));
 		this.GameInv.addButton(8+9+9+2, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.SKULL_ITEM,1,(byte)SkullType.ZOMBIE.ordinal()), "§eWarZ"), CommandLocations.getLocation("warz")));
-		this.GameInv.addButton(8+9+9+3, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_AXE), "§ePvP"), CommandLocations.getLocation("pvpt")));
+		this.GameInv.addButton(8+9+9+3, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_AXE), "§ePvP"), CommandLocations.getLocation("pvp")));
 		this.GameInv.addButton(8+9+9+4, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.DIAMOND_PICKAXE), "§eCreative"), CommandLocations.getLocation("creative")));
-		this.GameInv.addButton(8+9+9+6, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GRASS), "§eSkyBlock"), CommandLocations.getLocation("skyblock")));
-		this.GameInv.addButton(8+9+9+7, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_AXE), "§eGunGame"), CommandLocations.getLocation("GunGame")));
-		this.GameInv.addButton(8+9+9+8, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§eVersus 1vs1"), CommandLocations.getLocation("vs")));
+		this.GameInv.addButton(8+9+9+6, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GRASS), "§eSkyBlock"), CommandLocations.getLocation("sky")));
+		this.GameInv.addButton(8+9+9+7, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.GOLD_AXE), "§eGunGame"), CommandLocations.getLocation("gungame")));
+		this.GameInv.addButton(8+9+9+8, new ButtonTeleport(UtilItem.RenameItem(new ItemStack(Material.BOW), "§eVersus 1vs1"), CommandLocations.getLocation("versus")));
 
 		this.GameInv.fill(Material.STAINED_GLASS_PANE, 7);
 		UtilInv.getBase().addPage(this.GameInv);

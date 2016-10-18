@@ -112,6 +112,7 @@ public class kHub extends JavaPlugin {
 		getConfig().addDefault("Config.Client.Port", 9051);
 		getConfig().addDefault("Config.Lobby", "1");
 		getConfig().addDefault("Config.HubType", "hub");
+		getConfig().addDefault("shop.active", false);
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 	}

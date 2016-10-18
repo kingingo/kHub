@@ -170,24 +170,25 @@ public class HubListener extends kListener {
 	GemsShop eula;
 
 	public void initializeGemsShop() {
-		payToWin = new GemsShop("§d§lShop", null, ServerType.GAME, new kConfig(UtilFile.getYMLFile(UtilServer.getPermissionManager().getInstance(), "gemsshop_payToWin")), null);
-		eula = new GemsShop("§d§lShop", null, ServerType.GAME);
-		payToWin.setClick(new Click() {
+		if(getPlugin().getConfig().getBoolean("shop.active")){
+			payToWin = new GemsShop("§d§lShop", null, ServerType.GAME, new kConfig(UtilFile.getYMLFile(UtilServer.getPermissionManager().getInstance(), "gemsshop_payToWin")), null);
+			eula = new GemsShop("§d§lShop", null, ServerType.GAME);
+			payToWin.setClick(new Click() {
 
-			@Override
-			public void onClick(Player player, ActionType type, Object object) {
-				if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME) > TimeSpan.MINUTE * 30)) {
-
-					payToWin.openInv(player);
-				} else {
-					eula.openInv(player);
+				@Override
+				public void onClick(Player player, ActionType type, Object object) {
+					if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME) > TimeSpan.MINUTE * 30)) {
+						payToWin.openInv(player);
+					} else {
+						eula.openInv(player);
+					}
 				}
-			}
 
-		});
+			});
 
-		payToWin.setEtype(EntityType.VILLAGER);
-		payToWin.setCreature();
+			payToWin.setEtype(EntityType.VILLAGER);
+			payToWin.setCreature();
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

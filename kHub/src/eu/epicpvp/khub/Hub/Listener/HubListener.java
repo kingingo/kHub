@@ -453,8 +453,8 @@ public class HubListener extends kListener {
 		UtilPlayer.setTab(ev.getPlayer(), kHub.hubType + " " + kHub.hubID);
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.COMPASS), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
-		if (kHub.hubType.toLowerCase().startsWith("premiumhub") || kHub.hubType.toLowerCase().startsWith("hub"))
-			ev.getPlayer().getInventory().setItem(3, UtilItem.RenameItem(new ItemStack(Material.DIAMOND), "§d§lOnline-Shop"));
+//		if (kHub.hubType.toLowerCase().startsWith("premiumhub") || kHub.hubType.toLowerCase().startsWith("hub"))
+//			ev.getPlayer().getInventory().setItem(3, UtilItem.RenameItem(new ItemStack(Material.DIAMOND), "§d§lOnline-Shop"));
 		ev.getPlayer().getInventory().setItem(5, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_BUCH") + " §c§lBETA"));
 		ev.getPlayer().getInventory().setItem(8, UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 	}

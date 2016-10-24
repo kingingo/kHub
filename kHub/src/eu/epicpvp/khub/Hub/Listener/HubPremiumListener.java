@@ -27,7 +27,7 @@ public class HubPremiumListener extends HubListener {
 
 				loadedplayer.changeCoins(Action.ADD, 100);
 				votes.add(loadedplayer.getName());
-				UtilServer.getClient().sendMessage(loadedplayer.getPlayerId(), "§6Vote§8 »§f Danke für deinen Vote, §e"+loadedplayer.getName()+"§f. Wenn du deinen Key noch nicht bekommen hast, gehe auf den Server, auf den du in haben möchtest.");
+				UtilServer.getClient().sendMessage(loadedplayer.getPlayerId(), "§6Vote§8 »§f Danke für deinen Vote, §e"+loadedplayer.getName()+"§f. Wenn du deinen Key noch nicht bekommen hast, gehe auf den Server, auf den du ihn haben möchtest.");
 			}
 		});
 		

@@ -37,9 +37,9 @@ public class HubPremiumListener extends HubListener {
 			public void run() {
 				if(!votes.isEmpty()){
 					if(votes.size()>=3){
-						String players = "";
+						String players = "§e";
 						for(int i = 0; i < (votes.size()-1); i++){
-							players+=votes.get(i)+"§f,§e";
+							players+=votes.get(i)+"§f,§e ";
 						}
 						players=players.substring(0, players.length()-"§f,§e".length());
 						players+="§f und §e"+votes.get(votes.size()-1);

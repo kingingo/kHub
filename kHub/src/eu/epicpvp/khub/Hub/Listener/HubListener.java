@@ -170,47 +170,43 @@ public class HubListener extends kListener {
 	GemsShop eula;
 
 	public void initializeGemsShop() {
-		if(getPlugin().getConfig().getBoolean("shop.active")){
 			payToWin = new GemsShop("§d§lShop", null, ServerType.GAME, new kConfig(UtilFile.getYMLFile(UtilServer.getPermissionManager().getInstance(), "gemsshop_payToWin")), null);
 			eula = new GemsShop("§d§lShop", null, ServerType.GAME);
 			payToWin.setClick(new Click() {
 
 				@Override
 				public void onClick(Player player, ActionType type, Object object) {
-					if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME) > TimeSpan.MINUTE * 30)) {
-						payToWin.openInv(player);
-					} else {
+					if(getPlugin().getConfig().getBoolean("shop.active")){
 						eula.openInv(player);
+					}else{
+						if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME) > TimeSpan.MINUTE * 30)) {
+							payToWin.openInv(player);
+						} else {
+							eula.openInv(player);
+						}
 					}
 				}
 
+			
 			});
-
-			payToWin.setEtype(EntityType.VILLAGER);
-			payToWin.setCreature();
-		}
+			
+		payToWin.setEtype(EntityType.VILLAGER);
+		payToWin.setCreature();
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onJoinShopMessage(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		Bukkit.getScheduler().runTaskLater(manager.getInstance(), () -> {
-			if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME) > TimeSpan.MINUTE * 30))
+			if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME) > TimeSpan.HOUR * 2))
 				player.spigot().sendMessage(JOIN_SHOP_MESSAGE);
 		}, 20);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onShopCommand(PlayerCommandPreprocessEvent event) {
-		Player player = event.getPlayer();
 		if (event.getMessage().toLowerCase().startsWith("/shop")) {
-			if (isOnlinestore() && ((UtilServer.getPermissionManager().getPermissionPlayer(player) != null && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().isEmpty() && !UtilServer.getPermissionManager().getPermissionPlayer(player).getGroups().get(0).getName().equalsIgnoreCase("default")) || getTimer().getTotalInteger(player, StatsKey.SKY_TIME, StatsKey.PVP_TIME, StatsKey.GUNGAME_TIME, StatsKey.GAME_TIME) > TimeSpan.MINUTE * 30)) {
-				payToWin.openInv(player);
-				event.setCancelled(true);
-			} else {
-				eula.openInv(player);
-				event.setCancelled(true);
-			}
+			payToWin.getClick().onClick(event.getPlayer(), ActionType.RIGHT, null);
 		}
 	}
 
@@ -453,8 +449,8 @@ public class HubListener extends kListener {
 		UtilPlayer.setTab(ev.getPlayer(), kHub.hubType + " " + kHub.hubID);
 		ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
 		ev.getPlayer().getInventory().setItem(1, UtilItem.RenameItem(new ItemStack(Material.COMPASS), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_COMPASS")));
-//		if (kHub.hubType.toLowerCase().startsWith("premiumhub") || kHub.hubType.toLowerCase().startsWith("hub"))
-//			ev.getPlayer().getInventory().setItem(3, UtilItem.RenameItem(new ItemStack(Material.DIAMOND), "§d§lOnline-Shop"));
+		if (kHub.hubType.toLowerCase().startsWith("premiumhub") || kHub.hubType.toLowerCase().startsWith("hub"))
+			ev.getPlayer().getInventory().setItem(3, UtilItem.RenameItem(new ItemStack(Material.DIAMOND), "§d§lOnline-Shop"));
 		ev.getPlayer().getInventory().setItem(5, UtilItem.RenameItem(new ItemStack(Material.BOOK_AND_QUILL), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_BUCH") + " §c§lBETA"));
 		ev.getPlayer().getInventory().setItem(8, UtilItem.RenameItem(new ItemStack(Material.NETHER_STAR), TranslationHandler.getText(ev.getPlayer(), "HUB_ITEM_NETHERSTAR")));
 	}
